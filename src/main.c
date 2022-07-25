@@ -1,8 +1,11 @@
 // SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "dil/builder.c"
 #include "dil/error.c"
+#include "dil/parser.c"
 #include "dil/string.c"
+#include "dil/tree.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,29 +20,23 @@ int main(int argumentCount, char const* const* arguments)
     }
     printf("\n");
 
-    DilString file =
-        dil_string_terminated("Some multi\nline\nstring\n\nwhich\nhas\nlines");
-    DilSplit split = dil_string_split_first(&file, '\n');
+    FILE*  file = fopen(arguments[1], "r");
+    char   buffer[1 << 16];
+    size_t length = fread(buffer, 1, 1 << 16, file);
+    fclose(file);
 
-    split.after.first += 3;
-    split.after.last -= 2;
+    DilFile info = {
+        .path     = arguments[1],
+        .contents = {.first = buffer, .last = buffer + length}
+    };
 
-    dil_message(
-        &(DilFile){.path = "imaginary.dil", .contents = file},
-        split.after,
-        "info",
-        "There is something here!");
+    DilTree    tree    = {0};
+    DilBuilder builder = {.built = &tree};
 
-    file = dil_string_terminated(
-        "A file that is alot longer! This would mean\nthat we will see alot "
-        "more on the console.\nOk?");
-    DilString portion = {.first = file.first + 25, .last = file.first + 85};
+    dil_parse(&builder, &info);
 
-    dil_message(
-        &(DilFile){.path = "imaginary.dil", .contents = file},
-        portion,
-        "info",
-        "There is something here!");
+    dil_builder_free(&builder);
+    dil_tree_free(&tree);
 
     return EXIT_SUCCESS;
 }

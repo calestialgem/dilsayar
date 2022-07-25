@@ -56,8 +56,9 @@ void dil_parse_skip(DilString* string)
 /* Skip erronous characters and print them. */
 void dil_parse_error(DilString* string, DilFile* file, char const* message)
 {
-    DilString portion = {.first = string->first, .last = string->last};
-    while (portion.last <= string->last && !dil_parse_skip_once(string)) {
+    DilString portion = {.first = string->first, .last = string->first};
+    while (string->first <= string->last && !dil_parse_skip_once(string)) {
+        string->first++;
         portion.last++;
     }
     file->error++;
@@ -142,9 +143,11 @@ void dil_parse(DilBuilder* builder, DilFile* file)
     DilString string = file->contents;
 
     size_t start = dil_tree_size(builder->built);
-    dil_builder_add(
-        builder,
-        (DilObject){.symbol = DIL_SYMBOL_START, .value = string});
+    dil_tree_add(
+        builder->built,
+        (DilNode){
+            .object = {.symbol = DIL_SYMBOL_START, .value = string}
+    });
     dil_builder_push(builder);
 
     bool parsed = true;
