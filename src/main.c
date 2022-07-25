@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "dil/lib.c"
+#include "dil/error.c"
+#include "dil/string.c"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +17,28 @@ int main(int argumentCount, char const* const* arguments)
     }
     printf("\n");
 
-    // Call library.
-    printf("%s\n", message());
+    DilString file =
+        dil_string_terminated("Some multi\nline\nstring\n\nwhich\nhas\nlines");
+    DilSplit split = dil_string_split_first(&file, '\n');
+
+    dil_message(
+        file,
+        split.before,
+        "info",
+        "imaginary.dil",
+        "There is something here!");
+
+    file = dil_string_terminated(
+        "A file that is alot longer! This would mean\nthat we will see alot "
+        "more on the console.\nOk?");
+    DilString portion = {.first = file.first + 5, .last = file.first + 20};
+
+    dil_message(
+        file,
+        portion,
+        "info",
+        "imaginary.dil",
+        "There is something here!");
 
     return EXIT_SUCCESS;
 }

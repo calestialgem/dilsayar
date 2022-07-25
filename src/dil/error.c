@@ -10,7 +10,12 @@
 #include <string.h>
 
 /* Print a portion of the input string. */
-void dil_message(DilString file, DilString portion)
+void dil_message(
+    DilString   file,
+    DilString   portion,
+    char const* type,
+    char const* path,
+    char const* message)
 {
     size_t    lineNumber   = 1;
     size_t    columnNumber = 1;
@@ -34,12 +39,20 @@ void dil_message(DilString file, DilString portion)
     (void)sprintf(lineNumberString, "%llu", lineNumber);
 
     printf(
+        "%s:%llu:%llu: %s: %s\n",
+        path,
+        lineNumber,
+        columnNumber,
+        type,
+        message);
+
+    printf(
         "%s | %.*s\n",
         lineNumberString,
         (int)dil_string_size(&line),
         line.first);
 
-    size_t start = strlen(lineNumberString) + 3 + columnNumber;
+    size_t start = strlen(lineNumberString) + 3 + columnNumber - 1;
     for (size_t i = 0; i < start; i++) {
         printf(" ");
     }
