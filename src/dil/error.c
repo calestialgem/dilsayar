@@ -17,47 +17,118 @@ void dil_message(
     char const* path,
     char const* message)
 {
-    size_t    lineNumber   = 1;
-    size_t    columnNumber = 1;
-    DilString line         = file;
-    for (char const* i = file.first; i < portion.first; i++) {
-        if (*i == '\n') {
-            lineNumber++;
-            columnNumber = 1;
-            line.first   = i;
-        } else {
-            columnNumber++;
+    if (dil_string_finite(&portion)) {
+        if (dil_string_starts(&portion, '\n')) {
+            portion.first++;
         }
     }
-
-    line.last = line.first;
-    while (line.last < file.last && *line.last != '\n') {
-        line.last++;
+    size_t startLineNumber   = 1;
+    size_t startColumnNumber = 1;
+    size_t endLineNumber     = 1;
+    size_t endColumnNumber   = 1;
+    for (char const* i = file.first; i < portion.last; i++) {
+        if (i < portion.first) {
+            if (*i == '\n') {
+                startLineNumber++;
+                startColumnNumber = 1;
+            } else {
+                startColumnNumber++;
+            }
+        }
+        if (*i == '\n') {
+            endLineNumber++;
+            endColumnNumber = 1;
+        } else {
+            endColumnNumber++;
+        }
     }
-
-    char lineNumberString[32];
-    (void)sprintf(lineNumberString, "%llu", lineNumber);
 
     printf(
         "%s:%llu:%llu: %s: %s\n",
         path,
-        lineNumber,
-        columnNumber,
+        startLineNumber,
+        startColumnNumber,
         type,
         message);
 
-    printf(
-        "%s | %.*s\n",
-        lineNumberString,
-        (int)dil_string_size(&line),
-        line.first);
+    char lineNumberString[32];
 
-    size_t start = strlen(lineNumberString) + 3 + columnNumber - 1;
-    for (size_t i = 0; i < start; i++) {
-        printf(" ");
+    if (startLineNumber == endLineNumber) {
+        char const* lineStart = portion.first;
+        while (lineStart > file.first && *lineStart != '\n') {
+            lineStart--;
+        }
+        lineStart++;
+
+        (void)sprintf(lineNumberString, "%8llu", startLineNumber);
+
+        int lineLength = 0;
+        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+            lineLength++;
+        }
+
+        printf("%s | %.*s\n", lineNumberString, lineLength, lineStart);
+        lineStart += lineLength + 1;
+
+        size_t start = strlen(lineNumberString) + 3 + startColumnNumber - 1;
+        for (size_t i = 0; i < start; i++) {
+            printf(" ");
+        }
+        size_t length = endColumnNumber - startColumnNumber;
+        for (size_t i = 0; i < length; i++) {
+            printf("~");
+        }
+    } else {
+        char const* lineStart = portion.first;
+        while (lineStart > file.first && *lineStart != '\n') {
+            lineStart--;
+        }
+        lineStart++;
+
+        (void)sprintf(lineNumberString, "%8llu", startLineNumber);
+        int lineLength = 0;
+        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+            lineLength++;
+        }
+
+        printf("%s | %.*s\n", lineNumberString, lineLength, lineStart);
+        lineStart += lineLength + 1;
+
+        printf("     ... |");
+
+        size_t start =
+            strlen(lineNumberString) + 3 + startColumnNumber - 1 - 10;
+        for (size_t i = 0; i < start; i++) {
+            printf(" ");
+        }
+        size_t length = lineLength - startColumnNumber + 1;
+        for (size_t i = 0; i < length; i++) {
+            printf("~");
+        }
+
+        lineStart = portion.last;
+        while (lineStart > file.first && *lineStart != '\n') {
+            lineStart--;
+        }
+        lineStart++;
+
+        (void)sprintf(lineNumberString, "%8llu", endLineNumber);
+        lineLength = 0;
+        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+            lineLength++;
+        }
+
+        printf("\n%s | %.*s\n", lineNumberString, lineLength, lineStart);
+        lineStart += lineLength + 1;
+
+        start = strlen(lineNumberString) + 3;
+        for (size_t i = 0; i < start; i++) {
+            printf(" ");
+        }
+        length = endColumnNumber - 1;
+        for (size_t i = 0; i < length; i++) {
+            printf("~");
+        }
     }
-    for (size_t i = 0; i < dil_string_size(&portion); i++) {
-        printf("^");
-    }
-    printf("\n");
+    printf("\n\n");
 }

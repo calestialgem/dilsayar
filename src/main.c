@@ -21,9 +21,12 @@ int main(int argumentCount, char const* const* arguments)
         dil_string_terminated("Some multi\nline\nstring\n\nwhich\nhas\nlines");
     DilSplit split = dil_string_split_first(&file, '\n');
 
+    split.after.first += 3;
+    split.after.last -= 2;
+
     dil_message(
         file,
-        split.before,
+        split.after,
         "info",
         "imaginary.dil",
         "There is something here!");
@@ -31,7 +34,7 @@ int main(int argumentCount, char const* const* arguments)
     file = dil_string_terminated(
         "A file that is alot longer! This would mean\nthat we will see alot "
         "more on the console.\nOk?");
-    DilString portion = {.first = file.first + 5, .last = file.first + 20};
+    DilString portion = {.first = file.first + 25, .last = file.first + 85};
 
     dil_message(
         file,
