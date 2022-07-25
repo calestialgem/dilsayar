@@ -4,6 +4,7 @@
 #pragma once
 
 #include "dil/builder.c"
+#include "dil/object.c"
 #include "dil/string.c"
 #include "dil/tree.c"
 
@@ -48,14 +49,29 @@ void dil_parse_skip(DilString* string)
     }
 }
 
+/* Try to parse a string. */
+bool dil_parse_string(DilBuilder* builder, DilString* string)
+{
+    return false;
+}
+
 /* Try to parse a rule. */
-bool dil_parse_rule(DilBuilder* builder, DilString* string) {}
+bool dil_parse_rule(DilBuilder* builder, DilString* string)
+{
+    return false;
+}
 
 /* Try to parse a skip directive. */
-bool dil_parse_directive_skip(DilBuilder* builder, DilString* string) {}
+bool dil_parse_directive_skip(DilBuilder* builder, DilString* string)
+{
+    return false;
+}
 
 /* Try to parse a start directive. */
-bool dil_parse_directive_start(DilBuilder* builder, DilString* string) {}
+bool dil_parse_directive_start(DilBuilder* builder, DilString* string)
+{
+    return false;
+}
 
 /* Try to parse an output directive. */
 bool dil_parse_directive_output(DilBuilder* builder, DilString* string)
@@ -64,6 +80,10 @@ bool dil_parse_directive_output(DilBuilder* builder, DilString* string)
     if (!dil_string_prefix_check(string, &directive)) {
         return false;
     }
+    dil_parse_skip(string);
+
+    if (!dil_parse_string(builder, string)) {}
+
     dil_parse_skip(string);
 
     return true;
@@ -79,12 +99,20 @@ bool dil_parse_statement(DilBuilder* builder, DilString* string)
 }
 
 /* Parses the start symbol. */
-void dil_parse(DilTree* tree, DilString string)
+void dil_parse(DilBuilder* builder, DilString string)
 {
-    DilBuilder builder = {.built = tree};
-    bool       parsed  = true;
+    size_t start = dil_tree_size(builder->built);
+    dil_builder_add(
+        builder,
+        (DilObject){.symbol = DIL_SYMBOL_START, .value = string});
+    dil_builder_push(builder);
+
+    bool parsed = true;
     while (parsed) {
         dil_parse_skip(&string);
-        parsed = dil_parse_statement(&builder, &string);
+        parsed = dil_parse_statement(builder, &string);
     }
+
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, start)->object.value.last = string.first;
 }
