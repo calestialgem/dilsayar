@@ -1,9 +1,9 @@
 <!-- SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com> -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 
-# Şablon C
+# Dilsayar
 
-This is the template project for C language using VS Code, CMake and clangd.
+A parser generator in C. Reads the grammar file and produces its parser in C.
 
 ---
 

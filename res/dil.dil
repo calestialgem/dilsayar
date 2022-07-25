@@ -1,0 +1,39 @@
+// SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#output "dilsayar.c";
+#start *statement;
+#skip whitespace | comment;
+
+statement = output | start | skip | terminal | rule;
+output    = "#output" string ';';
+start     = "#start" pattern ';';
+skip      = "#skip" pattern ';';
+terminal  = "#terminal" ';';
+rule      = identifier '=' pattern ';';
+
+pattern      = alternatives;
+alternatives = repeat *('|' repeat);
+
+repeat       = group | optional | zero_or_more | one_or_more | fixed_times;
+optional     = '?' group;
+zero_or_more = '*' group;
+one_or_more  = '+' group;
+fixed_times  = [1~9] +[0~9] group;
+
+group = literal | '(' +literal ')';
+
+#terminal;
+
+literal   = character | range | string | wildcard | reference;
+character = '\'' escaped '\'';
+range     = '[' escaped '~' escaped ']';
+string    = '"' *escaped '"';
+wildcard  = '.';
+reference = identifier;
+escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | .);
+
+identifier = ([a~z] | [A~Z]) *([a~z] | [A~Z] | [0~9] | '_');
+
+whitespace = '\t' | '\n' | '\r' | ' ';
+comment    = "//" *. '\n';
