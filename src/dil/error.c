@@ -9,12 +9,21 @@
 #include <stdio.h>
 #include <string.h>
 
+/* Information of a info.contents. */
+typedef struct {
+    /* Path to the info.contents. */
+    char const* path;
+    /* Contents of the info.contents. */
+    DilString contents;
+    /* Whether the file has errors. */
+    size_t error;
+} DilFile;
+
 /* Print a portion of the input string. */
 void dil_message(
-    DilString   file,
+    DilFile*    file,
     DilString   portion,
     char const* type,
-    char const* path,
     char const* message)
 {
     if (dil_string_finite(&portion)) {
@@ -26,7 +35,7 @@ void dil_message(
     size_t startColumnNumber = 1;
     size_t endLineNumber     = 1;
     size_t endColumnNumber   = 1;
-    for (char const* i = file.first; i < portion.last; i++) {
+    for (char const* i = file->contents.first; i < portion.last; i++) {
         if (i < portion.first) {
             if (*i == '\n') {
                 startLineNumber++;
@@ -45,7 +54,7 @@ void dil_message(
 
     printf(
         "%s:%llu:%llu: %s: %s\n",
-        path,
+        file->path,
         startLineNumber,
         startColumnNumber,
         type,
@@ -55,7 +64,7 @@ void dil_message(
 
     if (startLineNumber == endLineNumber) {
         char const* lineStart = portion.first;
-        while (lineStart > file.first && *lineStart != '\n') {
+        while (lineStart > file->contents.first && *lineStart != '\n') {
             lineStart--;
         }
         lineStart++;
@@ -63,7 +72,8 @@ void dil_message(
         (void)sprintf(lineNumberString, "%8llu", startLineNumber);
 
         int lineLength = 0;
-        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
+             i++) {
             lineLength++;
         }
 
@@ -80,14 +90,15 @@ void dil_message(
         }
     } else {
         char const* lineStart = portion.first;
-        while (lineStart > file.first && *lineStart != '\n') {
+        while (lineStart > file->contents.first && *lineStart != '\n') {
             lineStart--;
         }
         lineStart++;
 
         (void)sprintf(lineNumberString, "%8llu", startLineNumber);
         int lineLength = 0;
-        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
+             i++) {
             lineLength++;
         }
 
@@ -107,14 +118,15 @@ void dil_message(
         }
 
         lineStart = portion.last;
-        while (lineStart > file.first && *lineStart != '\n') {
+        while (lineStart > file->contents.first && *lineStart != '\n') {
             lineStart--;
         }
         lineStart++;
 
         (void)sprintf(lineNumberString, "%8llu", endLineNumber);
         lineLength = 0;
-        for (char const* i = lineStart; i < file.last && *i != '\n'; i++) {
+        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
+             i++) {
             lineLength++;
         }
 

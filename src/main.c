@@ -25,10 +25,9 @@ int main(int argumentCount, char const* const* arguments)
     split.after.last -= 2;
 
     dil_message(
-        file,
+        &(DilFile){.path = "imaginary.dil", .contents = file},
         split.after,
         "info",
-        "imaginary.dil",
         "There is something here!");
 
     file = dil_string_terminated(
@@ -37,10 +36,9 @@ int main(int argumentCount, char const* const* arguments)
     DilString portion = {.first = file.first + 25, .last = file.first + 85};
 
     dil_message(
-        file,
+        &(DilFile){.path = "imaginary.dil", .contents = file},
         portion,
         "info",
-        "imaginary.dil",
         "There is something here!");
 
     return EXIT_SUCCESS;
