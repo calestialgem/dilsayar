@@ -12,7 +12,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug",
             "args": [
-                "dummy"
+                "dil.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
@@ -27,7 +27,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug.exe",
             "args": [
-                "dummy"
+                "dil.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",

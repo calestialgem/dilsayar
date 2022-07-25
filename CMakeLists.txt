@@ -9,7 +9,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 project(dilsayar)
 
 set(headers
-    src/sln/lib.c
+    src/dil/lib.c
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${headers})
