@@ -14,6 +14,16 @@ typedef struct {
     char const* last;
 } DilString;
 
+/* Convert a null terminated string. */
+DilString dil_string_terminated(char const* array)
+{
+    DilString string = {.first = array, .last = array};
+    while (*string.last) {
+        string.last++;
+    }
+    return string;
+}
+
 /* Amount of elements. */
 size_t dil_string_size(DilString const* view)
 {
@@ -124,9 +134,47 @@ bool dil_string_equal(DilString const* lhs, DilString const* rhs)
     return true;
 }
 
-/* Return a view upto the position from the begining of the view. Removes that
+/* View split at a border. */
+typedef struct {
+    /* Elements before the border. */
+    DilString before;
+    /* Elements after the border. */
+    DilString after;
+} DilSplit;
+
+/* Split at the position. */
+DilSplit dil_string_split_position(DilString const* view, char const* position)
+{
+    return (DilSplit){
+        .before = {.first = view->first,   .last = position},
+        .after  = {   .first = position, .last = view->last}
+    };
+}
+
+/* Split at the index. */
+DilSplit dil_string_split_index(DilString const* view, size_t index)
+{
+    return dil_string_split_position(view, view->first + index);
+}
+
+/* Split at the first occurence of the element. */
+DilSplit dil_string_split_first(DilString const* view, char element)
+{
+    return dil_string_split_position(view, dil_string_first(view, element));
+}
+
+/* Split at the first element that fits the predicate. */
+DilSplit
+dil_string_split_first_fit(DilString const* view, bool (*predicate)(char))
+{
+    return dil_string_split_position(
+        view,
+        dil_string_first_fit(view, predicate));
+}
+
+/* Return a view upto the position from the begining of the view. Removes those
  * elements from the view. */
-DilString dil_string_prefix_position(DilString* view, char const* position)
+DilString dil_string_lead_position(DilString* view, char const* position)
 {
     DilString prefix = {.first = view->first, .last = position};
     view->first      = position;
@@ -134,24 +182,39 @@ DilString dil_string_prefix_position(DilString* view, char const* position)
 }
 
 /* Return a view to the amount of elements from the begining of the view.
- * Removes that elements from the view. */
-DilString dil_string_prefix_amount(DilString* view, size_t amount)
+ * Removes those elements from the view. */
+DilString dil_string_lead_amount(DilString* view, size_t amount)
 {
-    return dil_string_prefix_position(view, view->first + amount);
+    return dil_string_lead_position(view, view->first + amount);
 }
 
 /* Return a view of elements upto the first occurence of the element from the
- * begining of the view. Removes that elements from the view. */
-DilString dil_string_prefix_first(DilString* view, char element)
+ * begining of the view. Removes those elements from the view. */
+DilString dil_string_lead_first(DilString* view, char element)
 {
-    return dil_string_prefix_position(view, dil_string_first(view, element));
+    return dil_string_lead_position(view, dil_string_first(view, element));
 }
 
 /* Return a view of elements upto the first element that fits the predicate from
- * the begining of the view. Removes that elements from the view. */
-DilString dil_string_prefix_first_fit(DilString* view, bool (*predicate)(char))
+ * the begining of the view. Removes those elements from the view. */
+DilString dil_string_lead_first_fit(DilString* view, bool (*predicate)(char))
 {
-    return dil_string_prefix_position(
+    return dil_string_lead_position(
         view,
         dil_string_first_fit(view, predicate));
+}
+
+/* Whether the string starts with the prefix. Consumes the prefix when true. */
+bool dil_string_prefix_check(DilString* string, DilString const* prefix)
+{
+    size_t size = dil_string_size(prefix);
+    if (dil_string_size(string) < size) {
+        return false;
+    }
+    DilSplit split = dil_string_split_index(string, size);
+    if (!dil_string_equal(&split.before, prefix)) {
+        return false;
+    }
+    *string = split.after;
+    return true;
 }

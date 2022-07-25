@@ -13,6 +13,7 @@ set(headers
     src/dil/indices.c
     src/dil/lib.c
     src/dil/object.c
+    src/dil/parser.c
     src/dil/string.c
     src/dil/tree.c
 )
