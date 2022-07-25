@@ -10,6 +10,8 @@ project(dilsayar)
 
 set(headers
     src/dil/lib.c
+    src/dil/rule.c
+    src/dil/string.c
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${headers})
