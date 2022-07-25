@@ -9,9 +9,12 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 project(dilsayar)
 
 set(headers
+    src/dil/builder.c
+    src/dil/indices.c
     src/dil/lib.c
-    src/dil/rule.c
+    src/dil/object.c
     src/dil/string.c
+    src/dil/tree.c
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${headers})

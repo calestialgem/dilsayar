@@ -37,5 +37,9 @@ typedef enum {
 typedef struct {
     DilSymbol symbol;
     DilString value;
-    size_t    childeren;
 } DilObject;
+
+typedef struct {
+    DilObject object;
+    size_t    childeren;
+} DilNode;
