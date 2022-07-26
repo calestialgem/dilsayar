@@ -20,6 +20,24 @@ typedef struct {
     size_t error;
 } DilSource;
 
+/* Location of a character in the source file. */
+typedef struct {
+    /* As pointer. */
+    char const* position;
+    /* Line number, starting from 1. */
+    size_t line;
+    /* Column number, starting from 1. */
+    size_t column;
+} DilSourceLocation;
+
+/* Portion of a file. */
+typedef struct {
+    /* Border before. */
+    DilSourceLocation start;
+    /* Border after. */
+    DilSourceLocation end;
+} DilSourcePortion;
+
 /* Load the source file at the path to the memory to the buffer. */
 DilSource dil_source_load(DilBuffer* buffer, char const* path)
 {
@@ -48,128 +66,122 @@ DilSource dil_source_load(DilBuffer* buffer, char const* path)
     return result;
 }
 
+/* Find the location of the character at the position in the source file. */
+DilSourceLocation
+dil_source_locate(DilSource const* source, char const* position)
+{
+    DilSourceLocation result = {.position = position, .line = 1, .column = 1};
+    for (char const* i = source->contents.first; i < position; i++) {
+        if (*i == '\n') {
+            result.line++;
+            result.column = 1;
+        } else {
+            result.column++;
+        }
+    }
+    return result;
+}
+
+/* Find the location of the begining of the line the location is in. */
+DilSourceLocation dil_source_locate_start(DilSourceLocation const* location)
+{
+    return (DilSourceLocation){
+        .position = location->position - location->column + 1,
+        .line     = location->line,
+        .column   = 1};
+}
+
+/* Find the location of the end of the line the location is in. */
+DilSourceLocation dil_source_locate_end(
+    DilSource const*         source,
+    DilSourceLocation const* location)
+{
+    DilSourceLocation result = *location;
+    while (result.position < source->contents.last &&
+           *result.position != '\n') {
+        result.position++;
+    }
+    result.column += result.position - location->position;
+    return result;
+}
+
+/* Find the portion of the string in the source file. */
+DilSourcePortion
+dil_source_find(DilSource const* source, DilString const* string)
+{
+    return (DilSourcePortion){
+        .start = dil_source_locate(source, string->first),
+        .end   = dil_source_locate(source, string->last)};
+}
+
+/* Find the line the location is in. */
+DilSourcePortion
+dil_source_find_line(DilSource const* source, DilSourceLocation const* location)
+{
+    return (DilSourcePortion){
+        .start = dil_source_locate_start(location),
+        .end   = dil_source_locate_end(source, location)};
+}
+
+/* Print the single line portion underlined. */
+void dil_source_underline(
+    DilSource const*        file,
+    DilSourcePortion const* portion,
+    bool                    dots)
+{
+    size_t const BUFFER_SIZE = 32;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf(buffer, "%8llu", portion->start.line);
+
+    DilSourcePortion line = dil_source_find_line(file, &portion->start);
+    printf(
+        "%s | %.*s\n",
+        buffer,
+        (int)(line.end.position - line.start.position),
+        line.start.position);
+
+    if (dots) {
+        printf("     ... | ");
+    } else {
+        printf("           ");
+    }
+    size_t column = 1;
+    for (; column < portion->start.column; column++) {
+        printf(" ");
+    }
+    for (; column < portion->end.column; column++) {
+        printf("~");
+    }
+    printf("\n");
+}
+
 /* Print a portion of the source file. */
 void dil_source_print(
-    DilSource*  file,
-    DilString   portion,
-    char const* type,
-    char const* message)
+    DilSource const* file,
+    DilString const* string,
+    char const*      type,
+    char const*      message)
 {
-    if (dil_string_finite(&portion)) {
-        if (dil_string_starts(&portion, '\n')) {
-            portion.first++;
-        }
-    }
-    size_t startLineNumber   = 1;
-    size_t startColumnNumber = 1;
-    size_t endLineNumber     = 1;
-    size_t endColumnNumber   = 1;
-    for (char const* i = file->contents.first; i < portion.last; i++) {
-        if (i < portion.first) {
-            if (*i == '\n') {
-                startLineNumber++;
-                startColumnNumber = 1;
-            } else {
-                startColumnNumber++;
-            }
-        }
-        if (*i == '\n') {
-            endLineNumber++;
-            endColumnNumber = 1;
-        } else {
-            endColumnNumber++;
-        }
-    }
-
+    DilSourcePortion portion = dil_source_find(file, string);
     printf(
         "%s:%llu:%llu: %s: %s\n",
         file->path,
-        startLineNumber,
-        startColumnNumber,
+        portion.start.line,
+        portion.start.column,
         type,
         message);
 
-    char lineNumberString[32];
-
-    if (startLineNumber == endLineNumber) {
-        char const* lineStart = portion.first;
-        while (lineStart > file->contents.first && *lineStart != '\n') {
-            lineStart--;
-        }
-        lineStart++;
-
-        (void)sprintf(lineNumberString, "%8llu", startLineNumber);
-
-        int lineLength = 0;
-        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
-             i++) {
-            lineLength++;
-        }
-
-        printf("%s | %.*s\n", lineNumberString, lineLength, lineStart);
-        lineStart += lineLength + 1;
-
-        size_t start = strlen(lineNumberString) + 3 + startColumnNumber - 1;
-        for (size_t i = 0; i < start; i++) {
-            printf(" ");
-        }
-        size_t length = endColumnNumber - startColumnNumber;
-        for (size_t i = 0; i < length; i++) {
-            printf("~");
-        }
+    if (portion.start.line == portion.end.line) {
+        dil_source_underline(file, &portion, false);
     } else {
-        char const* lineStart = portion.first;
-        while (lineStart > file->contents.first && *lineStart != '\n') {
-            lineStart--;
-        }
-        lineStart++;
-
-        (void)sprintf(lineNumberString, "%8llu", startLineNumber);
-        int lineLength = 0;
-        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
-             i++) {
-            lineLength++;
-        }
-
-        printf("%s | %.*s\n", lineNumberString, lineLength, lineStart);
-        lineStart += lineLength + 1;
-
-        printf("     ... |");
-
-        size_t start =
-            strlen(lineNumberString) + 3 + startColumnNumber - 1 - 10;
-        for (size_t i = 0; i < start; i++) {
-            printf(" ");
-        }
-        size_t length = lineLength - startColumnNumber + 1;
-        for (size_t i = 0; i < length; i++) {
-            printf("~");
-        }
-
-        lineStart = portion.last;
-        while (lineStart > file->contents.first && *lineStart != '\n') {
-            lineStart--;
-        }
-        lineStart++;
-
-        (void)sprintf(lineNumberString, "%8llu", endLineNumber);
-        lineLength = 0;
-        for (char const* i = lineStart; i < file->contents.last && *i != '\n';
-             i++) {
-            lineLength++;
-        }
-
-        printf("\n%s | %.*s\n", lineNumberString, lineLength, lineStart);
-        lineStart += lineLength + 1;
-
-        start = strlen(lineNumberString) + 3;
-        for (size_t i = 0; i < start; i++) {
-            printf(" ");
-        }
-        length = endColumnNumber - 1;
-        for (size_t i = 0; i < length; i++) {
-            printf("~");
-        }
+        DilSourcePortion startPortion = {
+            .start = portion.start,
+            .end   = dil_source_locate_end(file, &portion.start)};
+        DilSourcePortion endPortion = {
+            .start = dil_source_locate_start(&portion.end),
+            .end   = portion.end};
+        dil_source_underline(file, &startPortion, true);
+        dil_source_underline(file, &endPortion, false);
     }
-    printf("\n\n");
+    printf("\n");
 }

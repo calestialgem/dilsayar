@@ -62,7 +62,7 @@ void dil_parse_error(DilString* string, DilSource* file, char const* message)
         portion.last++;
     }
     file->error++;
-    dil_source_print(file, portion, "error", message);
+    dil_source_print(file, &portion, "error", message);
 }
 
 /* Try to parse a string. */
