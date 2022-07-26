@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/buffer.c"
 #include "dil/string.c"
 
 #include <stddef.h>
@@ -19,22 +20,36 @@ typedef struct {
     size_t error;
 } DilFile;
 
-/* Load the file at the path to the memory. */
-DilFile dil_file_load(char const* path)
+/* Load the file at the path to the memory to the buffer. */
+DilFile dil_file_load(DilBuffer* buffer, char const* path)
 {
-    FILE*  file = fopen(path, "r");
-    char   buffer[1 << 16];
-    size_t length = fread(buffer, 1, 1 << 16, file);
-    fclose(file);
+    FILE*   stream = fopen(path, "r");
+    DilFile result = {.path = path};
 
-    return (DilFile){
-        .path     = path,
-        .contents = {.first = buffer, .last = buffer + length}
-    };
+    if (stream == NULL) {
+        printf("Could not open file %s!\n", path);
+        result.error++;
+        return result;
+    }
+
+    size_t       start = dil_buffer_size(buffer);
+    size_t const CHUNK = 1024;
+    size_t       read  = CHUNK;
+
+    while (read == CHUNK) {
+        dil_buffer_reserve(buffer, CHUNK);
+        read = fread(buffer->last, sizeof(char), CHUNK, stream);
+        buffer->last += read;
+    }
+    (void)fclose(stream);
+
+    result.contents.first = buffer->first + start;
+    result.contents.last  = buffer->last;
+    return result;
 }
 
-/* Print a portion of the input string. */
-void dil_message(
+/* Print a portion of the file. */
+void dil_file_print(
     DilFile*    file,
     DilString   portion,
     char const* type,

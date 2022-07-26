@@ -4,7 +4,7 @@
 #pragma once
 
 #include "dil/builder.c"
-#include "dil/error.c"
+#include "dil/file.c"
 #include "dil/object.c"
 #include "dil/string.c"
 #include "dil/tree.c"
@@ -62,7 +62,7 @@ void dil_parse_error(DilString* string, DilFile* file, char const* message)
         portion.last++;
     }
     file->error++;
-    dil_message(file, portion, "error", message);
+    dil_file_print(file, portion, "error", message);
 }
 
 /* Try to parse a string. */
