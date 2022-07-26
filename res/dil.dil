@@ -18,23 +18,22 @@ repeat       = group | optional | zero_or_more | one_or_more | fixed_times;
 optional     = '?' group;
 zero_or_more = '*' group;
 one_or_more  = '+' group;
-fixed_times  = [1~9] +[0~9] group;
+fixed_times  = '1~9' +'0~9' group;
 
 group = literal | '(' +literal ')';
 
 #skip;
 
-literal   = character | range | string | wildcard | set | notset | reference;
-character = '\'' (escaped | !{'}) '\'';
-range     = '[' (escaped | !{[]~}) '~' (escaped | !{[]~}) ']';
-string    = '"' *(escaped | !{"}) '"';
-wildcard  = '.';
-set       = '{' +(escaped | !{\{\}}) '}';
+literal   = set | notset | allset | string | reference;
+set       = '\'' +(escaped | !'\'') '\'';
 notset    = '!' set;
+allset    = '.';
+string    = '"' *(escaped | !'"') '"';
 reference = identifier;
-escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | {tn'"[]~\{\}});
 
-identifier = ([a~z] | [A~Z]) *([a~z] | [A~Z] | [0~9] | '_');
+escaped = '\\' (2'0~9a~zA~Z' | 'tn\\\'"\~');
 
-whitespace = '\t' | '\n' | ' ';
+identifier = 'a~zA~Z' *'a~zA~Z0~9_';
+
+whitespace = '\t\n ';
 comment    = "//" *. '\n';
