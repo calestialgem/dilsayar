@@ -3,10 +3,13 @@
 
 #include "dil/builder.c"
 #include "dil/error.c"
+#include "dil/indices.c"
+#include "dil/object.c"
 #include "dil/parser.c"
 #include "dil/string.c"
 #include "dil/tree.c"
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,22 +23,14 @@ int main(int argumentCount, char const* const* arguments)
     }
     printf("\n");
 
-    FILE*  file = fopen(arguments[1], "r");
-    char   buffer[1 << 16];
-    size_t length = fread(buffer, 1, 1 << 16, file);
-    fclose(file);
+    DilFile info = dil_file_load(arguments[1]);
+    DilTree tree = {0};
 
-    DilFile info = {
-        .path     = arguments[1],
-        .contents = {.first = buffer, .last = buffer + length}
-    };
-
-    DilTree    tree    = {0};
     DilBuilder builder = {.built = &tree};
-
     dil_parse(&builder, &info);
-
     dil_builder_free(&builder);
+
+    dil_tree_print(&tree);
     dil_tree_free(&tree);
 
     return EXIT_SUCCESS;

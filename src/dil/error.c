@@ -19,6 +19,20 @@ typedef struct {
     size_t error;
 } DilFile;
 
+/* Load the file at the path to the memory. */
+DilFile dil_file_load(char const* path)
+{
+    FILE*  file = fopen(path, "r");
+    char   buffer[1 << 16];
+    size_t length = fread(buffer, 1, 1 << 16, file);
+    fclose(file);
+
+    return (DilFile){
+        .path     = path,
+        .contents = {.first = buffer, .last = buffer + length}
+    };
+}
+
 /* Print a portion of the input string. */
 void dil_message(
     DilFile*    file,

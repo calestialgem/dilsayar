@@ -3,10 +3,12 @@
 
 #pragma once
 
+#include "dil/indices.c"
 #include "dil/object.c"
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -151,4 +153,41 @@ void dil_tree_free(DilTree* list)
     list->first     = NULL;
     list->last      = NULL;
     list->allocated = NULL;
+}
+
+/* Print the tree. */
+void dil_tree_print(DilTree const* tree)
+{
+    DilIndices childeren = {0};
+    size_t     current   = 0;
+
+    while (current < dil_tree_size(tree)) {
+        size_t depth = dil_indices_size(&childeren);
+        if (depth > 0) {
+            for (size_t i = 0; i < depth - 1; i++) {
+                printf("|   ");
+            }
+            printf("+- ");
+        }
+        DilNode const* node = dil_tree_at(tree, current);
+        dil_object_print(&node->object);
+        printf("\n");
+
+        if (depth > 0) {
+            (*dil_indices_finish(&childeren))--;
+        }
+
+        if (node->childeren > 0) {
+            dil_indices_add(&childeren, node->childeren);
+        } else {
+            while (dil_indices_finite(&childeren) &&
+                   *dil_indices_finish(&childeren) == 0) {
+                dil_indices_remove(&childeren);
+            }
+        }
+
+        current++;
+    }
+
+    dil_indices_free(&childeren);
 }
