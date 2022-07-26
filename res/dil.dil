@@ -24,15 +24,17 @@ group = literal | '(' +literal ')';
 
 #skip;
 
-literal   = character | range | string | wildcard | reference;
-character = '\'' escaped '\'';
-range     = '[' escaped '~' escaped ']';
-string    = '"' *escaped '"';
+literal   = character | range | string | wildcard | set | notset | reference;
+character = '\'' (escaped | !{'}) '\'';
+range     = '[' (escaped | !{[]~}) '~' (escaped | !{[]~}) ']';
+string    = '"' *(escaped | !{"}) '"';
 wildcard  = '.';
+set       = '{' +(escaped | !{\{\}}) '}';
+notset    = '!' set;
 reference = identifier;
-escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | .) | .;
+escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | {tn'"[]~\{\}});
 
 identifier = ([a~z] | [A~Z]) *([a~z] | [A~Z] | [0~9] | '_');
 
-whitespace = '\t' | '\n' | '\r' | ' ';
+whitespace = '\t' | '\n' | ' ';
 comment    = "//" *. '\n';
