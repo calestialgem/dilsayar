@@ -5,11 +5,10 @@
 #start *statement;
 #skip whitespace | comment;
 
-statement = output | start | skip | terminal | rule;
+statement = output | start | skip | rule;
 output    = "#output" string ';';
 start     = "#start" pattern ';';
 skip      = "#skip" pattern ';';
-terminal  = "#terminal" ';';
 rule      = identifier '=' pattern ';';
 
 pattern      = alternatives;
@@ -23,7 +22,7 @@ fixed_times  = [1~9] +[0~9] group;
 
 group = literal | '(' +literal ')';
 
-#terminal;
+#skip;
 
 literal   = character | range | string | wildcard | reference;
 character = '\'' escaped '\'';
@@ -31,7 +30,7 @@ range     = '[' escaped '~' escaped ']';
 string    = '"' *escaped '"';
 wildcard  = '.';
 reference = identifier;
-escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | .);
+escaped   = '\\' (2([0~9] | [a~f] | [A-F]) | .) | .;
 
 identifier = ([a~z] | [A~Z]) *([a~z] | [A~Z] | [0~9] | '_');
 

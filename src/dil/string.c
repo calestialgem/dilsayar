@@ -204,7 +204,13 @@ DilString dil_string_lead_first_fit(DilString* view, bool (*predicate)(char))
         dil_string_first_fit(view, predicate));
 }
 
-/* Whether the string starts with the prefix. Consumes the prefix when true. */
+/* Whether the view starts with the element. Consumes the element when true. */
+bool dil_string_prefix_element(DilString* string, char element)
+{
+    return dil_string_finite(string) && dil_string_starts(string, element);
+}
+
+/* Whether the view starts with the prefix. Consumes the prefix when true. */
 bool dil_string_prefix_check(DilString* string, DilString const* prefix)
 {
     size_t size = dil_string_size(prefix);

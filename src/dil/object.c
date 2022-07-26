@@ -50,33 +50,19 @@ char const* dil_object_format(DilSymbol symbol)
 {
     switch (symbol) {
         case DIL_SYMBOL_START:
-            return "start";
         case DIL_SYMBOL_STATEMENT:
-            return "statement";
         case DIL_SYMBOL_DIRECTIVE_OUTPUT:
-            return "#output";
         case DIL_SYMBOL_DIRECTIVE_START:
-            return "#start";
         case DIL_SYMBOL_DIRECTIVE_SKIP:
-            return "#skip";
         case DIL_SYMBOL_RULE:
-            return "rule";
         case DIL_SYMBOL_ALTERNATIVES:
-            return "|";
         case DIL_SYMBOL_REPEAT:
-            return "repeat";
         case DIL_SYMBOL_OPTIONAL:
-            return "?";
         case DIL_SYMBOL_ZERO_OR_MORE:
-            return "*";
         case DIL_SYMBOL_ONE_OR_MORE:
-            return "+";
         case DIL_SYMBOL_FIXED_TIMES:
-            return "%.*s";
         case DIL_SYMBOL_GROUP:
-            return "{}";
         case DIL_SYMBOL_LITERAL:
-            return "literal";
         case DIL_SYMBOL_CHARACTER:
         case DIL_SYMBOL_RANGE:
         case DIL_SYMBOL_STRING:
@@ -84,11 +70,8 @@ char const* dil_object_format(DilSymbol symbol)
         case DIL_SYMBOL_REFERENCE:
         case DIL_SYMBOL_ESCAPED:
         case DIL_SYMBOL_IDENTIFIER:
-            return "%.*s";
         case DIL_SYMBOL_WHITESPACE:
-            return "whitespace";
         case DIL_SYMBOL_COMMENT:
-            return "comment";
         case DIL_SYMBOL_TERMINAL:
             return "%.*s";
         default:

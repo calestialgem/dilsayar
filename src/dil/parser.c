@@ -54,25 +54,76 @@ void dil_parse_skip(DilString* string)
 }
 
 /* Skip erronous characters and print them. */
-void dil_parse_error(DilString* string, DilSource* file, char const* message)
+void dil_parse_error(DilString* string, DilSource* source, char const* message)
 {
     DilString portion = {.first = string->first, .last = string->first};
     while (string->first <= string->last && !dil_parse_skip_once(string)) {
         string->first++;
         portion.last++;
     }
-    file->error++;
-    dil_source_print(file, &portion, "error", message);
+    source->error++;
+    dil_source_print(source, &portion, "error", message);
+}
+
+/* Try to parse an escaped character. */
+bool dil_parse_escaped(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ESCAPED,
+        .value  = {.first = string->first}};
+    size_t index = dil_tree_size(builder->built);
+
+    if (dil_string_prefix_element(string, '\\')) {
+        dil_builder_add(builder, object);
+        dil_builder_push(builder);
+    } else {
+        dil_builder_add(builder, object);
+        dil_builder_push(builder);
+        if (!dil_string_finite(string)) {
+            dil_parse_error(string, source, "Expected a character!");
+            goto end;
+        }
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a string. */
-bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* file)
+bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
 {
-    return false;
+    DilObject object = {
+        .symbol = DIL_SYMBOL_STRING,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '"')) {
+        return false;
+    }
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    while (dil_parse_escaped(builder, string, source)) {}
+
+    if (!dil_string_prefix_element(string, '"')) {
+        dil_parse_error(string, source, "Expected `\"` to end the string!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a rule. */
-bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* file)
+bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
 {
     return false;
 }
@@ -81,7 +132,7 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* file)
 bool dil_parse_directive_skip(
     DilBuilder* builder,
     DilString*  string,
-    DilSource*  file)
+    DilSource*  source)
 {
     return false;
 }
@@ -90,7 +141,7 @@ bool dil_parse_directive_skip(
 bool dil_parse_directive_start(
     DilBuilder* builder,
     DilString*  string,
-    DilSource*  file)
+    DilSource*  source)
 {
     return false;
 }
@@ -99,39 +150,42 @@ bool dil_parse_directive_start(
 bool dil_parse_directive_output(
     DilBuilder* builder,
     DilString*  string,
-    DilSource*  file)
+    DilSource*  source)
 {
+    DilObject object = {
+        .symbol = DIL_SYMBOL_DIRECTIVE_OUTPUT,
+        .value  = {.first = string->first}};
+
     DilString const directive = dil_string_terminated("#output");
     if (!dil_string_prefix_check(string, &directive)) {
         return false;
     }
-    dil_builder_add(
-        builder,
-        (DilObject){.symbol = DIL_SYMBOL_DIRECTIVE_OUTPUT});
-    dil_builder_push(builder);
     dil_parse_skip(string);
 
-    if (!dil_parse_string(builder, string, file)) {
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_string(builder, string, source)) {
         dil_parse_error(
             string,
-            file,
+            source,
             "Expected file name in `#output` directive!");
         goto end;
     }
-
     dil_parse_skip(string);
 
-    DilString const statement = dil_string_terminated(";");
-    if (!dil_string_prefix_check(string, &statement)) {
+    if (!dil_string_prefix_element(string, ';')) {
         dil_parse_error(
             string,
-            file,
+            source,
             "Expected `;` to end the `#output` directive!");
         goto end;
     }
 
 end:
     dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
     return true;
 }
 
@@ -139,12 +193,12 @@ end:
 bool dil_parse_statement(
     DilBuilder* builder,
     DilString*  string,
-    DilSource*  file)
+    DilSource*  source)
 {
-    return dil_parse_directive_output(builder, string, file) ||
-           dil_parse_directive_start(builder, string, file) ||
-           dil_parse_directive_skip(builder, string, file) ||
-           dil_parse_rule(builder, string, file);
+    return dil_parse_directive_output(builder, string, source) ||
+           dil_parse_directive_start(builder, string, source) ||
+           dil_parse_directive_skip(builder, string, source) ||
+           dil_parse_rule(builder, string, source);
 }
 
 /* Parses the start symbol. */
@@ -152,7 +206,7 @@ void dil_parse(DilBuilder* builder, DilSource* source)
 {
     DilString string = source->contents;
 
-    size_t start = dil_tree_size(builder->built);
+    size_t index = dil_tree_size(builder->built);
     dil_tree_add(
         builder->built,
         (DilNode){
@@ -167,7 +221,7 @@ void dil_parse(DilBuilder* builder, DilSource* source)
     }
 
     dil_builder_pop(builder);
-    dil_tree_at(builder->built, start)->object.value.last = string.first;
+    dil_tree_at(builder->built, index)->object.value.last = string.first;
 
     if (source->error != 0) {
         printf(
