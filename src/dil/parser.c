@@ -105,6 +105,10 @@ bool dil_parse_directive_output(
     if (!dil_string_prefix_check(string, &directive)) {
         return false;
     }
+    dil_builder_add(
+        builder,
+        (DilObject){.symbol = DIL_SYMBOL_DIRECTIVE_OUTPUT});
+    dil_builder_push(builder);
     dil_parse_skip(string);
 
     if (!dil_parse_string(builder, string, file)) {
@@ -112,7 +116,7 @@ bool dil_parse_directive_output(
             string,
             file,
             "Expected file name in `#output` directive!");
-        return true;
+        goto end;
     }
 
     dil_parse_skip(string);
@@ -123,8 +127,11 @@ bool dil_parse_directive_output(
             string,
             file,
             "Expected `;` to end the `#output` directive!");
-        return true;
+        goto end;
     }
+
+end:
+    dil_builder_pop(builder);
     return true;
 }
 

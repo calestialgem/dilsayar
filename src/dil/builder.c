@@ -32,7 +32,8 @@ void dil_builder_pop(DilBuilder* builder)
 void dil_builder_add(DilBuilder* builder, DilObject object)
 {
     dil_tree_add(builder->built, (DilNode){.object = object});
-    dil_tree_at(builder->built, *dil_indices_finish(&builder->parents));
+    dil_tree_at(builder->built, *dil_indices_finish(&builder->parents))
+        ->childeren++;
 }
 
 /* Remove the parents. Keeps the memory. */

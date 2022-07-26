@@ -159,9 +159,8 @@ void dil_tree_free(DilTree* list)
 void dil_tree_print(DilTree const* tree)
 {
     DilIndices childeren = {0};
-    size_t     current   = 0;
 
-    while (current < dil_tree_size(tree)) {
+    for (size_t current = 0; current < dil_tree_size(tree); current++) {
         size_t depth = dil_indices_size(&childeren);
         if (depth > 0) {
             for (size_t i = 0; i < depth - 1; i++) {
@@ -171,7 +170,9 @@ void dil_tree_print(DilTree const* tree)
         }
         DilNode const* node = dil_tree_at(tree, current);
         dil_object_print(&node->object);
-        printf("\n");
+
+        // DEBUG: Print the depth and amount of childeren.
+        printf(" {Depth: %llu, Childeren: %llu}\n", depth, node->childeren);
 
         if (depth > 0) {
             (*dil_indices_finish(&childeren))--;
@@ -185,8 +186,6 @@ void dil_tree_print(DilTree const* tree)
                 dil_indices_remove(&childeren);
             }
         }
-
-        current++;
     }
 
     dil_indices_free(&childeren);
