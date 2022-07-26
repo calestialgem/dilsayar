@@ -1,39 +1,46 @@
 // SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#output "dilsayar.c";
-#start *statement;
-#skip whitespace | comment;
+output "dilsayar.c";
+start *Statement;
+skip Whitespace | Comment;
 
-statement = output | start | skip | rule;
-output    = "#output" string ';';
-start     = "#start" pattern ';';
-skip      = "#skip" pattern ';';
-rule      = identifier '=' pattern ';';
+Statement = Output | Start | Skip | Rule;
+Output    = "output" String ';'; // Path to output C file.
+Start     = "start" Pattern ';'; // Pattern of start symbol.
+Skip      = "skip" Pattern ';';  // Pattern to skip between justapositioned.
+Rule      = Identifier '=' Pattern ';';
 
-pattern      = alternatives;
-alternatives = repeat *('|' repeat);
+Pattern      = Alternatives;
 
-repeat       = group | optional | zero_or_more | one_or_more | fixed_times;
-optional     = '?' group;
-zero_or_more = '*' group;
-one_or_more  = '+' group;
-fixed_times  = '1~9' +'0~9' group;
+Alternatives = Repeat *('|' Repeat);
 
-group = literal | '(' +literal ')';
+Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;
+Optional   = '?' Group;
+ZeroOrMore = '*' Group;
+OneOrMore  = '+' Group;
+FixedTimes = '1~9' +'0~9' Group;
 
-#skip;
+Group = Literal | '(' +Literal ')';
 
-literal   = set | notset | allset | string | reference;
-set       = '\'' +(escaped | !'\'') '\'';
-notset    = '!' set;
-allset    = '.';
-string    = '"' *(escaped | !'"') '"';
-reference = identifier;
+skip;
 
-escaped = '\\' (2'0~9a~zA~Z' | 'tn\\\'"\~');
+Literal   = Set | NotSet | AllSet | String | Reference;
+Set       = '\'' +(Escaped | Escaped '\~' Escaped) '\'';
+NotSet    = '!' Set;
+AllSet    = '.';
+String    = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
+Reference = Identifier;
 
-identifier = 'a~zA~Z' *'a~zA~Z0~9_';
+// Backslash fallowed by two hex digits or;
+// tab, newline, backslash, single quote, and tilde.
+// Otherwise it is not escaped;
+// anything other than backslash, single quote, and tilde is accepted.
+Escaped = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';
 
-whitespace = '\t\n ';
-comment    = "//" *. '\n';
+Identifier = 'A~Z' *'a~zA~Z'; // PascalCase.
+
+// Carrige return is handled by the program.
+Whitespace = '\t\n ';
+
+Comment    = "//" *!'\n' '\n';
