@@ -18,13 +18,13 @@ typedef struct {
     DilString contents;
     /* Whether the file has errors. */
     size_t error;
-} DilFile;
+} DilSource;
 
-/* Load the file at the path to the memory to the buffer. */
-DilFile dil_file_load(DilBuffer* buffer, char const* path)
+/* Load the source file at the path to the memory to the buffer. */
+DilSource dil_source_load(DilBuffer* buffer, char const* path)
 {
-    FILE*   stream = fopen(path, "r");
-    DilFile result = {.path = path};
+    FILE*     stream = fopen(path, "r");
+    DilSource result = {.path = path};
 
     if (stream == NULL) {
         printf("Could not open file %s!\n", path);
@@ -48,9 +48,9 @@ DilFile dil_file_load(DilBuffer* buffer, char const* path)
     return result;
 }
 
-/* Print a portion of the file. */
-void dil_file_print(
-    DilFile*    file,
+/* Print a portion of the source file. */
+void dil_source_print(
+    DilSource*  file,
     DilString   portion,
     char const* type,
     char const* message)

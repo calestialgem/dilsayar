@@ -4,8 +4,8 @@
 #pragma once
 
 #include "dil/builder.c"
-#include "dil/file.c"
 #include "dil/object.c"
+#include "dil/source.c"
 #include "dil/string.c"
 #include "dil/tree.c"
 
@@ -54,7 +54,7 @@ void dil_parse_skip(DilString* string)
 }
 
 /* Skip erronous characters and print them. */
-void dil_parse_error(DilString* string, DilFile* file, char const* message)
+void dil_parse_error(DilString* string, DilSource* file, char const* message)
 {
     DilString portion = {.first = string->first, .last = string->first};
     while (string->first <= string->last && !dil_parse_skip_once(string)) {
@@ -62,17 +62,17 @@ void dil_parse_error(DilString* string, DilFile* file, char const* message)
         portion.last++;
     }
     file->error++;
-    dil_file_print(file, portion, "error", message);
+    dil_source_print(file, portion, "error", message);
 }
 
 /* Try to parse a string. */
-bool dil_parse_string(DilBuilder* builder, DilString* string, DilFile* file)
+bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* file)
 {
     return false;
 }
 
 /* Try to parse a rule. */
-bool dil_parse_rule(DilBuilder* builder, DilString* string, DilFile* file)
+bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* file)
 {
     return false;
 }
@@ -81,7 +81,7 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilFile* file)
 bool dil_parse_directive_skip(
     DilBuilder* builder,
     DilString*  string,
-    DilFile*    file)
+    DilSource*  file)
 {
     return false;
 }
@@ -90,7 +90,7 @@ bool dil_parse_directive_skip(
 bool dil_parse_directive_start(
     DilBuilder* builder,
     DilString*  string,
-    DilFile*    file)
+    DilSource*  file)
 {
     return false;
 }
@@ -99,7 +99,7 @@ bool dil_parse_directive_start(
 bool dil_parse_directive_output(
     DilBuilder* builder,
     DilString*  string,
-    DilFile*    file)
+    DilSource*  file)
 {
     DilString const directive = dil_string_terminated("#output");
     if (!dil_string_prefix_check(string, &directive)) {
@@ -129,7 +129,10 @@ bool dil_parse_directive_output(
 }
 
 /* Try to parse a statement. */
-bool dil_parse_statement(DilBuilder* builder, DilString* string, DilFile* file)
+bool dil_parse_statement(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  file)
 {
     return dil_parse_directive_output(builder, string, file) ||
            dil_parse_directive_start(builder, string, file) ||
@@ -138,7 +141,7 @@ bool dil_parse_statement(DilBuilder* builder, DilString* string, DilFile* file)
 }
 
 /* Parses the start symbol. */
-void dil_parse(DilBuilder* builder, DilFile* file)
+void dil_parse(DilBuilder* builder, DilSource* file)
 {
     DilString string = file->contents;
 

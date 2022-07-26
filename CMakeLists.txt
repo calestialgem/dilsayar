@@ -11,11 +11,11 @@ project(dilsayar)
 set(headers
     src/dil/buffer.c
     src/dil/builder.c
-    src/dil/file.c
     src/dil/indices.c
     src/dil/lib.c
     src/dil/object.c
     src/dil/parser.c
+    src/dil/source.c
     src/dil/string.c
     src/dil/tree.c
 )

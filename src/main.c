@@ -3,10 +3,10 @@
 
 #include "dil/buffer.c"
 #include "dil/builder.c"
-#include "dil/file.c"
 #include "dil/indices.c"
 #include "dil/object.c"
 #include "dil/parser.c"
+#include "dil/source.c"
 #include "dil/string.c"
 #include "dil/tree.c"
 
@@ -25,7 +25,7 @@ int main(int argumentCount, char const* const* arguments)
     printf("\n");
 
     DilBuffer  buffer  = {0};
-    DilFile    info    = dil_file_load(&buffer, arguments[1]);
+    DilSource  info    = dil_source_load(&buffer, arguments[1]);
     DilTree    tree    = {0};
     DilBuilder builder = {.built = &tree};
 
