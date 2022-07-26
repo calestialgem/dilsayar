@@ -65,6 +65,43 @@ void dil_parse_error(DilString* string, DilSource* source, char const* message)
     dil_source_print(source, &portion, "error", message);
 }
 
+/* Try to parse a specific terminal. */
+bool dil_parse_terminal(DilBuilder* builder, DilString* string, char terminal)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_TERMINAL,
+        .value  = {.first = string->first}};
+    size_t index = dil_tree_size(builder->built);
+
+    if (!dil_string_prefix_element(string, terminal)) {
+        return false;
+    }
+
+    dil_builder_add(builder, object);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse any terminal. */
+bool dil_parse_terminal_any(DilBuilder* builder, DilString* string)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_TERMINAL,
+        .value  = {.first = string->first}};
+    size_t index = dil_tree_size(builder->built);
+
+    if (!dil_string_finite(string)) {
+        return false;
+    }
+
+    // string: "jflkdrsj"
+
+    string->first++;
+    dil_builder_add(builder, object);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
 /* Try to parse an escaped character. */
 bool dil_parse_escaped(
     DilBuilder* builder,
@@ -76,7 +113,7 @@ bool dil_parse_escaped(
         .value  = {.first = string->first}};
     size_t index = dil_tree_size(builder->built);
 
-    if (dil_string_prefix_element(string, '\\')) {
+    if (dil_string_starts(string, '\\')) {
         dil_builder_add(builder, object);
         dil_builder_push(builder);
     } else {
