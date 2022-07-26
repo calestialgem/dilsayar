@@ -125,7 +125,7 @@ dil_source_find_line(DilSource const* source, DilSourceLocation const* location)
 
 /* Print the single line portion underlined. */
 void dil_source_underline(
-    DilSource const*        file,
+    DilSource const*        source,
     DilSourcePortion const* portion,
     bool                    dots)
 {
@@ -133,7 +133,7 @@ void dil_source_underline(
     char         buffer[BUFFER_SIZE];
     (void)sprintf(buffer, "%8llu", portion->start.line);
 
-    DilSourcePortion line = dil_source_find_line(file, &portion->start);
+    DilSourcePortion line = dil_source_find_line(source, &portion->start);
     printf(
         "%s | %.*s\n",
         buffer,
@@ -157,31 +157,31 @@ void dil_source_underline(
 
 /* Print a portion of the source file. */
 void dil_source_print(
-    DilSource const* file,
+    DilSource const* source,
     DilString const* string,
     char const*      type,
     char const*      message)
 {
-    DilSourcePortion portion = dil_source_find(file, string);
+    DilSourcePortion portion = dil_source_find(source, string);
     printf(
         "%s:%llu:%llu: %s: %s\n",
-        file->path,
+        source->path,
         portion.start.line,
         portion.start.column,
         type,
         message);
 
     if (portion.start.line == portion.end.line) {
-        dil_source_underline(file, &portion, false);
+        dil_source_underline(source, &portion, false);
     } else {
         DilSourcePortion startPortion = {
             .start = portion.start,
-            .end   = dil_source_locate_end(file, &portion.start)};
+            .end   = dil_source_locate_end(source, &portion.start)};
         DilSourcePortion endPortion = {
             .start = dil_source_locate_start(&portion.end),
             .end   = portion.end};
-        dil_source_underline(file, &startPortion, true);
-        dil_source_underline(file, &endPortion, false);
+        dil_source_underline(source, &startPortion, true);
+        dil_source_underline(source, &endPortion, false);
     }
     printf("\n");
 }

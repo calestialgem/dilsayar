@@ -25,11 +25,11 @@ int main(int argumentCount, char const* const* arguments)
     printf("\n");
 
     DilBuffer  buffer  = {0};
-    DilSource  info    = dil_source_load(&buffer, arguments[1]);
+    DilSource  source  = dil_source_load(&buffer, arguments[1]);
     DilTree    tree    = {0};
     DilBuilder builder = {.built = &tree};
 
-    dil_parse(&builder, &info);
+    dil_parse(&builder, &source);
     dil_tree_print(&tree);
 
     dil_builder_free(&builder);

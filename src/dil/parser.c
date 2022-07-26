@@ -141,9 +141,9 @@ bool dil_parse_statement(
 }
 
 /* Parses the start symbol. */
-void dil_parse(DilBuilder* builder, DilSource* file)
+void dil_parse(DilBuilder* builder, DilSource* source)
 {
-    DilString string = file->contents;
+    DilString string = source->contents;
 
     size_t start = dil_tree_size(builder->built);
     dil_tree_add(
@@ -156,13 +156,16 @@ void dil_parse(DilBuilder* builder, DilSource* file)
     bool parsed = true;
     while (parsed) {
         dil_parse_skip(&string);
-        parsed = dil_parse_statement(builder, &string, file);
+        parsed = dil_parse_statement(builder, &string, source);
     }
 
     dil_builder_pop(builder);
     dil_tree_at(builder->built, start)->object.value.last = string.first;
 
-    if (file->error != 0) {
-        printf("%s: error: File had %llu errors.\n", file->path, file->error);
+    if (source->error != 0) {
+        printf(
+            "%s: error: File had %llu errors.\n",
+            source->path,
+            source->error);
     }
 }
