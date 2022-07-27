@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 output "dilsayar.c";
-start *Statement;
+
 skip Whitespace | Comment;
+
+start *Statement;
 
 Statement = Output | Start | Skip | Rule;
 Output    = "output" String ';'; // Path to output C file.
