@@ -22,8 +22,6 @@ typedef struct {
     DilString* string;
     /* Parsed source file. */
     DilSource* source;
-    /* Whether adding childeren to currently built node is prohibited. */
-    bool terminal;
     /* Stack depth further away from the last nonterminal. */
     int depth;
 } DilParseContext;
@@ -31,9 +29,10 @@ typedef struct {
 /* Macro for the start of a try-parse function. */
 #define dil_parse__create(SYMBOL, TERMINAL)                   \
     char const* untouched = context->string->first;           \
-    context->terminal     = (TERMINAL);                       \
-    if (context->terminal) {                                  \
+    bool        terminal  = (TERMINAL);                       \
+    if (terminal) {                                           \
         context->depth++;                                     \
+        printf("Entering Terminal: %d\n", context->depth);    \
     }                                                         \
     if (context->depth < 2) {                                 \
         dil_builder_add(                                      \
@@ -46,8 +45,9 @@ typedef struct {
 
 /* Macro for the return of a try-parse function. */
 #define dil_parse__return(ACCEPT)                                     \
-    if (context->terminal) {                                          \
+    if (terminal) {                                                   \
         context->depth--;                                             \
+        printf("Exiting Terminal: %d\n", context->depth);             \
     }                                                                 \
     if ((ACCEPT)) {                                                   \
         if (context->depth < 1) {                                     \
@@ -620,10 +620,9 @@ void dil_parse(DilBuilder* builder, DilSource* source)
     dil_builder_push(builder);
 
     DilParseContext context = {
-        .builder  = builder,
-        .string   = &string,
-        .source   = source,
-        .terminal = false};
+        .builder = builder,
+        .string  = &string,
+        .source  = source};
 
     dil_parse__skip(&context);
     while (dil_parse_statement(&context)) {

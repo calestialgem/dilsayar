@@ -61,8 +61,6 @@ __Start__
 |   |   |   +- String {"output"}
 |   |   |   +- Identifier {String}
 |   |   |   +- Set {';'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {;}
 |   
 +- Rule {Start     = "start" Pattern ';';}
 |   |   
@@ -74,8 +72,6 @@ __Start__
 |   |   |   +- String {"start"}
 |   |   |   +- Identifier {Pattern}
 |   |   |   +- Set {';'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {;}
 |   
 +- Rule {Skip      = "skip" ?Pattern ';';}
 |   |   
@@ -90,8 +86,6 @@ __Start__
 |   |   |   |   +- Identifier {Pattern}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {;}
 |   
 +- Rule {Terminal  = "terminal" ';';}
 |   |   
@@ -102,8 +96,6 @@ __Start__
 |   |   |   |   
 |   |   |   +- String {"terminal"}
 |   |   |   +- Set {';'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {;}
 |   
 +- Rule {Rule      = Identifier '=' Pattern ';';}
 |   |   
@@ -114,13 +106,8 @@ __Start__
 |   |   |   |   
 |   |   |   +- Identifier {Identifier}
 |   |   |   +- Set {'='}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {=}
-|   |   |   |   
 |   |   |   +- Identifier {Pattern}
 |   |   |   +- Set {';'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {;}
 |   
 +- Rule {Pattern = Justaposition *('|' Justaposition);}
 |   |   
@@ -139,9 +126,6 @@ __Start__
 |   |   |   |   |   |   +- Justaposition {'|' Justaposition}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Set {'|'}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Escaped {|}
-|   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Identifier {Justaposition}
 |   
 +- Rule {Justaposition = +Alternative;}
@@ -231,9 +215,6 @@ __Start__
 |   |   +- Justaposition {'?' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'?'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {?}
-|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   
 +- Rule {ZeroOrMore   = '*' Alternative;}
@@ -244,9 +225,6 @@ __Start__
 |   |   +- Justaposition {'*' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'*'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {*}
-|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   
 +- Rule {OneOrMore    = '+' Alternative;}
@@ -257,9 +235,6 @@ __Start__
 |   |   +- Justaposition {'+' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'+'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {+}
-|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   
 +- Rule {FixedTimes   = Number Alternative;}
@@ -280,16 +255,11 @@ __Start__
 |   |   +- Justaposition {'(' +Pattern ')'}
 |   |   |   |   
 |   |   |   +- Set {'('}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {(}
-|   |   |   |   
 |   |   |   +- One Or More {+Pattern}
 |   |   |   |   |   
 |   |   |   |   +- Identifier {Pattern}
 |   |   |   |   
 |   |   |   +- Set {')'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {)}
 |   
 +- Rule {Reference    = Identifier;}
 |   |   
@@ -309,9 +279,6 @@ __Start__
 |   |   +- Justaposition {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
 |   |   |   |   
 |   |   |   +- Set {'"'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {"}
-|   |   |   |   
 |   |   |   +- Zero Or More {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
 |   |   |   |   |   
 |   |   |   |   +- Group {('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
@@ -321,9 +288,6 @@ __Start__
 |   |   |   |   |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\"') }
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Set {'\\'}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Escaped {\\}
-|   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\"')}
 |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\"'}
@@ -334,35 +298,16 @@ __Start__
 |   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Number {2}
 |   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {0}
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {9}
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {a}
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {f}
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {A}
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {F}
 |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   +- Justaposition {'tn\\"'}
 |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   +- Set {'tn\\"'}
-|   |   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   |   +- Escaped {t}
-|   |   |   |   |   |   |   |   |   |   |   +- Escaped {n}
-|   |   |   |   |   |   |   |   |   |   |   +- Escaped {\\}
-|   |   |   |   |   |   |   |   |   |   |   +- Escaped {"}
 |   |   |   |   |   |   |   
 |   |   |   |   |   |   +- Justaposition {!'\\"'}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Not Set {!'\\"'}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Set {'\\"'}
-|   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   +- Escaped {\\}
-|   |   |   |   |   |   |   |   |   +- Escaped {"}
 |   |   |   |   
 |   |   |   +- Set {'"'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {"}
 |   
 +- Rule {NotSet = '!' Set;}
 |   |   
@@ -372,9 +317,6 @@ __Start__
 |   |   +- Justaposition {'!' Set}
 |   |   |   |   
 |   |   |   +- Set {'!'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {!}
-|   |   |   |   
 |   |   |   +- Identifier {Set}
 |   
 +- Rule {Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';}
@@ -385,9 +327,6 @@ __Start__
 |   |   +- Justaposition {'\'' *(Escaped ?('\~' Escaped)) '\''}
 |   |   |   |   
 |   |   |   +- Set {'\''}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {\'}
-|   |   |   |   
 |   |   |   +- Zero Or More {*(Escaped ?('\~' Escaped))}
 |   |   |   |   |   
 |   |   |   |   +- Group {(Escaped ?('\~' Escaped))}
@@ -406,14 +345,9 @@ __Start__
 |   |   |   |   |   |   |   |   |   |   +- Justaposition {'\~' Escaped}
 |   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Set {'\~'}
-|   |   |   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {\~}
-|   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
 |   |   |   |   
 |   |   |   +- Set {'\''}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {\'}
 |   
 +- Rule {Number     = '1~9' *'0~9';}
 |   |   
@@ -423,16 +357,9 @@ __Start__
 |   |   +- Justaposition {'1~9' *'0~9'}
 |   |   |   |   
 |   |   |   +- Set {'1~9'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {1}
-|   |   |   |   +- Escaped {9}
-|   |   |   |   
 |   |   |   +- Zero Or More {*'0~9'}
 |   |   |   |   |   
 |   |   |   |   +- Set {'0~9'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Escaped {0}
-|   |   |   |   |   +- Escaped {9}
 |   
 +- Rule {Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';}
 |   |   
@@ -442,9 +369,6 @@ __Start__
 |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') }
 |   |   |   |   
 |   |   |   +- Set {'\\'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {\\}
-|   |   |   |   
 |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\\'\~')}
 |   |   |   |   |   
 |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\\'\~'}
@@ -455,33 +379,14 @@ __Start__
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Number {2}
 |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Escaped {0}
-|   |   |   |   |   |   |   |   +- Escaped {9}
-|   |   |   |   |   |   |   |   +- Escaped {a}
-|   |   |   |   |   |   |   |   +- Escaped {f}
-|   |   |   |   |   |   |   |   +- Escaped {A}
-|   |   |   |   |   |   |   |   +- Escaped {F}
 |   |   |   |   |   |   
 |   |   |   |   |   +- Justaposition {'tn\\\'\~'}
 |   |   |   |   |   |   |   
 |   |   |   |   |   |   +- Set {'tn\\\'\~'}
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Escaped {t}
-|   |   |   |   |   |   |   +- Escaped {n}
-|   |   |   |   |   |   |   +- Escaped {\\}
-|   |   |   |   |   |   |   +- Escaped {\'}
-|   |   |   |   |   |   |   +- Escaped {\~}
 |   |   |   
 |   |   +- Justaposition {!'\\\'\~'}
 |   |   |   |   
 |   |   |   +- Not Set {!'\\\'\~'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'\\\'\~'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Escaped {\\}
-|   |   |   |   |   +- Escaped {\'}
-|   |   |   |   |   +- Escaped {\~}
 |   
 +- Rule {Identifier = 'A~Z' *'a~zA~Z';}
 |   |   
@@ -491,18 +396,9 @@ __Start__
 |   |   +- Justaposition {'A~Z' *'a~zA~Z'}
 |   |   |   |   
 |   |   |   +- Set {'A~Z'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {A}
-|   |   |   |   +- Escaped {Z}
-|   |   |   |   
 |   |   |   +- Zero Or More {*'a~zA~Z'}
 |   |   |   |   |   
 |   |   |   |   +- Set {'a~zA~Z'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Escaped {a}
-|   |   |   |   |   +- Escaped {z}
-|   |   |   |   |   +- Escaped {A}
-|   |   |   |   |   +- Escaped {Z}
 |   
 +- Rule {Whitespace = '\t\n ';}
 |   |   
@@ -512,10 +408,6 @@ __Start__
 |   |   +- Justaposition {'\t\n '}
 |   |   |   |   
 |   |   |   +- Set {'\t\n '}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {\t}
-|   |   |   |   +- Escaped {\n}
-|   |   |   |   +- Escaped { }
 |   
 +- Rule {Comment    = "//" *!'\n' '\n';}
 |   |   
@@ -528,12 +420,6 @@ __Start__
 |   |   |   +- Zero Or More {*!'\n'}
 |   |   |   |   |   
 |   |   |   |   +- Not Set {!'\n'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Set {'\n'}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Escaped {\n}
 |   |   |   |   
 |   |   |   +- Set {'\n'}
-|   |   |   |   |   
-|   |   |   |   +- Escaped {\n}
 
