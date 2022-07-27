@@ -21,11 +21,13 @@ Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;
 Optional   = '?' Group;
 ZeroOrMore = '*' Group;
 OneOrMore  = '+' Group;
-FixedTimes = '1~9' *'0~9' Group;
+FixedTimes = Number Group;
 
 Group = Literal | '(' +Literal ')';
 
 skip;
+
+Number = '1~9' *'0~9';
 
 Literal   = Set | NotSet | AllSet | String | Reference;
 Set       = '\'' +(Escaped | Escaped '\~' Escaped) '\'';

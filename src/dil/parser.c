@@ -187,9 +187,9 @@ bool dil_parse_fixed_times(
     dil_builder_add(builder, object);
     dil_builder_push(builder);
 
-    if (!dil_parse_group(builder, string, source)) {
-        dil_parse_error(string, source, "Expected `Group` in `FixedTimes`!");
-        goto end;
+    {
+        DilString const terminals = dil_string_terminated("0123456789");
+        while (dil_string_prefix_set(string, &terminals)) {}
     }
 
 end:
