@@ -10,7 +10,7 @@ start *Statement;
 Statement = Output | Start | Skip | Rule;
 Output    = "output" String ';'; // Path to output C file.
 Start     = "start" Pattern ';'; // Pattern of start symbol.
-Skip      = "skip" Pattern ';';  // Pattern to skip between justapositioned.
+Skip      = "skip" ?Pattern ';'; // Pattern to skip between justapositioned.
 Rule      = Identifier '=' Pattern ';';
 
 Pattern = Alternative *('|' Alternative);

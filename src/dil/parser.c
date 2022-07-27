@@ -539,11 +539,8 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
     dil_parse__return(true);
 }
 
-/* Try to parse a skip directive. */
-bool dil_parse_directive_skip(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+/* Try to parse a skip. */
+bool dil_parse_skip(DilBuilder* builder, DilString* string, DilSource* source)
 {
     dil_parse__create(DIL_SYMBOL_SKIP);
 
@@ -555,12 +552,9 @@ bool dil_parse_directive_skip(
 
     dil_parse__skip_0(string);
 
-    if (!dil_parse_pattern(builder, string, source)) {
-        dil_parse__error(string, source, "Expected `Pattern` in `Skip`!");
-        dil_parse__return(true);
+    if (dil_parse_pattern(builder, string, source)) {
+        dil_parse__skip_0(string);
     }
-
-    dil_parse__skip_0(string);
 
     if (!dil_parse__terminal(builder, string, ';')) {
         dil_parse__error(string, source, "Expected `;` in `Skip`!");
@@ -570,11 +564,8 @@ bool dil_parse_directive_skip(
     dil_parse__return(true);
 }
 
-/* Try to parse a start directive. */
-bool dil_parse_directive_start(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+/* Try to parse a start. */
+bool dil_parse_start(DilBuilder* builder, DilString* string, DilSource* source)
 {
     dil_parse__create(DIL_SYMBOL_START);
 
@@ -601,11 +592,8 @@ bool dil_parse_directive_start(
     dil_parse__return(true);
 }
 
-/* Try to parse an output directive. */
-bool dil_parse_directive_output(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+/* Try to parse an output. */
+bool dil_parse_output(DilBuilder* builder, DilString* string, DilSource* source)
 {
     dil_parse__create(DIL_SYMBOL_OUTPUT);
 
@@ -638,9 +626,9 @@ bool dil_parse_statement(
     DilString*  string,
     DilSource*  source)
 {
-    return dil_parse_directive_output(builder, string, source) ||
-           dil_parse_directive_start(builder, string, source) ||
-           dil_parse_directive_skip(builder, string, source) ||
+    return dil_parse_output(builder, string, source) ||
+           dil_parse_start(builder, string, source) ||
+           dil_parse_skip(builder, string, source) ||
            dil_parse_rule(builder, string, source);
 }
 

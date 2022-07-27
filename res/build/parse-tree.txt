@@ -259,7 +259,7 @@ __Start__
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Skip      = "skip" Pattern ';';}
++- Rule {Skip      = "skip" ?Pattern ';';}
 |   |   
 |   +- Identifier {Skip}
 |   |   |   
@@ -269,9 +269,9 @@ __Start__
 |   |   +- Terminal {p}
 |   |   
 |   +- Terminal {=}
-|   +- Pattern {"skip" Pattern ';'}
+|   +- Pattern {"skip" ?Pattern ';'}
 |   |   |   
-|   |   +- Alternative {"skip" Pattern ';'}
+|   |   +- Alternative {"skip" ?Pattern ';'}
 |   |   |   |   
 |   |   |   +- Group {"skip"}
 |   |   |   |   |   
@@ -284,17 +284,20 @@ __Start__
 |   |   |   |   |   +- Terminal {p}
 |   |   |   |   |   +- Terminal {"}
 |   |   |   |   
-|   |   |   +- Group {Pattern}
+|   |   |   +- Optional {?Pattern}
 |   |   |   |   |   
-|   |   |   |   +- Identifier {Pattern}
+|   |   |   |   +- Terminal {?}
+|   |   |   |   +- Group {Pattern}
 |   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {P}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {n}
+|   |   |   |   |   +- Identifier {Pattern}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Terminal {P}
+|   |   |   |   |   |   +- Terminal {a}
+|   |   |   |   |   |   +- Terminal {t}
+|   |   |   |   |   |   +- Terminal {t}
+|   |   |   |   |   |   +- Terminal {e}
+|   |   |   |   |   |   +- Terminal {r}
+|   |   |   |   |   |   +- Terminal {n}
 |   |   |   |   
 |   |   |   +- Group {';'}
 |   |   |   |   |   
@@ -812,10 +815,10 @@ __Start__
 |   |   
 |   +- Terminal {;}
 |   
-+- Skip {skip;
-}
++- Skip {skip;}
 |   |   
 |   +- Terminal {skip}
+|   +- Terminal {;}
 |   
 +- Rule {Number = '1~9' *'0~9';}
 |   |   
