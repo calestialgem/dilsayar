@@ -84,6 +84,18 @@ char const* dil_string_first_fit(DilString const* view, bool (*predicate)(char))
     return view->last;
 }
 
+/* Whether view contains the element. */
+bool dil_string_contains(DilString const* view, char element)
+{
+    return dil_string_first(view, element) != view->last;
+}
+
+/* Whether the view contains an element that fits the predicate. */
+bool dil_string_contains_fit(DilString const* view, bool (*predicate)(char))
+{
+    return dil_string_first_fit(view, predicate) != view->last;
+}
+
 /* Whether the first element equals to the given. */
 bool dil_string_starts(DilString const* view, char element)
 {
@@ -207,7 +219,22 @@ DilString dil_string_lead_first_fit(DilString* view, bool (*predicate)(char))
 /* Whether the view starts with the element. Consumes the element when true. */
 bool dil_string_prefix_element(DilString* string, char element)
 {
-    return dil_string_finite(string) && dil_string_starts(string, element);
+    if (dil_string_finite(string) && dil_string_starts(string, element)) {
+        string->first++;
+        return true;
+    }
+    return false;
+}
+
+/* Whether the view starts with an element of the set. Consumes the element when
+ * true. */
+bool dil_string_prefix_set(DilString* string, DilString const* set)
+{
+    if (dil_string_finite(string) && dil_string_contains(set, *string->first)) {
+        string->first++;
+        return true;
+    }
+    return false;
 }
 
 /* Whether the view starts with the prefix. Consumes the prefix when true. */
