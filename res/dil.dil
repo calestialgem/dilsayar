@@ -30,8 +30,8 @@ skip;
 Number = '1~9' *'0~9';
 
 Literal   = Set | NotSet | AllSet | String | Reference;
-Set       = '\'' +(Escaped | Escaped '\~' Escaped) '\'';
 NotSet    = '!' Set;
+Set       = '\'' +(Escaped | Escaped '\~' Escaped) '\'';
 AllSet    = '.';
 String    = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
 Reference = Identifier;

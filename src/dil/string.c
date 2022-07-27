@@ -237,6 +237,18 @@ bool dil_string_prefix_set(DilString* string, DilString const* set)
     return false;
 }
 
+/* Whether the view does not start with an element of the set. Consumes the
+ * element when true. */
+bool dil_string_prefix_not_set(DilString* string, DilString const* set)
+{
+    if (dil_string_finite(string) &&
+        !dil_string_contains(set, *string->first)) {
+        string->first++;
+        return true;
+    }
+    return false;
+}
+
 /* Whether the view starts with the prefix. Consumes the prefix when true. */
 bool dil_string_prefix_check(DilString* string, DilString const* prefix)
 {

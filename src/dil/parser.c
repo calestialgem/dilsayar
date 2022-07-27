@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/buffer.c"
 #include "dil/builder.c"
 #include "dil/object.c"
 #include "dil/source.c"
@@ -103,12 +104,28 @@ bool dil_parse_terminal_any(DilBuilder* builder, DilString* string)
 }
 
 /* Try to parse an identifier. */
-bool dil_parse_identifier(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+bool dil_parse_identifier(DilBuilder* builder, DilString* string)
 {
-    return false;
+    DilString const SET_0 = dil_string_terminated("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    DilString const SET_1 = dil_string_terminated(
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ESCAPED,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_set(string, &SET_0)) {
+        return false;
+    }
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    while (dil_string_prefix_set(string, &SET_1)) {}
+
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse an escaped character. */
@@ -117,21 +134,45 @@ bool dil_parse_escaped(
     DilString*  string,
     DilSource*  source)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_ESCAPED,
-        .value  = {.first = string->first}};
+    DilString const SET_0  = dil_string_terminated("0123456789abcdefABCDEF");
+    DilString const SET_1  = dil_string_terminated("tn\\'~");
+    DilString const SET_2  = dil_string_terminated("\\'~");
+    DilObject       object = {
+              .symbol = DIL_SYMBOL_ESCAPED,
+              .value  = {.first = string->first}};
     size_t index = dil_tree_size(builder->built);
 
-    if (dil_string_starts(string, '\\')) {
+    if (dil_string_prefix_element(string, '\\')) {
+        dil_builder_add(builder, object);
+        dil_builder_push(builder);
+        if (dil_string_prefix_set(string, &SET_0)) {
+            for (size_t i = 0; i < 2 - 1; i++) {
+                if (!dil_string_prefix_set(string, &SET_0)) {
+                    size_t const BUFFER_SIZE = 1024;
+                    char         buffer[BUFFER_SIZE];
+                    (void)sprintf_s(
+                        buffer,
+                        BUFFER_SIZE,
+                        "Expected one of `'%.*s'` in `Escaped`!",
+                        (int)dil_string_size(&SET_0),
+                        SET_0.first);
+                    dil_parse_error(string, source, buffer);
+                    goto end;
+                }
+            }
+        } else if (dil_string_prefix_set(string, &SET_1)) {
+        } else {
+            dil_parse_error(
+                string,
+                source,
+                "Unexpected character in `Escaped`!");
+            goto end;
+        }
+    } else if (dil_string_prefix_not_set(string, &SET_2)) {
         dil_builder_add(builder, object);
         dil_builder_push(builder);
     } else {
-        dil_builder_add(builder, object);
-        dil_builder_push(builder);
-        if (!dil_string_finite(string)) {
-            dil_parse_error(string, source, "Expected a character!");
-            goto end;
-        }
+        return false;
     }
 
 end:
@@ -141,20 +182,20 @@ end:
 }
 
 /* Try to parse a reference. */
-bool dil_parse_reference(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+bool dil_parse_reference(DilBuilder* builder, DilString* string)
 {
-    return dil_parse_identifier(builder, string, source);
+    return dil_parse_identifier(builder, string);
 }
 
 /* Try to parse a string. */
 bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_STRING,
-        .value  = {.first = string->first}};
+    DilString const SET_0  = dil_string_terminated("0123456789abcdefABCDEF");
+    DilString const SET_1  = dil_string_terminated("tn\\\"");
+    DilString const SET_2  = dil_string_terminated("\\\"");
+    DilObject       object = {
+              .symbol = DIL_SYMBOL_STRING,
+              .value  = {.first = string->first}};
 
     if (!dil_string_prefix_element(string, '"')) {
         return false;
@@ -164,10 +205,39 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
     dil_builder_add(builder, object);
     dil_builder_push(builder);
 
-    while (dil_parse_escaped(builder, string, source)) {}
+    while (dil_string_finite(string)) {
+        if (dil_string_prefix_element(string, '\\')) {
+            if (dil_string_prefix_set(string, &SET_0)) {
+                for (size_t i = 0; i < 2 - 1; i++) {
+                    if (!dil_string_prefix_set(string, &SET_0)) {
+                        size_t const BUFFER_SIZE = 1024;
+                        char         buffer[BUFFER_SIZE];
+                        (void)sprintf_s(
+                            buffer,
+                            BUFFER_SIZE,
+                            "Expected one of `'%.*s'` in `String`!",
+                            (int)dil_string_size(&SET_0),
+                            SET_0.first);
+                        dil_parse_error(string, source, buffer);
+                        goto end;
+                    }
+                }
+            } else if (dil_string_prefix_set(string, &SET_1)) {
+            } else {
+                dil_parse_error(
+                    string,
+                    source,
+                    "Unexpected character in `String`!");
+                goto end;
+            }
+        } else if (dil_string_prefix_not_set(string, &SET_2)) {
+        } else {
+            break;
+        }
+    }
 
     if (!dil_string_prefix_element(string, '"')) {
-        dil_parse_error(string, source, "Expected `\"` to end the string!");
+        dil_parse_error(string, source, "Expected `'\"'` in `String`!");
         goto end;
     }
 
@@ -178,21 +248,23 @@ end:
 }
 
 /* Try to parse a all set. */
-bool dil_parse_all_set(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
+bool dil_parse_all_set(DilBuilder* builder, DilString* string)
 {
-    return false;
-}
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ALL_SET,
+        .value  = {.first = string->first}};
 
-/* Try to parse a not set. */
-bool dil_parse_not_set(
-    DilBuilder* builder,
-    DilString*  string,
-    DilSource*  source)
-{
-    return false;
+    if (!dil_string_prefix_element(string, '.')) {
+        return false;
+    }
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a set. */
@@ -228,6 +300,35 @@ end:
     return true;
 }
 
+/* Try to parse a not set. */
+bool dil_parse_not_set(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_NOT_SET,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '!')) {
+        return false;
+    }
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_set(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Set` in `NotSet`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
 /* Try to parse a literal. */
 bool dil_parse_literal(
     DilBuilder* builder,
@@ -236,9 +337,9 @@ bool dil_parse_literal(
 {
     return dil_parse_set(builder, string, source) ||
            dil_parse_not_set(builder, string, source) ||
-           dil_parse_all_set(builder, string, source) ||
+           dil_parse_all_set(builder, string) ||
            dil_parse_string(builder, string, source) ||
-           dil_parse_reference(builder, string, source);
+           dil_parse_reference(builder, string);
 }
 
 /* Try to parse a number. */
@@ -506,7 +607,7 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
         .symbol = DIL_SYMBOL_RULE,
         .value  = {.first = string->first}};
 
-    if (!dil_parse_identifier(builder, string, source)) {
+    if (!dil_parse_identifier(builder, string)) {
         return false;
     }
 
