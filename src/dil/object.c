@@ -25,7 +25,6 @@ typedef enum {
     DIL_SYMBOL_LITERAL,
     DIL_SYMBOL_SET,
     DIL_SYMBOL_NOT_SET,
-    DIL_SYMBOL_ALL_SET,
     DIL_SYMBOL_STRING,
     DIL_SYMBOL_REFERENCE,
     DIL_SYMBOL_ESCAPED,
@@ -81,8 +80,6 @@ char const* dil_object_format(DilSymbol symbol)
             return "Set {%.*s}";
         case DIL_SYMBOL_NOT_SET:
             return "Not Set {%.*s}";
-        case DIL_SYMBOL_ALL_SET:
-            return "All Set {%.*s}";
         case DIL_SYMBOL_STRING:
             return "String {%.*s}";
         case DIL_SYMBOL_REFERENCE:

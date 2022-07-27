@@ -109,7 +109,7 @@ bool dil_parse__terminal(DilBuilder* builder, DilString* string, char terminal)
 bool dil_parse__terminal_set(
     DilBuilder*      builder,
     DilString*       string,
-    DilString* const set)
+    DilString const* set)
 {
     dil_parse__create(DIL_SYMBOL_TERMINAL);
     dil_parse__return(dil_string_prefix_set(string, set));
@@ -119,7 +119,7 @@ bool dil_parse__terminal_set(
 bool dil_parse__terminal_not_set(
     DilBuilder*      builder,
     DilString*       string,
-    DilString* const set)
+    DilString const* set)
 {
     dil_parse__create(DIL_SYMBOL_TERMINAL);
     dil_parse__return(dil_string_prefix_not_set(string, set));
@@ -144,11 +144,11 @@ bool dil_parse_identifier(DilBuilder* builder, DilString* string)
     DilString const SET_1 = dil_string_terminated(
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-    if (!dil_string_prefix_set(string, &SET_0)) {
+    if (!dil_parse__terminal_set(builder, string, &SET_0)) {
         dil_parse__return(false);
     }
 
-    while (dil_string_prefix_set(string, &SET_1)) {}
+    while (dil_parse__terminal_set(builder, string, &SET_1)) {}
 
     dil_parse__return(true);
 }
@@ -166,9 +166,9 @@ bool dil_parse_escaped(
     DilString const SET_2 = dil_string_terminated("\\'~");
 
     if (dil_parse__terminal(builder, string, '\\')) {
-        if (dil_string_prefix_set(string, &SET_0)) {
+        if (dil_parse__terminal_set(builder, string, &SET_0)) {
             for (size_t i = 0; i < 2 - 1; i++) {
-                if (!dil_string_prefix_set(string, &SET_0)) {
+                if (!dil_parse__terminal_set(builder, string, &SET_0)) {
                     dil_parse__error_set(string, source, &SET_0);
                     dil_parse__return(true);
                 }
@@ -176,7 +176,7 @@ bool dil_parse_escaped(
             dil_parse__return(true);
         }
 
-        if (dil_string_prefix_set(string, &SET_1)) {
+        if (dil_parse__terminal_set(builder, string, &SET_1)) {
             dil_parse__return(true);
         }
 
@@ -184,7 +184,7 @@ bool dil_parse_escaped(
         dil_parse__return(true);
     }
 
-    if (dil_string_prefix_not_set(string, &SET_2)) {
+    if (dil_parse__terminal_not_set(builder, string, &SET_2)) {
         dil_parse__return(true);
     }
 
@@ -212,16 +212,16 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
 
     while (dil_string_finite(string)) {
         if (dil_parse__terminal(builder, string, '\\')) {
-            if (dil_string_prefix_set(string, &SET_0)) {
+            if (dil_parse__terminal_set(builder, string, &SET_0)) {
                 for (size_t i = 0; i < 2 - 1; i++) {
-                    if (!dil_string_prefix_set(string, &SET_0)) {
+                    if (!dil_parse__terminal_set(builder, string, &SET_0)) {
                         dil_parse__error_set(string, source, &SET_0);
                         dil_parse__return(true);
                     }
                 }
                 continue;
             }
-            if (dil_string_prefix_set(string, &SET_1)) {
+            if (dil_parse__terminal_set(builder, string, &SET_1)) {
                 continue;
             }
             dil_parse__error(
@@ -230,7 +230,7 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
                 "Unexpected character in `String`!");
             dil_parse__return(true);
         }
-        if (dil_string_prefix_not_set(string, &SET_2)) {
+        if (dil_parse__terminal_not_set(builder, string, &SET_2)) {
             continue;
         }
         break;
@@ -239,18 +239,6 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
     if (!dil_parse__terminal(builder, string, '"')) {
         dil_parse__error(string, source, "Expected `\"` in `String`!");
         dil_parse__return(true);
-    }
-
-    dil_parse__return(true);
-}
-
-/* Try to parse a all set. */
-bool dil_parse_all_set(DilBuilder* builder, DilString* string)
-{
-    dil_parse__create(DIL_SYMBOL_ALL_SET);
-
-    if (!dil_parse__terminal(builder, string, '.')) {
-        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -265,12 +253,15 @@ bool dil_parse_set(DilBuilder* builder, DilString* string, DilSource* source)
         dil_parse__return(false);
     }
 
-    if (!dil_parse_escaped(builder, string, source)) {
-        dil_parse__error(string, source, "Expected `Escaped` in `Set`!");
-        dil_parse__return(true);
+    while (dil_parse_escaped(builder, string, source)) {
+        if (!dil_parse__terminal(builder, string, '~')) {
+            continue;
+        }
+        if (!dil_parse_escaped(builder, string, source)) {
+            dil_parse__error(string, source, "Expected `Escaped` in `Set`!");
+            dil_parse__return(true);
+        }
     }
-
-    while (dil_parse_escaped(builder, string, source)) {}
 
     if (!dil_parse__terminal(builder, string, '\'')) {
         dil_parse__error(string, source, "Expected `'` in `Set`!");
@@ -308,7 +299,6 @@ bool dil_parse_literal(
 {
     return dil_parse_set(builder, string, source) ||
            dil_parse_not_set(builder, string, source) ||
-           dil_parse_all_set(builder, string) ||
            dil_parse_string(builder, string, source) ||
            dil_parse_reference(builder, string);
 }
@@ -321,13 +311,13 @@ bool dil_parse_number(DilBuilder* builder, DilString* string)
     DilString const SET_0 = dil_string_terminated("123456789");
     DilString const SET_1 = dil_string_terminated("0123456789");
 
-    if (!dil_string_prefix_set(string, &SET_0)) {
+    if (!dil_parse__terminal_set(builder, string, &SET_0)) {
         dil_parse__return(false);
     }
 
     dil_parse__skip_0(string);
 
-    while (dil_string_prefix_set(string, &SET_1)) {}
+    while (dil_parse__terminal_set(builder, string, &SET_1)) {}
 
     dil_parse__return(true);
 }

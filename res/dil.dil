@@ -29,10 +29,9 @@ skip;
 
 Number = '1~9' *'0~9';
 
-Literal   = Set | NotSet | AllSet | String | Reference;
+Literal   = Set | NotSet | String | Reference;
 NotSet    = '!' Set;
-Set       = '\'' +(Escaped | Escaped '\~' Escaped) '\'';
-AllSet    = '.';
+Set       = '\'' *(Escaped ?('\~' Escaped)) '\'';
 String    = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
 Reference = Identifier;
 
