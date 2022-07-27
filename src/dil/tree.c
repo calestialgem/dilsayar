@@ -6,6 +6,9 @@
 #include "dil/indices.c"
 #include "dil/object.c"
 
+#include <Windows.h>
+#include <errhandlingapi.h>
+#include <fileapi.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -173,7 +176,6 @@ void dil_tree_print_branch(FILE* stream, int pipes, DilObject const* object)
 /* Print the tree. */
 void dil_tree_print(FILE* stream, DilTree const* tree)
 {
-    (void)fprintf(stream, "\n");
     DilIndices childeren = {0};
 
     for (size_t current = 0; current < dil_tree_size(tree); current++) {
@@ -203,4 +205,22 @@ void dil_tree_print(FILE* stream, DilTree const* tree)
     }
 
     dil_indices_free(&childeren);
+}
+
+/* Print the tree to the default file. */
+void dil_tree_print_file(DilTree const* tree)
+{
+    char PATH[] = "build\\parse-tree.txt";
+    if (!CreateDirectory("build", NULL) &&
+        GetLastError() != ERROR_ALREADY_EXISTS) {
+        printf("Could not create the build directory!\n");
+        return;
+    }
+    FILE* outputParseStream = fopen(PATH, "w");
+    if (outputParseStream == NULL) {
+        printf("Could not open the output file %s!\n", PATH);
+        return;
+    }
+    dil_tree_print(outputParseStream, tree);
+    (void)fclose(outputParseStream);
 }
