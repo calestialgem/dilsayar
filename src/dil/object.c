@@ -15,7 +15,8 @@ typedef enum {
     DIL_SYMBOL_START,
     DIL_SYMBOL_SKIP,
     DIL_SYMBOL_RULE,
-    DIL_SYMBOL_ALTERNATIVES,
+    DIL_SYMBOL_PATTERN,
+    DIL_SYMBOL_ALTERNATIVE,
     DIL_SYMBOL_OPTIONAL,
     DIL_SYMBOL_ZERO_OR_MORE,
     DIL_SYMBOL_ONE_OR_MORE,
@@ -60,8 +61,10 @@ char const* dil_object_format(DilSymbol symbol)
             return "Skip {%.*s}";
         case DIL_SYMBOL_RULE:
             return "Rule {%.*s}";
-        case DIL_SYMBOL_ALTERNATIVES:
-            return "Alternatives {%.*s}";
+        case DIL_SYMBOL_PATTERN:
+            return "Pattern {%.*s}";
+        case DIL_SYMBOL_ALTERNATIVE:
+            return "Alternative {%.*s}";
         case DIL_SYMBOL_OPTIONAL:
             return "Optional {%.*s}";
         case DIL_SYMBOL_ZERO_OR_MORE:

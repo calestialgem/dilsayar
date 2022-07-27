@@ -454,13 +454,13 @@ bool dil_parse_repeat(DilBuilder* builder, DilString* string, DilSource* source)
            dil_parse_fixed_times(builder, string, source);
 }
 
-/* Try to parse a pattern. */
-bool dil_parse_alternatives(
+/* Try to parse an alternative. */
+bool dil_parse_alternative(
     DilBuilder* builder,
     DilString*  string,
     DilSource*  source)
 {
-    dil_parse__create(DIL_SYMBOL_ALTERNATIVES);
+    dil_parse__create(DIL_SYMBOL_ALTERNATIVE);
 
     if (!dil_parse_repeat(builder, string, source)) {
         dil_parse__return(false);
@@ -468,17 +468,7 @@ bool dil_parse_alternatives(
 
     dil_parse__skip_0(string);
 
-    while (dil_parse__terminal(builder, string, '|')) {
-        dil_parse__skip_0(string);
-
-        if (!dil_parse_repeat(builder, string, source)) {
-            dil_parse__error(
-                string,
-                source,
-                "Expected `Repeat` in `Alternatives`!");
-            dil_parse__return(true);
-        }
-
+    while (dil_parse_repeat(builder, string, source)) {
         dil_parse__skip_0(string);
     }
 
@@ -491,7 +481,29 @@ bool dil_parse_pattern(
     DilString*  string,
     DilSource*  source)
 {
-    return dil_parse_alternatives(builder, string, source);
+    dil_parse__create(DIL_SYMBOL_PATTERN);
+
+    if (!dil_parse_alternative(builder, string, source)) {
+        dil_parse__return(false);
+    }
+
+    dil_parse__skip_0(string);
+
+    while (dil_parse__terminal(builder, string, '|')) {
+        dil_parse__skip_0(string);
+
+        if (!dil_parse_alternative(builder, string, source)) {
+            dil_parse__error(
+                string,
+                source,
+                "Expected `Alternative` in `Pattern`!");
+            dil_parse__return(true);
+        }
+
+        dil_parse__skip_0(string);
+    }
+
+    dil_parse__return(true);
 }
 
 /* Try to parse a rule. */

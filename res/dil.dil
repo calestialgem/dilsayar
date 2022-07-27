@@ -13,9 +13,10 @@ Start     = "start" Pattern ';'; // Pattern of start symbol.
 Skip      = "skip" Pattern ';';  // Pattern to skip between justapositioned.
 Rule      = Identifier '=' Pattern ';';
 
-Pattern      = Alternatives;
+Pattern = Alternative *('|' Alternative);
 
-Alternatives = Repeat *('|' Repeat);
+// Justapositioned patterns combine to a single alternative.
+Alternative = +Repeat;
 
 Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;
 Optional   = '?' Group;
