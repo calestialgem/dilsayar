@@ -2,15 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 output "dilsayar.c";
-
+start *Statement;
 skip Whitespace | Comment;
 
-start *Statement;
-
 Statement = Output | Start | Skip | Rule;
-Output    = "output" String ';'; // Path to output C file.
-Start     = "start" Pattern ';'; // Pattern of start symbol.
-Skip      = "skip" ?Pattern ';'; // Pattern to skip between justapositioned.
+Output    = "output" String ';';
+Start     = "start" Pattern ';';
+Skip      = "skip" ?Pattern ';';
+Terminal  = "terminal" ';';
 Rule      = Identifier '=' Pattern ';';
 
 Pattern = Set
@@ -33,23 +32,14 @@ FixedTimes   = Number Pattern;
 Group        = '(' +Pattern ')';
 Reference    = Identifier;
 
-skip;
+terminal;
 
 String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
 NotSet = '!' Set;
 Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';
 
-Number = '1~9' *'0~9';
-
-// Backslash fallowed by two hex digits or;
-// tab, newline, backslash, single quote, and tilde.
-// Otherwise it is not escaped;
-// anything other than backslash, single quote, and tilde is accepted.
-Escaped = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';
-
-Identifier = 'A~Z' *'a~zA~Z'; // PascalCase.
-
-// Carrige return is handled by the program.
+Number     = '1~9' *'0~9';
+Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';
+Identifier = 'A~Z' *'a~zA~Z';
 Whitespace = '\t\n ';
-
 Comment    = "//" *!'\n' '\n';
