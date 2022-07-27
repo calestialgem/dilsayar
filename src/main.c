@@ -30,7 +30,7 @@ int main(int argumentCount, char const* const* arguments)
     DilBuilder builder = {.built = &tree};
 
     dil_parse(&builder, &source);
-    dil_tree_print(&tree);
+    dil_tree_print(stdout, &tree);
 
     dil_builder_free(&builder);
     dil_tree_free(&tree);

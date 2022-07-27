@@ -155,34 +155,38 @@ void dil_tree_free(DilTree* list)
     list->allocated = NULL;
 }
 
-/* Print the tree. */
-void dil_tree_print(DilTree const* tree)
+/* Print pipes and object if its given. */
+void dil_tree_print_branch(FILE* stream, int pipes, DilObject const* object)
 {
-    printf("\n");
+    for (int i = 0; i < pipes; i++) {
+        (void)fprintf(stream, "|   ");
+    }
+    if (object != NULL) {
+        if (pipes > -1) {
+            (void)fprintf(stream, "+- ");
+        }
+        dil_object_print(stream, object);
+    }
+    (void)fprintf(stream, "\n");
+}
+
+/* Print the tree. */
+void dil_tree_print(FILE* stream, DilTree const* tree)
+{
+    (void)fprintf(stream, "\n");
     DilIndices childeren = {0};
 
     for (size_t current = 0; current < dil_tree_size(tree); current++) {
-        size_t depth = dil_indices_size(&childeren);
-        if (depth > 0) {
-            for (size_t i = 0; i < depth - 1; i++) {
-                printf("|   ");
-            }
-            printf("+- ");
-        }
-        DilNode const* node = dil_tree_at(tree, current);
-        dil_object_print(&node->object);
-
-        printf("\n");
+        DilNode const* node  = dil_tree_at(tree, current);
+        int            depth = (int)dil_indices_size(&childeren);
+        dil_tree_print_branch(stream, depth - 1, &node->object);
 
         if (depth > 0) {
             (*dil_indices_finish(&childeren))--;
         }
 
         if (node->childeren > 0) {
-            for (size_t i = 0; i < depth + 1; i++) {
-                printf("|   ");
-            }
-            printf("\n");
+            dil_tree_print_branch(stream, depth + 1, NULL);
             dil_indices_add(&childeren, node->childeren);
         } else {
             bool closed = false;
@@ -192,13 +196,8 @@ void dil_tree_print(DilTree const* tree)
                 closed = true;
             }
             if (closed) {
-                depth = dil_indices_size(&childeren) + 1;
-                if (depth > 0) {
-                    for (size_t i = 0; i < depth - 1; i++) {
-                        printf("|   ");
-                    }
-                }
-                printf("\n");
+                depth = (int)dil_indices_size(&childeren);
+                dil_tree_print_branch(stream, depth, NULL);
             }
         }
     }

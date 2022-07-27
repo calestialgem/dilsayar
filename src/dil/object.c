@@ -103,9 +103,10 @@ char const* dil_object_format(DilSymbol symbol)
 }
 
 /* Print the object. */
-void dil_object_print(DilObject const* object)
+void dil_object_print(FILE* stream, DilObject const* object)
 {
-    printf(
+    (void)fprintf(
+        stream,
         dil_object_format(object->symbol),
         (int)(dil_string_size(&object->value)),
         object->value.first);
