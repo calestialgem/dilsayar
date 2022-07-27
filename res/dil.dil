@@ -5,7 +5,7 @@ output "dilsayar.c";
 start *Statement;
 skip Whitespace | Comment;
 
-Statement = Output | Start | Skip | Rule;
+Statement = Output | Start | Skip | Terminal | Rule;
 Output    = "output" String ';';
 Start     = "start" Pattern ';';
 Skip      = "skip" ?Pattern ';';
