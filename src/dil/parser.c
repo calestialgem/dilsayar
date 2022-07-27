@@ -159,10 +159,237 @@ end:
     return true;
 }
 
+/* Try to parse a group. */
+bool dil_parse_group(DilBuilder* builder, DilString* string, DilSource* source)
+{
+}
+
+/* Try to parse a fixed times. */
+bool dil_parse_fixed_times(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_FIXED_TIMES,
+        .value  = {.first = string->first}};
+
+    {
+        DilString const terminals = dil_string_terminated("123456789");
+        if (!dil_string_prefix_set(string, &terminals)) {
+            return false;
+        }
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_group(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Group` in `FixedTimes`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a one or more. */
+bool dil_parse_one_or_more(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ONE_OR_MORE,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '+')) {
+        return false;
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_group(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Group` in `OneOrMore`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a zero or more. */
+bool dil_parse_zero_or_more(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ZERO_OR_MORE,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '*')) {
+        return false;
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_group(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Group` in `ZeroOrMore`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a optional. */
+bool dil_parse_optional(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_OPTIONAL,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '?')) {
+        return false;
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_group(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Group` in `Optional`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a repeat. */
+bool dil_parse_repeat(DilBuilder* builder, DilString* string, DilSource* source)
+{
+    return dil_parse_group(builder, string, source) ||
+           dil_parse_optional(builder, string, source) ||
+           dil_parse_zero_or_more(builder, string, source) ||
+           dil_parse_one_or_more(builder, string, source) ||
+           dil_parse_fixed_times(builder, string, source);
+}
+
+/* Try to parse a pattern. */
+bool dil_parse_alternatives(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_ALTERNATIVES,
+        .value  = {.first = string->first}};
+
+    if (!dil_parse_repeat(builder, string, source)) {
+        return false;
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    while (dil_string_prefix_element(string, '|')) {
+        dil_parse_skip(string);
+
+        if (!dil_parse_repeat(builder, string, source)) {
+            dil_parse_error(
+                string,
+                source,
+                "Expected `Repeat` in `Alternatives`!");
+            goto end;
+        }
+
+        dil_parse_skip(string);
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a pattern. */
+bool dil_parse_pattern(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return dil_parse_alternatives(builder, string, source);
+}
+
 /* Try to parse a rule. */
 bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
 {
-    return false;
+    DilObject object = {
+        .symbol = DIL_SYMBOL_RULE,
+        .value  = {.first = string->first}};
+
+    if (!dil_parse_identifier(builder, string, source)) {
+        return false;
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_string_prefix_element(string, '=')) {
+        dil_parse_error(string, source, "Expected `'='` in `Rule`!");
+        goto end;
+    }
+
+    dil_parse_skip(string);
+
+    if (!dil_parse_pattern(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Pattern` in `Rule`!");
+        goto end;
+    }
+
+    dil_parse_skip(string);
+
+    if (!dil_string_prefix_element(string, ';')) {
+        dil_parse_error(string, source, "Expected `';'` in `Rule`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a skip directive. */
@@ -171,7 +398,39 @@ bool dil_parse_directive_skip(
     DilString*  string,
     DilSource*  source)
 {
-    return false;
+    DilObject object = {
+        .symbol = DIL_SYMBOL_DIRECTIVE_SKIP,
+        .value  = {.first = string->first}};
+
+    {
+        DilString const terminals = dil_string_terminated("skip");
+        if (!dil_string_prefix_check(string, &terminals)) {
+            return false;
+        }
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_pattern(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Pattern` in `Skip`!");
+        goto end;
+    }
+
+    dil_parse_skip(string);
+
+    if (!dil_string_prefix_element(string, ';')) {
+        dil_parse_error(string, source, "Expected `';'` in `Skip`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a start directive. */
@@ -180,7 +439,39 @@ bool dil_parse_directive_start(
     DilString*  string,
     DilSource*  source)
 {
-    return false;
+    DilObject object = {
+        .symbol = DIL_SYMBOL_DIRECTIVE_START,
+        .value  = {.first = string->first}};
+
+    {
+        DilString const terminals = dil_string_terminated("start");
+        if (!dil_string_prefix_check(string, &terminals)) {
+            return false;
+        }
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_pattern(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Pattern` in `Start`!");
+        goto end;
+    }
+
+    dil_parse_skip(string);
+
+    if (!dil_string_prefix_element(string, ';')) {
+        dil_parse_error(string, source, "Expected `';'` in `Start`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse an output directive. */
@@ -193,10 +484,13 @@ bool dil_parse_directive_output(
         .symbol = DIL_SYMBOL_DIRECTIVE_OUTPUT,
         .value  = {.first = string->first}};
 
-    DilString const directive = dil_string_terminated("#output");
-    if (!dil_string_prefix_check(string, &directive)) {
-        return false;
+    {
+        DilString const terminals = dil_string_terminated("output");
+        if (!dil_string_prefix_check(string, &terminals)) {
+            return false;
+        }
     }
+
     dil_parse_skip(string);
 
     size_t index = dil_tree_size(builder->built);
@@ -204,19 +498,14 @@ bool dil_parse_directive_output(
     dil_builder_push(builder);
 
     if (!dil_parse_string(builder, string, source)) {
-        dil_parse_error(
-            string,
-            source,
-            "Expected file name in `#output` directive!");
+        dil_parse_error(string, source, "Expected `String` in `Output`!");
         goto end;
     }
+
     dil_parse_skip(string);
 
     if (!dil_string_prefix_element(string, ';')) {
-        dil_parse_error(
-            string,
-            source,
-            "Expected `;` to end the `#output` directive!");
+        dil_parse_error(string, source, "Expected `';'` in `Output`!");
         goto end;
     }
 
