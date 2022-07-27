@@ -95,8 +95,6 @@ bool dil_parse_terminal_any(DilBuilder* builder, DilString* string)
         return false;
     }
 
-    // string: "jflkdrsj"
-
     string->first++;
     dil_builder_add(builder, object);
     dil_tree_at(builder->built, index)->object.value.last = string->first;
@@ -153,7 +151,7 @@ bool dil_parse_escaped(
                     (void)sprintf_s(
                         buffer,
                         BUFFER_SIZE,
-                        "Expected one of `'%.*s'` in `Escaped`!",
+                        "Expected one of `%.*s` in `Escaped`!",
                         (int)dil_string_size(&SET_0),
                         SET_0.first);
                     dil_parse_error(string, source, buffer);
@@ -215,7 +213,7 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
                         (void)sprintf_s(
                             buffer,
                             BUFFER_SIZE,
-                            "Expected one of `'%.*s'` in `String`!",
+                            "Expected one of `%.*s` in `String`!",
                             (int)dil_string_size(&SET_0),
                             SET_0.first);
                         dil_parse_error(string, source, buffer);
@@ -237,7 +235,7 @@ bool dil_parse_string(DilBuilder* builder, DilString* string, DilSource* source)
     }
 
     if (!dil_string_prefix_element(string, '"')) {
-        dil_parse_error(string, source, "Expected `'\"'` in `String`!");
+        dil_parse_error(string, source, "Expected `\"` in `String`!");
         goto end;
     }
 
@@ -290,7 +288,7 @@ bool dil_parse_set(DilBuilder* builder, DilString* string, DilSource* source)
     while (dil_parse_escaped(builder, string, source)) {}
 
     if (!dil_string_prefix_element(string, '\'')) {
-        dil_parse_error(string, source, "Expected `'''` in `Set`!");
+        dil_parse_error(string, source, "Expected `'` in `Set`!");
         goto end;
     }
 
@@ -345,15 +343,14 @@ bool dil_parse_literal(
 /* Try to parse a number. */
 bool dil_parse_number(DilBuilder* builder, DilString* string)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_NUMBER,
-        .value  = {.first = string->first}};
+    DilString const SET_0  = dil_string_terminated("123456789");
+    DilString const SET_1  = dil_string_terminated("0123456789");
+    DilObject       object = {
+              .symbol = DIL_SYMBOL_NUMBER,
+              .value  = {.first = string->first}};
 
-    {
-        DilString const set = dil_string_terminated("123456789");
-        if (!dil_string_prefix_set(string, &set)) {
-            return false;
-        }
+    if (!dil_string_prefix_set(string, &SET_0)) {
+        return false;
     }
 
     dil_parse_skip(string);
@@ -362,10 +359,7 @@ bool dil_parse_number(DilBuilder* builder, DilString* string)
     dil_builder_add(builder, object);
     dil_builder_push(builder);
 
-    {
-        DilString const set = dil_string_terminated("0123456789");
-        while (dil_string_prefix_set(string, &set)) {}
-    }
+    while (dil_string_prefix_set(string, &SET_1)) {}
 
     dil_builder_pop(builder);
     dil_tree_at(builder->built, index)->object.value.last = string->first;
@@ -402,7 +396,7 @@ bool dil_parse_group(DilBuilder* builder, DilString* string, DilSource* source)
         }
 
         if (!dil_string_prefix_element(string, ')')) {
-            dil_parse_error(string, source, "Expected `')'` in `Group`!");
+            dil_parse_error(string, source, "Expected `)` in `Group`!");
             goto end;
         }
 
@@ -618,7 +612,7 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
     dil_builder_push(builder);
 
     if (!dil_string_prefix_element(string, '=')) {
-        dil_parse_error(string, source, "Expected `'='` in `Rule`!");
+        dil_parse_error(string, source, "Expected `=` in `Rule`!");
         goto end;
     }
 
@@ -632,7 +626,7 @@ bool dil_parse_rule(DilBuilder* builder, DilString* string, DilSource* source)
     dil_parse_skip(string);
 
     if (!dil_string_prefix_element(string, ';')) {
-        dil_parse_error(string, source, "Expected `';'` in `Rule`!");
+        dil_parse_error(string, source, "Expected `;` in `Rule`!");
         goto end;
     }
 
@@ -648,15 +642,13 @@ bool dil_parse_directive_skip(
     DilString*  string,
     DilSource*  source)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_SKIP,
-        .value  = {.first = string->first}};
+    DilString const STRING_0 = dil_string_terminated("skip");
+    DilObject       object   = {
+                .symbol = DIL_SYMBOL_SKIP,
+                .value  = {.first = string->first}};
 
-    {
-        DilString const terminals = dil_string_terminated("skip");
-        if (!dil_string_prefix_check(string, &terminals)) {
-            return false;
-        }
+    if (!dil_string_prefix_check(string, &STRING_0)) {
+        return false;
     }
 
     dil_parse_skip(string);
@@ -673,7 +665,7 @@ bool dil_parse_directive_skip(
     dil_parse_skip(string);
 
     if (!dil_string_prefix_element(string, ';')) {
-        dil_parse_error(string, source, "Expected `';'` in `Skip`!");
+        dil_parse_error(string, source, "Expected `;` in `Skip`!");
         goto end;
     }
 
@@ -689,15 +681,13 @@ bool dil_parse_directive_start(
     DilString*  string,
     DilSource*  source)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_START,
-        .value  = {.first = string->first}};
+    DilString const STRING_0 = dil_string_terminated("start");
+    DilObject       object   = {
+                .symbol = DIL_SYMBOL_START,
+                .value  = {.first = string->first}};
 
-    {
-        DilString const terminals = dil_string_terminated("start");
-        if (!dil_string_prefix_check(string, &terminals)) {
-            return false;
-        }
+    if (!dil_string_prefix_check(string, &STRING_0)) {
+        return false;
     }
 
     dil_parse_skip(string);
@@ -714,7 +704,7 @@ bool dil_parse_directive_start(
     dil_parse_skip(string);
 
     if (!dil_string_prefix_element(string, ';')) {
-        dil_parse_error(string, source, "Expected `';'` in `Start`!");
+        dil_parse_error(string, source, "Expected `;` in `Start`!");
         goto end;
     }
 
@@ -730,15 +720,13 @@ bool dil_parse_directive_output(
     DilString*  string,
     DilSource*  source)
 {
-    DilObject object = {
-        .symbol = DIL_SYMBOL_OUTPUT,
-        .value  = {.first = string->first}};
+    DilString const STRING_0 = dil_string_terminated("output");
+    DilObject       object   = {
+                .symbol = DIL_SYMBOL_OUTPUT,
+                .value  = {.first = string->first}};
 
-    {
-        DilString const terminals = dil_string_terminated("output");
-        if (!dil_string_prefix_check(string, &terminals)) {
-            return false;
-        }
+    if (!dil_string_prefix_check(string, &STRING_0)) {
+        return false;
     }
 
     dil_parse_skip(string);
@@ -755,7 +743,7 @@ bool dil_parse_directive_output(
     dil_parse_skip(string);
 
     if (!dil_string_prefix_element(string, ';')) {
-        dil_parse_error(string, source, "Expected `';'` in `Output`!");
+        dil_parse_error(string, source, "Expected `;` in `Output`!");
         goto end;
     }
 
