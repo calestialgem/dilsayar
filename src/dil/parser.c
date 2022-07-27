@@ -247,18 +247,23 @@ void dil_parse(DilBuilder* builder, DilSource* source)
     dil_tree_add(
         builder->built,
         (DilNode){
-            .object = {.symbol = DIL_SYMBOL_START, .value = string}
+            .object = {
+                       .symbol = DIL_SYMBOL_START,
+                       .value  = {.first = string.first}}
     });
     dil_builder_push(builder);
 
-    bool parsed = true;
-    while (parsed) {
+    dil_parse_skip(&string);
+    while (dil_parse_statement(builder, &string, source)) {
         dil_parse_skip(&string);
-        parsed = dil_parse_statement(builder, &string, source);
     }
 
     dil_builder_pop(builder);
     dil_tree_at(builder->built, index)->object.value.last = string.first;
+
+    if (dil_string_finite(&string)) {
+        dil_parse_error(&string, source, "Unexpected characters in the file!");
+    }
 
     if (source->error != 0) {
         printf(
