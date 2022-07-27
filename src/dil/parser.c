@@ -102,6 +102,15 @@ bool dil_parse_terminal_any(DilBuilder* builder, DilString* string)
     return true;
 }
 
+/* Try to parse an identifier. */
+bool dil_parse_identifier(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return false;
+}
+
 /* Try to parse an escaped character. */
 bool dil_parse_escaped(
     DilBuilder* builder,
@@ -129,6 +138,15 @@ end:
     dil_builder_pop(builder);
     dil_tree_at(builder->built, index)->object.value.last = string->first;
     return true;
+}
+
+/* Try to parse a reference. */
+bool dil_parse_reference(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return dil_parse_identifier(builder, string, source);
 }
 
 /* Try to parse a string. */
@@ -159,9 +177,143 @@ end:
     return true;
 }
 
+/* Try to parse a all set. */
+bool dil_parse_all_set(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return false;
+}
+
+/* Try to parse a not set. */
+bool dil_parse_not_set(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return false;
+}
+
+/* Try to parse a set. */
+bool dil_parse_set(DilBuilder* builder, DilString* string, DilSource* source)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_SET,
+        .value  = {.first = string->first}};
+
+    if (!dil_string_prefix_element(string, '\'')) {
+        return false;
+    }
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    if (!dil_parse_escaped(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Escaped` in `Set`!");
+        goto end;
+    }
+
+    while (dil_parse_escaped(builder, string, source)) {}
+
+    if (!dil_string_prefix_element(string, '\'')) {
+        dil_parse_error(string, source, "Expected `'''` in `Set`!");
+        goto end;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
+/* Try to parse a literal. */
+bool dil_parse_literal(
+    DilBuilder* builder,
+    DilString*  string,
+    DilSource*  source)
+{
+    return dil_parse_set(builder, string, source) ||
+           dil_parse_not_set(builder, string, source) ||
+           dil_parse_all_set(builder, string, source) ||
+           dil_parse_string(builder, string, source) ||
+           dil_parse_reference(builder, string, source);
+}
+
+/* Try to parse a number. */
+bool dil_parse_number(DilBuilder* builder, DilString* string)
+{
+    DilObject object = {
+        .symbol = DIL_SYMBOL_NUMBER,
+        .value  = {.first = string->first}};
+
+    {
+        DilString const set = dil_string_terminated("123456789");
+        if (!dil_string_prefix_set(string, &set)) {
+            return false;
+        }
+    }
+
+    dil_parse_skip(string);
+
+    size_t index = dil_tree_size(builder->built);
+    dil_builder_add(builder, object);
+    dil_builder_push(builder);
+
+    {
+        DilString const set = dil_string_terminated("0123456789");
+        while (dil_string_prefix_set(string, &set)) {}
+    }
+
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
+}
+
 /* Try to parse a group. */
 bool dil_parse_group(DilBuilder* builder, DilString* string, DilSource* source)
 {
+    DilObject object = {
+        .symbol = DIL_SYMBOL_GROUP,
+        .value  = {.first = string->first}};
+    size_t index = dil_tree_size(builder->built);
+
+    if (dil_parse_literal(builder, string, source)) {
+        dil_builder_add(builder, object);
+        dil_builder_push(builder);
+        goto end;
+    } else if (dil_string_prefix_element(string, '(')) {
+        dil_builder_add(builder, object);
+        dil_builder_push(builder);
+
+        dil_parse_skip(string);
+
+        if (!dil_parse_literal(builder, string, source)) {
+            dil_parse_error(string, source, "Expected `Literal` in `Group`!");
+            goto end;
+        }
+
+        dil_parse_skip(string);
+
+        while (dil_parse_literal(builder, string, source)) {
+            dil_parse_skip(string);
+        }
+
+        if (!dil_string_prefix_element(string, ')')) {
+            dil_parse_error(string, source, "Expected `')'` in `Group`!");
+            goto end;
+        }
+
+        goto end;
+    } else {
+        return false;
+    }
+
+end:
+    dil_builder_pop(builder);
+    dil_tree_at(builder->built, index)->object.value.last = string->first;
+    return true;
 }
 
 /* Try to parse a fixed times. */
@@ -174,11 +326,8 @@ bool dil_parse_fixed_times(
         .symbol = DIL_SYMBOL_FIXED_TIMES,
         .value  = {.first = string->first}};
 
-    {
-        DilString const terminals = dil_string_terminated("123456789");
-        if (!dil_string_prefix_set(string, &terminals)) {
-            return false;
-        }
+    if (!dil_parse_number(builder, string)) {
+        return false;
     }
 
     dil_parse_skip(string);
@@ -187,9 +336,9 @@ bool dil_parse_fixed_times(
     dil_builder_add(builder, object);
     dil_builder_push(builder);
 
-    {
-        DilString const terminals = dil_string_terminated("0123456789");
-        while (dil_string_prefix_set(string, &terminals)) {}
+    if (!dil_parse_group(builder, string, source)) {
+        dil_parse_error(string, source, "Expected `Group` in `FixedTimes`!");
+        goto end;
     }
 
 end:
@@ -399,7 +548,7 @@ bool dil_parse_directive_skip(
     DilSource*  source)
 {
     DilObject object = {
-        .symbol = DIL_SYMBOL_DIRECTIVE_SKIP,
+        .symbol = DIL_SYMBOL_SKIP,
         .value  = {.first = string->first}};
 
     {
@@ -440,7 +589,7 @@ bool dil_parse_directive_start(
     DilSource*  source)
 {
     DilObject object = {
-        .symbol = DIL_SYMBOL_DIRECTIVE_START,
+        .symbol = DIL_SYMBOL_START,
         .value  = {.first = string->first}};
 
     {
@@ -481,7 +630,7 @@ bool dil_parse_directive_output(
     DilSource*  source)
 {
     DilObject object = {
-        .symbol = DIL_SYMBOL_DIRECTIVE_OUTPUT,
+        .symbol = DIL_SYMBOL_OUTPUT,
         .value  = {.first = string->first}};
 
     {
@@ -537,7 +686,7 @@ void dil_parse(DilBuilder* builder, DilSource* source)
         builder->built,
         (DilNode){
             .object = {
-                       .symbol = DIL_SYMBOL_START,
+                       .symbol = DIL_SYMBOL__START,
                        .value  = {.first = string.first}}
     });
     dil_builder_push(builder);
