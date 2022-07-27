@@ -21,7 +21,7 @@ Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;
 Optional   = '?' Group;
 ZeroOrMore = '*' Group;
 OneOrMore  = '+' Group;
-FixedTimes = '1~9' +'0~9' Group;
+FixedTimes = '1~9' *'0~9' Group;
 
 Group = Literal | '(' +Literal ')';
 
