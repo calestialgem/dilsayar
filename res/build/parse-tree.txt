@@ -6,420 +6,51 @@ __Start__
 |   
 +- Start {start *Statement;}
 |   |   
-|   +- Pattern {*Statement}
+|   +- Zero Or More {*Statement}
 |   |   |   
-|   |   +- Justaposition {*Statement}
-|   |   |   |   
-|   |   |   +- Zero Or More {*Statement}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Statement}
-|   
-+- Skip {skip Whitespace | Comment;}
-|   |   
-|   +- Pattern {Whitespace | Comment}
-|   |   |   
-|   |   +- Justaposition {Whitespace }
-|   |   |   |   
-|   |   |   +- Identifier {Whitespace}
-|   |   |   
-|   |   +- Justaposition {Comment}
-|   |   |   |   
-|   |   |   +- Identifier {Comment}
-|   
-+- Rule {Statement = Output | Start | Skip | Terminal | Rule;}
-|   |   
-|   +- Identifier {Statement}
-|   +- Pattern {Output | Start | Skip | Terminal | Rule}
-|   |   |   
-|   |   +- Justaposition {Output }
-|   |   |   |   
-|   |   |   +- Identifier {Output}
-|   |   |   
-|   |   +- Justaposition {Start }
-|   |   |   |   
-|   |   |   +- Identifier {Start}
-|   |   |   
-|   |   +- Justaposition {Skip }
-|   |   |   |   
-|   |   |   +- Identifier {Skip}
-|   |   |   
-|   |   +- Justaposition {Terminal }
-|   |   |   |   
-|   |   |   +- Identifier {Terminal}
-|   |   |   
-|   |   +- Justaposition {Rule}
-|   |   |   |   
-|   |   |   +- Identifier {Rule}
-|   
-+- Rule {Output    = "output" String ';';}
-|   |   
-|   +- Identifier {Output}
-|   +- Pattern {"output" String ';'}
-|   |   |   
-|   |   +- Justaposition {"output" String ';'}
-|   |   |   |   
-|   |   |   +- String {"output"}
-|   |   |   +- Identifier {String}
-|   |   |   +- Set {';'}
-|   
-+- Rule {Start     = "start" Pattern ';';}
-|   |   
-|   +- Identifier {Start}
-|   +- Pattern {"start" Pattern ';'}
-|   |   |   
-|   |   +- Justaposition {"start" Pattern ';'}
-|   |   |   |   
-|   |   |   +- String {"start"}
-|   |   |   +- Identifier {Pattern}
-|   |   |   +- Set {';'}
-|   
-+- Rule {Skip      = "skip" ?Pattern ';';}
-|   |   
-|   +- Identifier {Skip}
-|   +- Pattern {"skip" ?Pattern ';'}
-|   |   |   
-|   |   +- Justaposition {"skip" ?Pattern ';'}
-|   |   |   |   
-|   |   |   +- String {"skip"}
-|   |   |   +- Optional {?Pattern}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Pattern}
-|   |   |   |   
-|   |   |   +- Set {';'}
-|   
-+- Rule {Terminal  = "terminal" ';';}
-|   |   
-|   +- Identifier {Terminal}
-|   +- Pattern {"terminal" ';'}
-|   |   |   
-|   |   +- Justaposition {"terminal" ';'}
-|   |   |   |   
-|   |   |   +- String {"terminal"}
-|   |   |   +- Set {';'}
-|   
-+- Rule {Rule      = Identifier '=' Pattern ';';}
-|   |   
-|   +- Identifier {Rule}
-|   +- Pattern {Identifier '=' Pattern ';'}
-|   |   |   
-|   |   +- Justaposition {Identifier '=' Pattern ';'}
-|   |   |   |   
-|   |   |   +- Identifier {Identifier}
-|   |   |   +- Set {'='}
-|   |   |   +- Identifier {Pattern}
-|   |   |   +- Set {';'}
-|   
-+- Rule {Pattern = Justaposition *('|' Justaposition);}
-|   |   
-|   +- Identifier {Pattern}
-|   +- Pattern {Justaposition *('|' Justaposition)}
-|   |   |   
-|   |   +- Justaposition {Justaposition *('|' Justaposition)}
-|   |   |   |   
-|   |   |   +- Identifier {Justaposition}
-|   |   |   +- Zero Or More {*('|' Justaposition)}
-|   |   |   |   |   
-|   |   |   |   +- Group {('|' Justaposition)}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Pattern {'|' Justaposition}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Justaposition {'|' Justaposition}
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Set {'|'}
-|   |   |   |   |   |   |   +- Identifier {Justaposition}
-|   
-+- Rule {Justaposition = +Alternative;}
-|   |   
-|   +- Identifier {Justaposition}
-|   +- Pattern {+Alternative}
-|   |   |   
-|   |   +- Justaposition {+Alternative}
-|   |   |   |   
-|   |   |   +- One Or More {+Alternative}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Alternative}
-|   
-+- Rule {Alternative = Set
-            | NotSet
-            | String
-            | Reference
-            | Group
-            | FixedTimes
-            | OneOrMore
-            | ZeroOrMore
-            | Optional
-            ;}
-|   |   
-|   +- Identifier {Alternative}
-|   +- Pattern {Set
-            | NotSet
-            | String
-            | Reference
-            | Group
-            | FixedTimes
-            | OneOrMore
-            | ZeroOrMore
-            | Optional
-            }
-|   |   |   
-|   |   +- Justaposition {Set
-            }
-|   |   |   |   
-|   |   |   +- Identifier {Set}
-|   |   |   
-|   |   +- Justaposition {NotSet
-            }
-|   |   |   |   
-|   |   |   +- Identifier {NotSet}
-|   |   |   
-|   |   +- Justaposition {String
-            }
-|   |   |   |   
-|   |   |   +- Identifier {String}
-|   |   |   
-|   |   +- Justaposition {Reference
-            }
-|   |   |   |   
-|   |   |   +- Identifier {Reference}
-|   |   |   
-|   |   +- Justaposition {Group
-            }
-|   |   |   |   
-|   |   |   +- Identifier {Group}
-|   |   |   
-|   |   +- Justaposition {FixedTimes
-            }
-|   |   |   |   
-|   |   |   +- Identifier {FixedTimes}
-|   |   |   
-|   |   +- Justaposition {OneOrMore
-            }
-|   |   |   |   
-|   |   |   +- Identifier {OneOrMore}
-|   |   |   
-|   |   +- Justaposition {ZeroOrMore
-            }
-|   |   |   |   
-|   |   |   +- Identifier {ZeroOrMore}
-|   |   |   
-|   |   +- Justaposition {Optional
-            }
-|   |   |   |   
-|   |   |   +- Identifier {Optional}
-|   
-+- Rule {Optional     = '?' Alternative;}
-|   |   
-|   +- Identifier {Optional}
-|   +- Pattern {'?' Alternative}
-|   |   |   
-|   |   +- Justaposition {'?' Alternative}
-|   |   |   |   
-|   |   |   +- Set {'?'}
-|   |   |   +- Identifier {Alternative}
-|   
-+- Rule {ZeroOrMore   = '*' Alternative;}
-|   |   
-|   +- Identifier {ZeroOrMore}
-|   +- Pattern {'*' Alternative}
-|   |   |   
-|   |   +- Justaposition {'*' Alternative}
-|   |   |   |   
-|   |   |   +- Set {'*'}
-|   |   |   +- Identifier {Alternative}
-|   
-+- Rule {OneOrMore    = '+' Alternative;}
-|   |   
-|   +- Identifier {OneOrMore}
-|   +- Pattern {'+' Alternative}
-|   |   |   
-|   |   +- Justaposition {'+' Alternative}
-|   |   |   |   
-|   |   |   +- Set {'+'}
-|   |   |   +- Identifier {Alternative}
-|   
-+- Rule {FixedTimes   = Number Alternative;}
-|   |   
-|   +- Identifier {FixedTimes}
-|   +- Pattern {Number Alternative}
-|   |   |   
-|   |   +- Justaposition {Number Alternative}
-|   |   |   |   
-|   |   |   +- Identifier {Number}
-|   |   |   +- Identifier {Alternative}
-|   
-+- Rule {Group        = '(' +Pattern ')';}
-|   |   
-|   +- Identifier {Group}
-|   +- Pattern {'(' +Pattern ')'}
-|   |   |   
-|   |   +- Justaposition {'(' +Pattern ')'}
-|   |   |   |   
-|   |   |   +- Set {'('}
-|   |   |   +- One Or More {+Pattern}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Pattern}
-|   |   |   |   
-|   |   |   +- Set {')'}
-|   
-+- Rule {Reference    = Identifier;}
-|   |   
-|   +- Identifier {Reference}
-|   +- Pattern {Identifier}
-|   |   |   
-|   |   +- Justaposition {Identifier}
-|   |   |   |   
-|   |   |   +- Identifier {Identifier}
-|   
-+- Terminal {terminal;}
-+- Rule {String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';}
-|   |   
-|   +- Identifier {String}
-|   +- Pattern {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
-|   |   |   
-|   |   +- Justaposition {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
-|   |   |   |   
-|   |   |   +- Set {'"'}
-|   |   |   +- Zero Or More {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
-|   |   |   |   |   
-|   |   |   |   +- Group {('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"'}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\"') }
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Set {'\\'}
-|   |   |   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\"')}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\"'}
-|   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   +- Justaposition {2'0~9a~fA~F' }
-|   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   |   +- Number {2}
-|   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   +- Justaposition {'tn\\"'}
-|   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   +- Set {'tn\\"'}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Justaposition {!'\\"'}
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Not Set {!'\\"'}
-|   |   |   |   
-|   |   |   +- Set {'"'}
-|   
-+- Rule {NotSet = '!' Set;}
-|   |   
-|   +- Identifier {NotSet}
-|   +- Pattern {'!' Set}
-|   |   |   
-|   |   +- Justaposition {'!' Set}
-|   |   |   |   
-|   |   |   +- Set {'!'}
-|   |   |   +- Identifier {Set}
-|   
-+- Rule {Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';}
-|   |   
-|   +- Identifier {Set}
-|   +- Pattern {'\'' *(Escaped ?('\~' Escaped)) '\''}
-|   |   |   
-|   |   +- Justaposition {'\'' *(Escaped ?('\~' Escaped)) '\''}
-|   |   |   |   
-|   |   |   +- Set {'\''}
-|   |   |   +- Zero Or More {*(Escaped ?('\~' Escaped))}
-|   |   |   |   |   
-|   |   |   |   +- Group {(Escaped ?('\~' Escaped))}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Pattern {Escaped ?('\~' Escaped)}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Justaposition {Escaped ?('\~' Escaped)}
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Identifier {Escaped}
-|   |   |   |   |   |   |   +- Optional {?('\~' Escaped)}
-|   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   +- Group {('\~' Escaped)}
-|   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   +- Pattern {'\~' Escaped}
-|   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   +- Justaposition {'\~' Escaped}
-|   |   |   |   |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   |   |   |   |   +- Set {'\~'}
-|   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
-|   |   |   |   
-|   |   |   +- Set {'\''}
-|   
-+- Rule {Number     = '1~9' *'0~9';}
-|   |   
-|   +- Identifier {Number}
-|   +- Pattern {'1~9' *'0~9'}
-|   |   |   
-|   |   +- Justaposition {'1~9' *'0~9'}
-|   |   |   |   
-|   |   |   +- Set {'1~9'}
-|   |   |   +- Zero Or More {*'0~9'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'0~9'}
-|   
-+- Rule {Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';}
-|   |   
-|   +- Identifier {Escaped}
-|   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~'}
-|   |   |   
-|   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') }
-|   |   |   |   
-|   |   |   +- Set {'\\'}
-|   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\\'\~')}
-|   |   |   |   |   
-|   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\\'\~'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Justaposition {2'0~9a~fA~F' }
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Number {2}
-|   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Justaposition {'tn\\\'\~'}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Set {'tn\\\'\~'}
-|   |   |   
-|   |   +- Justaposition {!'\\\'\~'}
-|   |   |   |   
-|   |   |   +- Not Set {!'\\\'\~'}
-|   
-+- Rule {Identifier = 'A~Z' *'a~zA~Z';}
-|   |   
-|   +- Identifier {Identifier}
-|   +- Pattern {'A~Z' *'a~zA~Z'}
-|   |   |   
-|   |   +- Justaposition {'A~Z' *'a~zA~Z'}
-|   |   |   |   
-|   |   |   +- Set {'A~Z'}
-|   |   |   +- Zero Or More {*'a~zA~Z'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'a~zA~Z'}
-|   
-+- Rule {Whitespace = '\t\n ';}
-|   |   
-|   +- Identifier {Whitespace}
-|   +- Pattern {'\t\n '}
-|   |   |   
-|   |   +- Justaposition {'\t\n '}
-|   |   |   |   
-|   |   |   +- Set {'\t\n '}
-|   
-+- Rule {Comment    = "//" *!'\n' '\n';}
-|   |   
-|   +- Identifier {Comment}
-|   +- Pattern {"//" *!'\n' '\n'}
-|   |   |   
-|   |   +- Justaposition {"//" *!'\n' '\n'}
-|   |   |   |   
-|   |   |   +- String {"//"}
-|   |   |   +- Zero Or More {*!'\n'}
-|   |   |   |   |   
-|   |   |   |   +- Not Set {!'\n'}
-|   |   |   |   
-|   |   |   +- Set {'\n'}
+|   |   +- Identifier {Statement}
 
+Skip {skip Whitespace | Comment;
+
+Statement = Output | Start | Skip | Terminal | Rule;
+Output    = "output" String ';';
+Start     = "start" Pattern ';';
+Skip      = "skip" ?Pattern ';';
+Terminal  = "terminal" ';';
+Rule      = Identifier '=' Pattern ';';
+
+Pattern = Set
+        | NotSet
+        | String
+        | Reference
+        | Group
+        | FixedTimes
+        | OneOrMore
+        | ZeroOrMore
+        | Optional
+        | Justaposition
+        | Alternative
+        ;
+
+Alternative   = Pattern +('|' Pattern);
+Justaposition = +Pattern;
+Optional      = '?' Pattern;
+ZeroOrMore    = '*' Pattern;
+OneOrMore     = '+' Pattern;
+FixedTimes    = Number Pattern;
+Group         = '(' +Pattern ')';
+Reference     = Identifier;
+
+terminal;
+
+String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
+NotSet = '!' Set;
+Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';
+
+Number     = '1~9' *'0~9';
+Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';
+Identifier = 'A~Z' *'a~zA~Z';
+Whitespace = '\t\n ';
+Comment    = "//" *!'\n' '\n';
+様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様様����}
+|   

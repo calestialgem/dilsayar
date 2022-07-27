@@ -328,8 +328,6 @@ bool dil_parse_group(DilParseContext* context)
     dil_parse__return(true);
 }
 
-bool dil_parse_alternative(DilParseContext* context);
-
 /* Try to parse a fixed times. */
 bool dil_parse_fixed_times(DilParseContext* context)
 {
@@ -341,8 +339,8 @@ bool dil_parse_fixed_times(DilParseContext* context)
 
     dil_parse__skip(context);
 
-    if (!dil_parse_alternative(context)) {
-        dil_parse__error(context, "Expected `Alternative` in `FixedTimes`!");
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error(context, "Expected `Pattern` in `FixedTimes`!");
         dil_parse__return(false);
     }
 
@@ -360,8 +358,8 @@ bool dil_parse_one_or_more(DilParseContext* context)
 
     dil_parse__skip(context);
 
-    if (!dil_parse_alternative(context)) {
-        dil_parse__error(context, "Expected `Alternative` in `OneOrMore`!");
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error(context, "Expected `Pattern` in `OneOrMore`!");
         dil_parse__return(false);
     }
 
@@ -379,8 +377,8 @@ bool dil_parse_zero_or_more(DilParseContext* context)
 
     dil_parse__skip(context);
 
-    if (!dil_parse_alternative(context)) {
-        dil_parse__error(context, "Expected `Alternative` in `ZeroOrMore`!");
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error(context, "Expected `Pattern` in `ZeroOrMore`!");
         dil_parse__return(false);
     }
 
@@ -398,9 +396,27 @@ bool dil_parse_optional(DilParseContext* context)
 
     dil_parse__skip(context);
 
-    if (!dil_parse_alternative(context)) {
-        dil_parse__error(context, "Expected `Alternative` in `Optional`!");
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error(context, "Expected `Pattern` in `Optional`!");
         dil_parse__return(false);
+    }
+
+    dil_parse__return(true);
+}
+
+/* Try to parse a justaposition. */
+bool dil_parse_justaposition(DilParseContext* context)
+{
+    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION, false);
+
+    if (!dil_parse_pattern(context)) {
+        dil_parse__return(false);
+    }
+
+    dil_parse__skip(context);
+
+    while (dil_parse_pattern(context)) {
+        dil_parse__skip(context);
     }
 
     dil_parse__return(true);
@@ -409,25 +425,36 @@ bool dil_parse_optional(DilParseContext* context)
 /* Try to parse alternatives. */
 bool dil_parse_alternative(DilParseContext* context)
 {
-    return dil_parse_set(context) || dil_parse_not_set(context) ||
-           dil_parse_string(context) || dil_parse_reference(context) ||
-           dil_parse_group(context) || dil_parse_fixed_times(context) ||
-           dil_parse_one_or_more(context) || dil_parse_zero_or_more(context) ||
-           dil_parse_optional(context);
-}
+    dil_parse__create(DIL_SYMBOL_ALTERNATIVE, false);
 
-/* Try to parse a justaposition. */
-bool dil_parse_justaposition(DilParseContext* context)
-{
-    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION, false);
-
-    if (!dil_parse_alternative(context)) {
+    if (!dil_parse_pattern(context)) {
         dil_parse__return(false);
     }
 
     dil_parse__skip(context);
 
-    while (dil_parse_alternative(context)) {
+    if (!dil_string_prefix_element(context->string, '|')) {
+        dil_parse__error(context, "Expected `|` in `Alternative`!");
+        dil_parse__return(false);
+    }
+
+    dil_parse__skip(context);
+
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error(context, "Expected `Pattern` in `Alternative`!");
+        dil_parse__return(false);
+    }
+
+    dil_parse__skip(context);
+
+    while (dil_string_prefix_element(context->string, '|')) {
+        dil_parse__skip(context);
+
+        if (!dil_parse_pattern(context)) {
+            dil_parse__error(context, "Expected `Pattern` in `Alternative`!");
+            dil_parse__return(false);
+        }
+
         dil_parse__skip(context);
     }
 
@@ -437,26 +464,12 @@ bool dil_parse_justaposition(DilParseContext* context)
 /* Try to parse a pattern. */
 bool dil_parse_pattern(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_PATTERN, false);
-
-    if (!dil_parse_justaposition(context)) {
-        dil_parse__return(false);
-    }
-
-    dil_parse__skip(context);
-
-    while (dil_string_prefix_element(context->string, '|')) {
-        dil_parse__skip(context);
-
-        if (!dil_parse_justaposition(context)) {
-            dil_parse__error(context, "Expected `Justaposition` in `Pattern`!");
-            dil_parse__return(false);
-        }
-
-        dil_parse__skip(context);
-    }
-
-    dil_parse__return(true);
+    return dil_parse_set(context) || dil_parse_not_set(context) ||
+           dil_parse_string(context) || dil_parse_reference(context) ||
+           dil_parse_group(context) || dil_parse_fixed_times(context) ||
+           dil_parse_one_or_more(context) || dil_parse_zero_or_more(context) ||
+           dil_parse_optional(context) || dil_parse_justaposition(context) ||
+           dil_parse_alternative(context);
 }
 
 /* Try to parse a rule. */
