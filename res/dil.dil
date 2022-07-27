@@ -13,28 +13,33 @@ Start     = "start" Pattern ';'; // Pattern of start symbol.
 Skip      = "skip" ?Pattern ';'; // Pattern to skip between justapositioned.
 Rule      = Identifier '=' Pattern ';';
 
-Pattern = Alternative *('|' Alternative);
+Pattern = Set
+        | NotSet
+        | String
+        | Reference
+        | Group
+        | FixedTimes
+        | OneOrMore
+        | ZeroOrMore
+        | Optional
+        | Alternatives
+        ;
 
-// Justapositioned patterns combine to a single alternative.
-Alternative = +Repeat;
-
-Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;
-Optional   = '?' Group;
-ZeroOrMore = '*' Group;
-OneOrMore  = '+' Group;
-FixedTimes = Number Group;
-
-Group = Literal | '(' +Literal ')';
+Alternatives = Pattern '|' Pattern;
+Optional     = '?' Pattern;
+ZeroOrMore   = '*' Pattern;
+OneOrMore    = '+' Pattern;
+FixedTimes   = Number Pattern;
+Group        = '(' +Pattern ')';
+Reference    = Identifier;
 
 skip;
 
-Number = '1~9' *'0~9';
+String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
+NotSet = '!' Set;
+Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';
 
-Literal   = Set | NotSet | String | Reference;
-NotSet    = '!' Set;
-Set       = '\'' *(Escaped ?('\~' Escaped)) '\'';
-String    = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
-Reference = Identifier;
+Number = '1~9' *'0~9';
 
 // Backslash fallowed by two hex digits or;
 // tab, newline, backslash, single quote, and tilde.
