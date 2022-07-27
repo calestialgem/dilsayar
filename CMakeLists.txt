@@ -14,6 +14,7 @@ set(headers
     src/dil/indices.c
     src/dil/lib.c
     src/dil/object.c
+    src/dil/parsecontext.c
     src/dil/parser.c
     src/dil/source.c
     src/dil/string.c

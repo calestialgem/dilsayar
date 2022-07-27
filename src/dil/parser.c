@@ -6,6 +6,7 @@
 #include "dil/buffer.c"
 #include "dil/builder.c"
 #include "dil/object.c"
+#include "dil/parsecontext.c"
 #include "dil/source.c"
 #include "dil/string.c"
 #include "dil/tree.c"
@@ -13,18 +14,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
-
-/* Context of the parsing process. */
-typedef struct {
-    /* Builder to parse into. */
-    DilBuilder* builder;
-    /* Remaining source file contents. */
-    DilString* string;
-    /* Parsed source file. */
-    DilSource* source;
-    /* Stack depth further away from the last nonterminal. */
-    int depth;
-} DilParseContext;
 
 /* Macro for the start of a try-parse function. */
 #define dil_parse__create(SYMBOL, TERMINAL)                   \
@@ -615,37 +604,44 @@ bool dil_parse_statement(DilParseContext* context)
            dil_parse_rule(context);
 }
 
-/* Parses the start symbol. */
-void dil_parse(DilBuilder* builder, DilSource* source)
+/* Parses the __start__ symbol. */
+bool dil_parse__start(DilParseContext* context)
 {
-    DilString string = source->contents;
-
-    size_t index = dil_tree_size(builder->built);
     dil_tree_add(
-        builder->built,
+        context->builder->built,
         (DilNode){
             .object = {
                        .symbol = DIL_SYMBOL__START,
-                       .value  = {.first = string.first}}
+                       .value  = {.first = context->string->first}}
     });
-    dil_builder_push(builder);
+    dil_builder_push(context->builder);
+    dil_parse__skip(context);
+    while (dil_parse_statement(context)) {
+        dil_parse__skip(context);
+    }
 
+    dil_builder_parent(context->builder)->object.value.last =
+        context->string->first;
+    dil_builder_pop(context->builder);
+
+    if (dil_string_finite(context->string)) {
+        dil_parse__error(context, "Unexpected characters in the file!");
+        return false;
+    }
+
+    return true;
+}
+
+/* Parses the source file. */
+void dil_parse(DilBuilder* builder, DilSource* source)
+{
+    DilString       string  = source->contents;
     DilParseContext context = {
         .builder = builder,
         .string  = &string,
         .source  = source};
 
-    dil_parse__skip(&context);
-    while (dil_parse_statement(&context)) {
-        dil_parse__skip(&context);
-    }
-
-    dil_builder_pop(builder);
-    dil_tree_at(builder->built, index)->object.value.last = string.first;
-
-    if (dil_string_finite(&string)) {
-        dil_parse__error(&context, "Unexpected characters in the file!");
-    }
+    dil_parse__start(&context);
 
     if (source->error != 0) {
         printf(
