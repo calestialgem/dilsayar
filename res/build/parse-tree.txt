@@ -191,9 +191,10 @@ __Start__
 |   |   |   |   +- Terminal {g}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {;}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {;}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -233,9 +234,10 @@ __Start__
 |   |   |   |   +- Terminal {n}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {;}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {;}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -276,9 +278,10 @@ __Start__
 |   |   |   |   |   +- Terminal {n}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {;}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {;}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -314,9 +317,10 @@ __Start__
 |   |   |   |   +- Terminal {"}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {;}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {;}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -348,9 +352,11 @@ __Start__
 |   |   |   |   +- Terminal {r}
 |   |   |   |   
 |   |   |   +- Set {'='}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {=}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {=}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Identifier {Pattern}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {P}
@@ -362,9 +368,10 @@ __Start__
 |   |   |   |   +- Terminal {n}
 |   |   |   |   
 |   |   |   +- Set {';'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {;}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {;}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -412,9 +419,11 @@ __Start__
 |   |   |   |   |   |   +- Justaposition {'|' Justaposition}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Set {'|'}
-|   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   +- Terminal {|}
-|   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   +- Terminal {|}
+|   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Identifier {Justaposition}
 |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   +- Terminal {J}
@@ -663,9 +672,11 @@ __Start__
 |   |   +- Justaposition {'?' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'?'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {?}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {?}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {A}
@@ -703,9 +714,11 @@ __Start__
 |   |   +- Justaposition {'*' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'*'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {*}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {A}
@@ -742,9 +755,11 @@ __Start__
 |   |   +- Justaposition {'+' Alternative}
 |   |   |   |   
 |   |   |   +- Set {'+'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {+}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {+}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Identifier {Alternative}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {A}
@@ -822,9 +837,11 @@ __Start__
 |   |   +- Justaposition {'(' +Pattern ')'}
 |   |   |   |   
 |   |   |   +- Set {'('}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {(}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {(}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- One Or More {+Pattern}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {+}
@@ -839,9 +856,10 @@ __Start__
 |   |   |   |   |   +- Terminal {n}
 |   |   |   |   
 |   |   |   +- Set {')'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {)}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {)}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -901,9 +919,11 @@ __Start__
 |   |   +- Justaposition {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
 |   |   |   |   
 |   |   |   +- Set {'"'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {"}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {"}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Zero Or More {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
@@ -915,10 +935,12 @@ __Start__
 |   |   |   |   |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\"') }
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Set {'\\'}
-|   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\"')}
 |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   +- Terminal {(}
@@ -933,29 +955,31 @@ __Start__
 |   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {2}
 |   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {0}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {9}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {f}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {A}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {F}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {0}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {9}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {a}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {f}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {A}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {F}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
 |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   +- Terminal {|}
 |   |   |   |   |   |   |   |   |   +- Justaposition {'tn\\"'}
 |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   +- Set {'tn\\"'}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {"}
-|   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {t}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {n}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {"}
+|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
 |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   +- Terminal {)}
 |   |   |   |   |   |   |   
@@ -974,9 +998,10 @@ __Start__
 |   |   |   |   |   +- Terminal {)}
 |   |   |   |   
 |   |   |   +- Set {'"'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {"}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {"}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -997,9 +1022,11 @@ __Start__
 |   |   +- Justaposition {'!' Set}
 |   |   |   |   
 |   |   |   +- Set {'!'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {!}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {!}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Identifier {Set}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {S}
@@ -1022,10 +1049,12 @@ __Start__
 |   |   +- Justaposition {'\'' *(Escaped ?('\~' Escaped)) '\''}
 |   |   |   |   
 |   |   |   +- Set {'\''}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Zero Or More {*(Escaped ?('\~' Escaped))}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
@@ -1057,10 +1086,12 @@ __Start__
 |   |   |   |   |   |   |   |   |   |   +- Justaposition {'\~' Escaped}
 |   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Set {'\~'}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
 |   |   |   |   |   |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   |   |   |   |   |   +- Terminal {E}
@@ -1076,10 +1107,11 @@ __Start__
 |   |   |   |   |   +- Terminal {)}
 |   |   |   |   
 |   |   |   +- Set {'\''}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -1100,20 +1132,23 @@ __Start__
 |   |   +- Justaposition {'1~9' *'0~9'}
 |   |   |   |   
 |   |   |   +- Set {'1~9'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {1}
-|   |   |   +- Terminal {~}
-|   |   |   +- Terminal {9}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {1}
+|   |   |   |   +- Terminal {~}
+|   |   |   |   +- Terminal {9}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Zero Or More {*'0~9'}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
 |   |   |   |   +- Set {'0~9'}
-|   |   |   |   +- Terminal {'}
-|   |   |   |   +- Terminal {0}
-|   |   |   |   +- Terminal {~}
-|   |   |   |   +- Terminal {9}
-|   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   +- Terminal {0}
+|   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   +- Terminal {9}
+|   |   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -1135,10 +1170,12 @@ __Start__
 |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') }
 |   |   |   |   
 |   |   |   +- Set {'\\'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {'}
+|   |   |   |   
 |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\\'\~')}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {(}
@@ -1153,32 +1190,34 @@ __Start__
 |   |   |   |   |   |   |   |   +- Terminal {2}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
-|   |   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   |   +- Terminal {0}
-|   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   +- Terminal {9}
-|   |   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   +- Terminal {f}
-|   |   |   |   |   |   |   +- Terminal {A}
-|   |   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   |   +- Terminal {F}
-|   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   +- Terminal {0}
+|   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   +- Terminal {9}
+|   |   |   |   |   |   |   |   +- Terminal {a}
+|   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   +- Terminal {f}
+|   |   |   |   |   |   |   |   +- Terminal {A}
+|   |   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   |   +- Terminal {F}
+|   |   |   |   |   |   |   |   +- Terminal {'}
 |   |   |   |   |   |   
 |   |   |   |   |   +- Terminal {|}
 |   |   |   |   |   +- Justaposition {'tn\\\'\~'}
 |   |   |   |   |   |   |   
 |   |   |   |   |   |   +- Set {'tn\\\'\~'}
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   +- Terminal {t}
+|   |   |   |   |   |   |   +- Terminal {n}
+|   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   +- Terminal {\}
+|   |   |   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   |   |   +- Terminal {'}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {)}
 |   |   |   
@@ -1220,23 +1259,26 @@ __Start__
 |   |   +- Justaposition {'A~Z' *'a~zA~Z'}
 |   |   |   |   
 |   |   |   +- Set {'A~Z'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {A}
-|   |   |   +- Terminal {~}
-|   |   |   +- Terminal {Z}
-|   |   |   +- Terminal {'}
-|   |   |   +- Zero Or More {*'a~zA~Z'}
 |   |   |   |   |   
-|   |   |   |   +- Terminal {*}
-|   |   |   |   +- Set {'a~zA~Z'}
 |   |   |   |   +- Terminal {'}
-|   |   |   |   +- Terminal {a}
-|   |   |   |   +- Terminal {~}
-|   |   |   |   +- Terminal {z}
 |   |   |   |   +- Terminal {A}
 |   |   |   |   +- Terminal {~}
 |   |   |   |   +- Terminal {Z}
 |   |   |   |   +- Terminal {'}
+|   |   |   |   
+|   |   |   +- Zero Or More {*'a~zA~Z'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Set {'a~zA~Z'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   +- Terminal {a}
+|   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   +- Terminal {z}
+|   |   |   |   |   +- Terminal {A}
+|   |   |   |   |   +- Terminal {~}
+|   |   |   |   |   +- Terminal {Z}
+|   |   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -1261,13 +1303,14 @@ __Start__
 |   |   +- Justaposition {'\t\n '}
 |   |   |   |   
 |   |   |   +- Set {'\t\n '}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {t}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {n}
-|   |   |   +- Terminal { }
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {t}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {n}
+|   |   |   |   +- Terminal { }
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 |   
@@ -1307,10 +1350,11 @@ __Start__
 |   |   |   |   |   +- Terminal {'}
 |   |   |   |   
 |   |   |   +- Set {'\n'}
-|   |   |   +- Terminal {'}
-|   |   |   +- Terminal {\}
-|   |   |   +- Terminal {n}
-|   |   |   +- Terminal {'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {'}
+|   |   |   |   +- Terminal {\}
+|   |   |   |   +- Terminal {n}
+|   |   |   |   +- Terminal {'}
 |   |   
 |   +- Terminal {;}
 

@@ -28,12 +28,17 @@ void dil_builder_pop(DilBuilder* builder)
     dil_indices_remove(&builder->parents);
 }
 
+/* Pointer to the last pushed parent. */
+DilNode* dil_builder_parent(DilBuilder* builder)
+{
+    return dil_tree_at(builder->built, *dil_indices_finish(&builder->parents));
+}
+
 /* Add childeren to the last pushed object. */
 void dil_builder_add(DilBuilder* builder, DilObject object)
 {
     dil_tree_add(builder->built, (DilNode){.object = object});
-    dil_tree_at(builder->built, *dil_indices_finish(&builder->parents))
-        ->childeren++;
+    dil_builder_parent(builder)->childeren++;
 }
 
 /* Remove the parents. Keeps the memory. */

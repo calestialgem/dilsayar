@@ -24,33 +24,48 @@ typedef struct {
     DilSource* source;
     /* Whether adding childeren to currently built node is prohibited. */
     bool terminal;
+    /* Stack depth further away from the last nonterminal. */
+    int depth;
 } DilParseContext;
 
 /* Macro for the start of a try-parse function. */
-#define dil_parse__create(SYMBOL)                          \
-    size_t index = dil_tree_size(context->builder->built); \
-    dil_builder_add(                                       \
-        context->builder,                                  \
-        (DilObject){                                       \
-            .symbol = (SYMBOL),                            \
-            .value  = {.first = context->string->first}});  \
-    dil_builder_push(context->builder)
+#define dil_parse__create(SYMBOL, TERMINAL)                   \
+    char const* untouched = context->string->first;           \
+    context->terminal     = (TERMINAL);                       \
+    if (context->terminal) {                                  \
+        context->depth++;                                     \
+    }                                                         \
+    if (context->depth < 2) {                                 \
+        dil_builder_add(                                      \
+            context->builder,                                 \
+            (DilObject){                                      \
+                .symbol = (SYMBOL),                           \
+                .value  = {.first = context->string->first}}); \
+        dil_builder_push(context->builder);                   \
+    }
 
 /* Macro for the return of a try-parse function. */
-#define dil_parse__return(ACCEPT)                                        \
-    dil_builder_pop(context->builder);                                   \
-    if ((ACCEPT)) {                                                      \
-        dil_tree_at(context->builder->built, index)->object.value.last = \
-            context->string->first;                                      \
-        return true;                                                     \
-    }                                                                    \
-    context->string->first =                                             \
-        dil_tree_at(context->builder->built, index)->object.value.first; \
-    dil_tree_remove(context->builder->built);                            \
-    dil_tree_at(                                                         \
-        context->builder->built,                                         \
-        *dil_indices_finish(&context->builder->parents))                 \
-        ->childeren--;                                                   \
+#define dil_parse__return(ACCEPT)                                     \
+    if (context->terminal) {                                          \
+        context->depth--;                                             \
+    }                                                                 \
+    if ((ACCEPT)) {                                                   \
+        if (context->depth < 1) {                                     \
+            dil_builder_parent(context->builder)->object.value.last = \
+                context->string->first;                               \
+            dil_builder_pop(context->builder);                        \
+        }                                                             \
+        return true;                                                  \
+    }                                                                 \
+    context->string->first = untouched;                               \
+    if (context->depth < 1) {                                         \
+        dil_builder_pop(context->builder);                            \
+        dil_tree_remove(context->builder->built);                     \
+        dil_tree_at(                                                  \
+            context->builder->built,                                  \
+            *dil_indices_finish(&context->builder->parents))          \
+            ->childeren--;                                            \
+    }                                                                 \
     return false;
 
 /* Try to skip a comment. */
@@ -120,21 +135,21 @@ void dil_parse__error_set(DilParseContext* context, DilString const* set)
 /* Try to parse a specific terminal. */
 bool dil_parse__terminal(DilParseContext* context, char terminal)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL);
+    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
     dil_parse__return(dil_string_prefix_element(context->string, terminal));
 }
 
 /* Try to parse a set terminal. */
 bool dil_parse__terminal_set(DilParseContext* context, DilString const* set)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL);
+    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
     dil_parse__return(dil_string_prefix_set(context->string, set));
 }
 
 /* Try to parse a not set terminal. */
 bool dil_parse__terminal_not_set(DilParseContext* context, DilString const* set)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL);
+    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
     dil_parse__return(dil_string_prefix_not_set(context->string, set));
 }
 
@@ -143,14 +158,14 @@ bool dil_parse__terminal_string(
     DilParseContext* context,
     DilString const* terminals)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL);
+    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
     dil_parse__return(dil_string_prefix_check(context->string, terminals));
 }
 
 /* Try to parse an identifier. */
 bool dil_parse_identifier(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_IDENTIFIER);
+    dil_parse__create(DIL_SYMBOL_IDENTIFIER, false);
 
     DilString const SET_0 = dil_string_terminated("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     DilString const SET_1 = dil_string_terminated(
@@ -201,7 +216,7 @@ bool dil_parse_escaped__terminal(DilParseContext* context)
 /* Try to parse a number. */
 bool dil_parse_number(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_NUMBER);
+    dil_parse__create(DIL_SYMBOL_NUMBER, false);
 
     DilString const SET_0 = dil_string_terminated("123456789");
     DilString const SET_1 = dil_string_terminated("0123456789");
@@ -245,14 +260,14 @@ bool dil_parse_set__terminal(DilParseContext* context)
 /* Try to parse a set. */
 bool dil_parse_set(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_SET);
+    dil_parse__create(DIL_SYMBOL_SET, false);
     dil_parse__return(dil_parse_set__terminal(context));
 }
 
 /* Try to parse a not set. */
 bool dil_parse_not_set(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_NOT_SET);
+    dil_parse__create(DIL_SYMBOL_NOT_SET, false);
 
     if (!dil_parse__terminal(context, '!')) {
         dil_parse__return(false);
@@ -269,7 +284,7 @@ bool dil_parse_not_set(DilParseContext* context)
 /* Try to parse a string. */
 bool dil_parse_string(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_STRING);
+    dil_parse__create(DIL_SYMBOL_STRING, false);
 
     DilString const SET_0 = dil_string_terminated("0123456789abcdefABCDEF");
     DilString const SET_1 = dil_string_terminated("tn\\\"");
@@ -321,7 +336,7 @@ bool dil_parse_pattern(DilParseContext* context);
 /* Try to parse a group. */
 bool dil_parse_group(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_GROUP);
+    dil_parse__create(DIL_SYMBOL_GROUP, false);
 
     if (!dil_parse__terminal(context, '(')) {
         dil_parse__return(false);
@@ -353,7 +368,7 @@ bool dil_parse_alternative(DilParseContext* context);
 /* Try to parse a fixed times. */
 bool dil_parse_fixed_times(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_FIXED_TIMES);
+    dil_parse__create(DIL_SYMBOL_FIXED_TIMES, false);
 
     if (!dil_parse_number(context)) {
         dil_parse__return(false);
@@ -372,7 +387,7 @@ bool dil_parse_fixed_times(DilParseContext* context)
 /* Try to parse a one or more. */
 bool dil_parse_one_or_more(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ONE_OR_MORE);
+    dil_parse__create(DIL_SYMBOL_ONE_OR_MORE, false);
 
     if (!dil_parse__terminal(context, '+')) {
         dil_parse__return(false);
@@ -391,7 +406,7 @@ bool dil_parse_one_or_more(DilParseContext* context)
 /* Try to parse a zero or more. */
 bool dil_parse_zero_or_more(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ZERO_OR_MORE);
+    dil_parse__create(DIL_SYMBOL_ZERO_OR_MORE, false);
 
     if (!dil_parse__terminal(context, '*')) {
         dil_parse__return(false);
@@ -410,7 +425,7 @@ bool dil_parse_zero_or_more(DilParseContext* context)
 /* Try to parse a optional. */
 bool dil_parse_optional(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_OPTIONAL);
+    dil_parse__create(DIL_SYMBOL_OPTIONAL, false);
 
     if (!dil_parse__terminal(context, '?')) {
         dil_parse__return(false);
@@ -439,7 +454,7 @@ bool dil_parse_alternative(DilParseContext* context)
 /* Try to parse a justaposition. */
 bool dil_parse_justaposition(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION);
+    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION, false);
 
     if (!dil_parse_alternative(context)) {
         dil_parse__return(false);
@@ -457,7 +472,7 @@ bool dil_parse_justaposition(DilParseContext* context)
 /* Try to parse a pattern. */
 bool dil_parse_pattern(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_PATTERN);
+    dil_parse__create(DIL_SYMBOL_PATTERN, false);
 
     if (!dil_parse_justaposition(context)) {
         dil_parse__return(false);
@@ -482,7 +497,7 @@ bool dil_parse_pattern(DilParseContext* context)
 /* Try to parse a rule. */
 bool dil_parse_rule(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_RULE);
+    dil_parse__create(DIL_SYMBOL_RULE, false);
 
     if (!dil_parse_identifier(context)) {
         dil_parse__return(false);
@@ -515,7 +530,7 @@ bool dil_parse_rule(DilParseContext* context)
 /* Try to parse a terminal. */
 bool dil_parse_terminal(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL);
+    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
 
     DilString const TERMINALS_0 = dil_string_terminated("terminal");
 
@@ -536,7 +551,7 @@ bool dil_parse_terminal(DilParseContext* context)
 /* Try to parse a skip. */
 bool dil_parse_skip(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_SKIP);
+    dil_parse__create(DIL_SYMBOL_SKIP, false);
 
     DilString const TERMINALS_0 = dil_string_terminated("skip");
 
@@ -561,7 +576,7 @@ bool dil_parse_skip(DilParseContext* context)
 /* Try to parse a start. */
 bool dil_parse_start(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_START);
+    dil_parse__create(DIL_SYMBOL_START, false);
 
     DilString const TERMINALS_0 = dil_string_terminated("start");
 
@@ -589,7 +604,7 @@ bool dil_parse_start(DilParseContext* context)
 /* Try to parse an output. */
 bool dil_parse_output(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_OUTPUT);
+    dil_parse__create(DIL_SYMBOL_OUTPUT, false);
 
     DilString const TERMINALS_0 = dil_string_terminated("output");
 
