@@ -29,6 +29,7 @@
         dil_tree_at(builder->built, index)->object.value.last = string->first; \
         return true;                                                           \
     }                                                                          \
+    string->first = dil_tree_at(builder->built, index)->object.value.first;    \
     dil_tree_remove(builder->built);                                           \
     dil_tree_at(builder->built, *dil_indices_finish(&builder->parents))        \
         ->childeren--;                                                         \
