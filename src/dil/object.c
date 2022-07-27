@@ -14,25 +14,23 @@ typedef enum {
     DIL_SYMBOL_OUTPUT,
     DIL_SYMBOL_START,
     DIL_SYMBOL_SKIP,
+    DIL_SYMBOL_TERMINAL,
     DIL_SYMBOL_RULE,
     DIL_SYMBOL_PATTERN,
-    DIL_SYMBOL_ALTERNATIVE,
+    DIL_SYMBOL_JUSTAPOSITION,
     DIL_SYMBOL_OPTIONAL,
     DIL_SYMBOL_ZERO_OR_MORE,
     DIL_SYMBOL_ONE_OR_MORE,
     DIL_SYMBOL_FIXED_TIMES,
     DIL_SYMBOL_GROUP,
-    DIL_SYMBOL_NUMBER,
-    DIL_SYMBOL_LITERAL,
-    DIL_SYMBOL_SET,
-    DIL_SYMBOL_NOT_SET,
     DIL_SYMBOL_STRING,
-    DIL_SYMBOL_REFERENCE,
+    DIL_SYMBOL_NOT_SET,
+    DIL_SYMBOL_SET,
+    DIL_SYMBOL_NUMBER,
     DIL_SYMBOL_ESCAPED,
     DIL_SYMBOL_IDENTIFIER,
     DIL_SYMBOL_WHITESPACE,
-    DIL_SYMBOL_COMMENT,
-    DIL_SYMBOL_TERMINAL
+    DIL_SYMBOL_COMMENT
 } DilSymbol;
 
 typedef struct {
@@ -59,12 +57,14 @@ char const* dil_object_format(DilSymbol symbol)
             return "Start {%.*s}";
         case DIL_SYMBOL_SKIP:
             return "Skip {%.*s}";
+        case DIL_SYMBOL_TERMINAL:
+            return "Terminal {%.*s}";
         case DIL_SYMBOL_RULE:
             return "Rule {%.*s}";
         case DIL_SYMBOL_PATTERN:
             return "Pattern {%.*s}";
-        case DIL_SYMBOL_ALTERNATIVE:
-            return "Alternative {%.*s}";
+        case DIL_SYMBOL_JUSTAPOSITION:
+            return "Justaposition {%.*s}";
         case DIL_SYMBOL_OPTIONAL:
             return "Optional {%.*s}";
         case DIL_SYMBOL_ZERO_OR_MORE:
@@ -75,18 +75,14 @@ char const* dil_object_format(DilSymbol symbol)
             return "Fixed Times {%.*s}";
         case DIL_SYMBOL_GROUP:
             return "Group {%.*s}";
-        case DIL_SYMBOL_NUMBER:
-            return "Number {%.*s}";
-        case DIL_SYMBOL_LITERAL:
-            return "Literal {%.*s}";
-        case DIL_SYMBOL_SET:
-            return "Set {%.*s}";
-        case DIL_SYMBOL_NOT_SET:
-            return "Not Set {%.*s}";
         case DIL_SYMBOL_STRING:
             return "String {%.*s}";
-        case DIL_SYMBOL_REFERENCE:
-            return "Reference {%.*s}";
+        case DIL_SYMBOL_NOT_SET:
+            return "Not Set {%.*s}";
+        case DIL_SYMBOL_SET:
+            return "Set {%.*s}";
+        case DIL_SYMBOL_NUMBER:
+            return "Number {%.*s}";
         case DIL_SYMBOL_ESCAPED:
             return "Escaped {%.*s}";
         case DIL_SYMBOL_IDENTIFIER:
@@ -95,8 +91,6 @@ char const* dil_object_format(DilSymbol symbol)
             return "Whitespace {%.*s}";
         case DIL_SYMBOL_COMMENT:
             return "Comment {%.*s}";
-        case DIL_SYMBOL_TERMINAL:
-            return "Terminal {%.*s}";
         default:
             return "Unknown !{%.*s}";
     }

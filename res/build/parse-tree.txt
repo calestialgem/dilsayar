@@ -4,19 +4,19 @@ __Start__
 |   |   
 |   +- Terminal {output}
 |   +- String {"dilsayar.c"}
+|   +- Terminal {;}
+|   
++- Start {start *Statement;}
+|   |   
+|   +- Terminal {start}
+|   +- Pattern {*Statement}
 |   |   |   
-|   |   +- Terminal {"}
-|   |   +- Terminal {d}
-|   |   +- Terminal {i}
-|   |   +- Terminal {l}
-|   |   +- Terminal {s}
-|   |   +- Terminal {a}
-|   |   +- Terminal {y}
-|   |   +- Terminal {a}
-|   |   +- Terminal {r}
-|   |   +- Terminal {.}
-|   |   +- Terminal {c}
-|   |   +- Terminal {"}
+|   |   +- Justaposition {*Statement}
+|   |   |   |   
+|   |   |   +- Zero Or More {*Statement}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Identifier {Statement}
 |   |   
 |   +- Terminal {;}
 |   
@@ -25,1013 +25,528 @@ __Start__
 |   +- Terminal {skip}
 |   +- Pattern {Whitespace | Comment}
 |   |   |   
-|   |   +- Alternative {Whitespace }
+|   |   +- Justaposition {Whitespace }
 |   |   |   |   
-|   |   |   +- Group {Whitespace}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Whitespace}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {W}
-|   |   |   |   |   +- Terminal {h}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {s}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {c}
-|   |   |   |   |   +- Terminal {e}
+|   |   |   +- Identifier {Whitespace}
 |   |   |   
 |   |   +- Terminal {|}
-|   |   +- Alternative {Comment}
+|   |   +- Justaposition {Comment}
 |   |   |   |   
-|   |   |   +- Group {Comment}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Comment}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {C}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {m}
-|   |   |   |   |   +- Terminal {m}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {t}
+|   |   |   +- Identifier {Comment}
 |   |   
 |   +- Terminal {;}
 |   
-+- Start {start *Statement;}
-|   |   
-|   +- Terminal {start}
-|   +- Pattern {*Statement}
-|   |   |   
-|   |   +- Alternative {*Statement}
-|   |   |   |   
-|   |   |   +- Zero Or More {*Statement}
-|   |   |   |   |   
-|   |   |   |   +- Terminal {*}
-|   |   |   |   +- Group {Statement}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Identifier {Statement}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {m}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   
-|   +- Terminal {;}
-|   
-+- Rule {Statement = Output | Start | Skip | Rule;}
++- Rule {Statement = Output | Start | Skip | Terminal | Rule;}
 |   |   
 |   +- Identifier {Statement}
-|   |   |   
-|   |   +- Terminal {S}
-|   |   +- Terminal {t}
-|   |   +- Terminal {a}
-|   |   +- Terminal {t}
-|   |   +- Terminal {e}
-|   |   +- Terminal {m}
-|   |   +- Terminal {e}
-|   |   +- Terminal {n}
-|   |   +- Terminal {t}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {Output | Start | Skip | Rule}
+|   +- Pattern {Output | Start | Skip | Terminal | Rule}
 |   |   |   
-|   |   +- Alternative {Output }
+|   |   +- Justaposition {Output }
 |   |   |   |   
-|   |   |   +- Group {Output}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Output}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {O}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {t}
+|   |   |   +- Identifier {Output}
 |   |   |   
 |   |   +- Terminal {|}
-|   |   +- Alternative {Start }
+|   |   +- Justaposition {Start }
 |   |   |   |   
-|   |   |   +- Group {Start}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Start}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {t}
+|   |   |   +- Identifier {Start}
 |   |   |   
 |   |   +- Terminal {|}
-|   |   +- Alternative {Skip }
+|   |   +- Justaposition {Skip }
 |   |   |   |   
-|   |   |   +- Group {Skip}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Skip}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {k}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {p}
+|   |   |   +- Identifier {Skip}
 |   |   |   
 |   |   +- Terminal {|}
-|   |   +- Alternative {Rule}
+|   |   +- Justaposition {Terminal }
 |   |   |   |   
-|   |   |   +- Group {Rule}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Rule}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {R}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {l}
-|   |   |   |   |   +- Terminal {e}
+|   |   |   +- Identifier {Terminal}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {Rule}
+|   |   |   |   
+|   |   |   +- Identifier {Rule}
 |   |   
 |   +- Terminal {;}
 |   
 +- Rule {Output    = "output" String ';';}
 |   |   
 |   +- Identifier {Output}
-|   |   |   
-|   |   +- Terminal {O}
-|   |   +- Terminal {u}
-|   |   +- Terminal {t}
-|   |   +- Terminal {p}
-|   |   +- Terminal {u}
-|   |   +- Terminal {t}
-|   |   
 |   +- Terminal {=}
 |   +- Pattern {"output" String ';'}
 |   |   |   
-|   |   +- Alternative {"output" String ';'}
+|   |   +- Justaposition {"output" String ';'}
 |   |   |   |   
-|   |   |   +- Group {"output"}
-|   |   |   |   |   
-|   |   |   |   +- String {"output"}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   
-|   |   |   +- Group {String}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {String}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {g}
-|   |   |   |   
-|   |   |   +- Group {';'}
-|   |   |   |   |   
-|   |   |   |   +- Set {';'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {;}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {;}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- String {"output"}
+|   |   |   +- Identifier {String}
+|   |   |   +- Set {';'}
 |   |   
 |   +- Terminal {;}
 |   
 +- Rule {Start     = "start" Pattern ';';}
 |   |   
 |   +- Identifier {Start}
-|   |   |   
-|   |   +- Terminal {S}
-|   |   +- Terminal {t}
-|   |   +- Terminal {a}
-|   |   +- Terminal {r}
-|   |   +- Terminal {t}
-|   |   
 |   +- Terminal {=}
 |   +- Pattern {"start" Pattern ';'}
 |   |   |   
-|   |   +- Alternative {"start" Pattern ';'}
+|   |   +- Justaposition {"start" Pattern ';'}
 |   |   |   |   
-|   |   |   +- Group {"start"}
-|   |   |   |   |   
-|   |   |   |   +- String {"start"}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   |   +- Terminal {s}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   
-|   |   |   +- Group {Pattern}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Pattern}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {P}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   
-|   |   |   +- Group {';'}
-|   |   |   |   |   
-|   |   |   |   +- Set {';'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {;}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {;}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- String {"start"}
+|   |   |   +- Identifier {Pattern}
+|   |   |   +- Set {';'}
 |   |   
 |   +- Terminal {;}
 |   
 +- Rule {Skip      = "skip" ?Pattern ';';}
 |   |   
 |   +- Identifier {Skip}
-|   |   |   
-|   |   +- Terminal {S}
-|   |   +- Terminal {k}
-|   |   +- Terminal {i}
-|   |   +- Terminal {p}
-|   |   
 |   +- Terminal {=}
 |   +- Pattern {"skip" ?Pattern ';'}
 |   |   |   
-|   |   +- Alternative {"skip" ?Pattern ';'}
+|   |   +- Justaposition {"skip" ?Pattern ';'}
 |   |   |   |   
-|   |   |   +- Group {"skip"}
-|   |   |   |   |   
-|   |   |   |   +- String {"skip"}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   |   +- Terminal {s}
-|   |   |   |   |   +- Terminal {k}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {"}
-|   |   |   |   
+|   |   |   +- String {"skip"}
 |   |   |   +- Optional {?Pattern}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {?}
-|   |   |   |   +- Group {Pattern}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Identifier {Pattern}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {P}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   |   +- Terminal {n}
+|   |   |   |   +- Identifier {Pattern}
 |   |   |   |   
-|   |   |   +- Group {';'}
-|   |   |   |   |   
-|   |   |   |   +- Set {';'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {;}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {;}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- Set {';'}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Terminal  = "terminal" ';';}
+|   |   
+|   +- Identifier {Terminal}
+|   +- Terminal {=}
+|   +- Pattern {"terminal" ';'}
+|   |   |   
+|   |   +- Justaposition {"terminal" ';'}
+|   |   |   |   
+|   |   |   +- String {"terminal"}
+|   |   |   +- Set {';'}
 |   |   
 |   +- Terminal {;}
 |   
 +- Rule {Rule      = Identifier '=' Pattern ';';}
 |   |   
 |   +- Identifier {Rule}
-|   |   |   
-|   |   +- Terminal {R}
-|   |   +- Terminal {u}
-|   |   +- Terminal {l}
-|   |   +- Terminal {e}
-|   |   
 |   +- Terminal {=}
 |   +- Pattern {Identifier '=' Pattern ';'}
 |   |   |   
-|   |   +- Alternative {Identifier '=' Pattern ';'}
+|   |   +- Justaposition {Identifier '=' Pattern ';'}
 |   |   |   |   
-|   |   |   +- Group {Identifier}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Identifier}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {I}
-|   |   |   |   |   +- Terminal {d}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {f}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   
-|   |   |   +- Group {'='}
-|   |   |   |   |   
-|   |   |   |   +- Set {'='}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {=}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {=}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Group {Pattern}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Pattern}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {P}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   
-|   |   |   +- Group {';'}
-|   |   |   |   |   
-|   |   |   |   +- Set {';'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {;}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {;}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- Identifier {Identifier}
+|   |   |   +- Set {'='}
+|   |   |   +- Identifier {Pattern}
+|   |   |   +- Set {';'}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Pattern = Alternative *('|' Alternative);}
++- Rule {Pattern = Justaposition *('|' Justaposition);}
 |   |   
 |   +- Identifier {Pattern}
-|   |   |   
-|   |   +- Terminal {P}
-|   |   +- Terminal {a}
-|   |   +- Terminal {t}
-|   |   +- Terminal {t}
-|   |   +- Terminal {e}
-|   |   +- Terminal {r}
-|   |   +- Terminal {n}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {Alternative *('|' Alternative)}
+|   +- Pattern {Justaposition *('|' Justaposition)}
 |   |   |   
-|   |   +- Alternative {Alternative *('|' Alternative)}
+|   |   +- Justaposition {Justaposition *('|' Justaposition)}
 |   |   |   |   
-|   |   |   +- Group {Alternative}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Alternative}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {A}
-|   |   |   |   |   +- Terminal {l}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {v}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   
-|   |   |   +- Zero Or More {*('|' Alternative)}
+|   |   |   +- Identifier {Justaposition}
+|   |   |   +- Zero Or More {*('|' Justaposition)}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
-|   |   |   |   +- Group {('|' Alternative)}
+|   |   |   |   +- Group {('|' Justaposition)}
 |   |   |   |   |   |   
 |   |   |   |   |   +- Terminal {(}
-|   |   |   |   |   +- Set {'|'}
+|   |   |   |   |   +- Pattern {'|' Justaposition}
 |   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   +- Escaped {|}
+|   |   |   |   |   |   +- Justaposition {'|' Justaposition}
 |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Terminal {|}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Identifier {Alternative}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {A}
-|   |   |   |   |   |   +- Terminal {l}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   |   +- Terminal {v}
-|   |   |   |   |   |   +- Terminal {e}
+|   |   |   |   |   |   |   +- Set {'|'}
+|   |   |   |   |   |   |   +- Identifier {Justaposition}
 |   |   |   |   |   |   
 |   |   |   |   |   +- Terminal {)}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Alternative = +Repeat;}
++- Rule {Justaposition = +Alternative;}
+|   |   
+|   +- Identifier {Justaposition}
+|   +- Terminal {=}
+|   +- Pattern {+Alternative}
+|   |   |   
+|   |   +- Justaposition {+Alternative}
+|   |   |   |   
+|   |   |   +- One Or More {+Alternative}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {+}
+|   |   |   |   +- Identifier {Alternative}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Alternative = Set
+            | NotSet
+            | String
+            | Reference
+            | Group
+            | FixedTimes
+            | OneOrMore
+            | ZeroOrMore
+            | Optional
+            ;}
 |   |   
 |   +- Identifier {Alternative}
-|   |   |   
-|   |   +- Terminal {A}
-|   |   +- Terminal {l}
-|   |   +- Terminal {t}
-|   |   +- Terminal {e}
-|   |   +- Terminal {r}
-|   |   +- Terminal {n}
-|   |   +- Terminal {a}
-|   |   +- Terminal {t}
-|   |   +- Terminal {i}
-|   |   +- Terminal {v}
-|   |   +- Terminal {e}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {+Repeat}
+|   +- Pattern {Set
+            | NotSet
+            | String
+            | Reference
+            | Group
+            | FixedTimes
+            | OneOrMore
+            | ZeroOrMore
+            | Optional
+            }
 |   |   |   
-|   |   +- Alternative {+Repeat}
+|   |   +- Justaposition {Set
+            }
 |   |   |   |   
-|   |   |   +- One Or More {+Repeat}
-|   |   |   |   |   
-|   |   |   |   +- Terminal {+}
-|   |   |   |   +- Group {Repeat}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Identifier {Repeat}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {R}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {t}
+|   |   |   +- Identifier {Set}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {NotSet
+            }
+|   |   |   |   
+|   |   |   +- Identifier {NotSet}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {String
+            }
+|   |   |   |   
+|   |   |   +- Identifier {String}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {Reference
+            }
+|   |   |   |   
+|   |   |   +- Identifier {Reference}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {Group
+            }
+|   |   |   |   
+|   |   |   +- Identifier {Group}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {FixedTimes
+            }
+|   |   |   |   
+|   |   |   +- Identifier {FixedTimes}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {OneOrMore
+            }
+|   |   |   |   
+|   |   |   +- Identifier {OneOrMore}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {ZeroOrMore
+            }
+|   |   |   |   
+|   |   |   +- Identifier {ZeroOrMore}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {Optional
+            }
+|   |   |   |   
+|   |   |   +- Identifier {Optional}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Repeat     = Group | Optional | ZeroOrMore | OneOrMore | FixedTimes;}
-|   |   
-|   +- Identifier {Repeat}
-|   |   |   
-|   |   +- Terminal {R}
-|   |   +- Terminal {e}
-|   |   +- Terminal {p}
-|   |   +- Terminal {e}
-|   |   +- Terminal {a}
-|   |   +- Terminal {t}
-|   |   
-|   +- Terminal {=}
-|   +- Pattern {Group | Optional | ZeroOrMore | OneOrMore | FixedTimes}
-|   |   |   
-|   |   +- Alternative {Group }
-|   |   |   |   
-|   |   |   +- Group {Group}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Group}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {G}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {Optional }
-|   |   |   |   
-|   |   |   +- Group {Optional}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Optional}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {O}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {l}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {ZeroOrMore }
-|   |   |   |   
-|   |   |   +- Group {ZeroOrMore}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {ZeroOrMore}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {Z}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {O}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {M}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {OneOrMore }
-|   |   |   |   
-|   |   |   +- Group {OneOrMore}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {OneOrMore}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {O}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {O}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {M}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {FixedTimes}
-|   |   |   |   
-|   |   |   +- Group {FixedTimes}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {FixedTimes}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {F}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {x}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {d}
-|   |   |   |   |   +- Terminal {T}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {m}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {s}
-|   |   
-|   +- Terminal {;}
-|   
-+- Rule {Optional   = '?' Group;}
++- Rule {Optional     = '?' Alternative;}
 |   |   
 |   +- Identifier {Optional}
-|   |   |   
-|   |   +- Terminal {O}
-|   |   +- Terminal {p}
-|   |   +- Terminal {t}
-|   |   +- Terminal {i}
-|   |   +- Terminal {o}
-|   |   +- Terminal {n}
-|   |   +- Terminal {a}
-|   |   +- Terminal {l}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {'?' Group}
+|   +- Pattern {'?' Alternative}
 |   |   |   
-|   |   +- Alternative {'?' Group}
+|   |   +- Justaposition {'?' Alternative}
 |   |   |   |   
-|   |   |   +- Group {'?'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'?'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {?}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {?}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Group {Group}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Group}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {G}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {p}
+|   |   |   +- Set {'?'}
+|   |   |   +- Identifier {Alternative}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {ZeroOrMore = '*' Group;}
++- Rule {ZeroOrMore   = '*' Alternative;}
 |   |   
 |   +- Identifier {ZeroOrMore}
-|   |   |   
-|   |   +- Terminal {Z}
-|   |   +- Terminal {e}
-|   |   +- Terminal {r}
-|   |   +- Terminal {o}
-|   |   +- Terminal {O}
-|   |   +- Terminal {r}
-|   |   +- Terminal {M}
-|   |   +- Terminal {o}
-|   |   +- Terminal {r}
-|   |   +- Terminal {e}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {'*' Group}
+|   +- Pattern {'*' Alternative}
 |   |   |   
-|   |   +- Alternative {'*' Group}
+|   |   +- Justaposition {'*' Alternative}
 |   |   |   |   
-|   |   |   +- Group {'*'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'*'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {*}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {*}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Group {Group}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Group}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {G}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {p}
+|   |   |   +- Set {'*'}
+|   |   |   +- Identifier {Alternative}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {OneOrMore  = '+' Group;}
++- Rule {OneOrMore    = '+' Alternative;}
 |   |   
 |   +- Identifier {OneOrMore}
-|   |   |   
-|   |   +- Terminal {O}
-|   |   +- Terminal {n}
-|   |   +- Terminal {e}
-|   |   +- Terminal {O}
-|   |   +- Terminal {r}
-|   |   +- Terminal {M}
-|   |   +- Terminal {o}
-|   |   +- Terminal {r}
-|   |   +- Terminal {e}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {'+' Group}
+|   +- Pattern {'+' Alternative}
 |   |   |   
-|   |   +- Alternative {'+' Group}
+|   |   +- Justaposition {'+' Alternative}
 |   |   |   |   
-|   |   |   +- Group {'+'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'+'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {+}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {+}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Group {Group}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Group}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {G}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {p}
+|   |   |   +- Set {'+'}
+|   |   |   +- Identifier {Alternative}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {FixedTimes = Number Group;}
++- Rule {FixedTimes   = Number Alternative;}
 |   |   
 |   +- Identifier {FixedTimes}
-|   |   |   
-|   |   +- Terminal {F}
-|   |   +- Terminal {i}
-|   |   +- Terminal {x}
-|   |   +- Terminal {e}
-|   |   +- Terminal {d}
-|   |   +- Terminal {T}
-|   |   +- Terminal {i}
-|   |   +- Terminal {m}
-|   |   +- Terminal {e}
-|   |   +- Terminal {s}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {Number Group}
+|   +- Pattern {Number Alternative}
 |   |   |   
-|   |   +- Alternative {Number Group}
+|   |   +- Justaposition {Number Alternative}
 |   |   |   |   
-|   |   |   +- Group {Number}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Number}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {N}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {m}
-|   |   |   |   |   +- Terminal {b}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   
-|   |   |   +- Group {Group}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Group}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {G}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {u}
-|   |   |   |   |   +- Terminal {p}
+|   |   |   +- Identifier {Number}
+|   |   |   +- Identifier {Alternative}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Group = Literal | '(' +Literal ')';}
++- Rule {Group        = '(' +Pattern ')';}
 |   |   
 |   +- Identifier {Group}
-|   |   |   
-|   |   +- Terminal {G}
-|   |   +- Terminal {r}
-|   |   +- Terminal {o}
-|   |   +- Terminal {u}
-|   |   +- Terminal {p}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {Literal | '(' +Literal ')'}
+|   +- Pattern {'(' +Pattern ')'}
 |   |   |   
-|   |   +- Alternative {Literal }
+|   |   +- Justaposition {'(' +Pattern ')'}
 |   |   |   |   
-|   |   |   +- Group {Literal}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Literal}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {L}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {l}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {'(' +Literal ')'}
-|   |   |   |   
-|   |   |   +- Group {'('}
-|   |   |   |   |   
-|   |   |   |   +- Set {'('}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {(}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {(}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- One Or More {+Literal}
+|   |   |   +- Set {'('}
+|   |   |   +- One Or More {+Pattern}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {+}
-|   |   |   |   +- Group {Literal}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Identifier {Literal}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {L}
-|   |   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {l}
+|   |   |   |   +- Identifier {Pattern}
 |   |   |   |   
-|   |   |   +- Group {')'}
-|   |   |   |   |   
-|   |   |   |   +- Set {')'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {)}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {)}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- Set {')'}
 |   |   
 |   +- Terminal {;}
 |   
-+- Skip {skip;}
++- Rule {Reference    = Identifier;}
 |   |   
-|   +- Terminal {skip}
-|   +- Terminal {;}
-|   
-+- Rule {Number = '1~9' *'0~9';}
-|   |   
-|   +- Identifier {Number}
-|   |   |   
-|   |   +- Terminal {N}
-|   |   +- Terminal {u}
-|   |   +- Terminal {m}
-|   |   +- Terminal {b}
-|   |   +- Terminal {e}
-|   |   +- Terminal {r}
-|   |   
+|   +- Identifier {Reference}
 |   +- Terminal {=}
-|   +- Pattern {'1~9' *'0~9'}
+|   +- Pattern {Identifier}
 |   |   |   
-|   |   +- Alternative {'1~9' *'0~9'}
+|   |   +- Justaposition {Identifier}
 |   |   |   |   
-|   |   |   +- Group {'1~9'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'1~9'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {1}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {1}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   +- Escaped {9}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {9}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
+|   |   |   +- Identifier {Identifier}
+|   |   
+|   +- Terminal {;}
+|   
++- Terminal {terminal;}
+|   |   
+|   +- Terminal {terminal}
+|   +- Terminal {;}
+|   
++- Rule {String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';}
+|   |   
+|   +- Identifier {String}
+|   +- Terminal {=}
+|   +- Pattern {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
+|   |   |   
+|   |   +- Justaposition {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
 |   |   |   |   
-|   |   |   +- Zero Or More {*'0~9'}
+|   |   |   +- Set {'"'}
+|   |   |   +- Zero Or More {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
-|   |   |   |   +- Group {'0~9'}
+|   |   |   |   +- Group {('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
 |   |   |   |   |   |   
-|   |   |   |   |   +- Set {'0~9'}
+|   |   |   |   |   +- Terminal {(}
+|   |   |   |   |   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"'}
 |   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   +- Escaped {0}
+|   |   |   |   |   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\"') }
 |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Terminal {0}
+|   |   |   |   |   |   |   +- Set {'\\'}
+|   |   |   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\"')}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {(}
+|   |   |   |   |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Justaposition {2'0~9a~fA~F' }
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Number {2}
+|   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Terminal {|}
+|   |   |   |   |   |   |   |   |   +- Justaposition {'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Set {'tn\\"'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {)}
 |   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {~}
-|   |   |   |   |   |   +- Escaped {9}
+|   |   |   |   |   |   +- Terminal {|}
+|   |   |   |   |   |   +- Justaposition {!'\\"'}
 |   |   |   |   |   |   |   |   
-|   |   |   |   |   |   |   +- Terminal {9}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {'}
+|   |   |   |   |   |   |   +- Not Set {!'\\"'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Terminal {)}
+|   |   |   |   
+|   |   |   +- Set {'"'}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Literal   = Set | NotSet | String | Reference;}
-|   |   
-|   +- Identifier {Literal}
-|   |   |   
-|   |   +- Terminal {L}
-|   |   +- Terminal {i}
-|   |   +- Terminal {t}
-|   |   +- Terminal {e}
-|   |   +- Terminal {r}
-|   |   +- Terminal {a}
-|   |   +- Terminal {l}
-|   |   
-|   +- Terminal {=}
-|   +- Pattern {Set | NotSet | String | Reference}
-|   |   |   
-|   |   +- Alternative {Set }
-|   |   |   |   
-|   |   |   +- Group {Set}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Set}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {NotSet }
-|   |   |   |   
-|   |   |   +- Group {NotSet}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {NotSet}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {N}
-|   |   |   |   |   +- Terminal {o}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {String }
-|   |   |   |   
-|   |   |   +- Group {String}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {String}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {t}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {i}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {g}
-|   |   |   
-|   |   +- Terminal {|}
-|   |   +- Alternative {Reference}
-|   |   |   |   
-|   |   |   +- Group {Reference}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Reference}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {R}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {f}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {r}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {n}
-|   |   |   |   |   +- Terminal {c}
-|   |   |   |   |   +- Terminal {e}
-|   |   
-|   +- Terminal {;}
-|   
-+- Rule {NotSet    = '!' Set;}
++- Rule {NotSet = '!' Set;}
 |   |   
 |   +- Identifier {NotSet}
-|   |   |   
-|   |   +- Terminal {N}
-|   |   +- Terminal {o}
-|   |   +- Terminal {t}
-|   |   +- Terminal {S}
-|   |   +- Terminal {e}
-|   |   +- Terminal {t}
-|   |   
 |   +- Terminal {=}
 |   +- Pattern {'!' Set}
 |   |   |   
-|   |   +- Alternative {'!' Set}
+|   |   +- Justaposition {'!' Set}
 |   |   |   |   
-|   |   |   +- Group {'!'}
-|   |   |   |   |   
-|   |   |   |   +- Set {'!'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {!}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {!}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Group {Set}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Set}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {S}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {t}
+|   |   |   +- Set {'!'}
+|   |   |   +- Identifier {Set}
 |   |   
 |   +- Terminal {;}
 |   
-+- Rule {Set       = '\'' *(Escaped ?('\~' Escaped)) }
++- Rule {Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';}
 |   |   
 |   +- Identifier {Set}
-|   |   |   
-|   |   +- Terminal {S}
-|   |   +- Terminal {e}
-|   |   +- Terminal {t}
-|   |   
 |   +- Terminal {=}
-|   +- Pattern {'\'' *(Escaped ?('\~' Escaped}
+|   +- Pattern {'\'' *(Escaped ?('\~' Escaped)) '\''}
 |   |   |   
-|   |   +- Alternative {'\'' *(Escaped ?('\~' Escaped}
+|   |   +- Justaposition {'\'' *(Escaped ?('\~' Escaped)) '\''}
 |   |   |   |   
-|   |   |   +- Group {'\''}
-|   |   |   |   |   
-|   |   |   |   +- Set {'\''}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   +- Escaped {\'}
-|   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {\}
-|   |   |   |   |   |   +- Terminal {'}
-|   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {'}
-|   |   |   |   
-|   |   |   +- Zero Or More {*(Escaped ?('\~' }
+|   |   |   +- Set {'\''}
+|   |   |   +- Zero Or More {*(Escaped ?('\~' Escaped))}
 |   |   |   |   |   
 |   |   |   |   +- Terminal {*}
-|   |   |   |   +- Group {(Escaped ?('\~' }
+|   |   |   |   +- Group {(Escaped ?('\~' Escaped))}
 |   |   |   |   |   |   
 |   |   |   |   |   +- Terminal {(}
-|   |   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   +- Pattern {Escaped ?('\~' Escaped)}
 |   |   |   |   |   |   |   
-|   |   |   |   |   |   +- Terminal {E}
-|   |   |   |   |   |   +- Terminal {s}
-|   |   |   |   |   |   +- Terminal {c}
-|   |   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   |   +- Terminal {d}
-|   |   |   |   
-|   |   |   +- Group {Escaped}
-|   |   |   |   |   
-|   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   |   +- Justaposition {Escaped ?('\~' Escaped)}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   |   |   +- Optional {?('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Terminal {?}
+|   |   |   |   |   |   |   |   +- Group {('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Terminal {(}
+|   |   |   |   |   |   |   |   |   +- Pattern {'\~' Escaped}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Justaposition {'\~' Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Set {'\~'}
+|   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Terminal {)}
 |   |   |   |   |   |   
-|   |   |   |   |   +- Terminal {E}
-|   |   |   |   |   +- Terminal {s}
-|   |   |   |   |   +- Terminal {c}
-|   |   |   |   |   +- Terminal {a}
-|   |   |   |   |   +- Terminal {p}
-|   |   |   |   |   +- Terminal {e}
-|   |   |   |   |   +- Terminal {d}
+|   |   |   |   |   +- Terminal {)}
+|   |   |   |   
+|   |   |   +- Set {'\''}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Number     = '1~9' *'0~9';}
+|   |   
+|   +- Identifier {Number}
+|   +- Terminal {=}
+|   +- Pattern {'1~9' *'0~9'}
+|   |   |   
+|   |   +- Justaposition {'1~9' *'0~9'}
+|   |   |   |   
+|   |   |   +- Set {'1~9'}
+|   |   |   +- Zero Or More {*'0~9'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Set {'0~9'}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';}
+|   |   
+|   +- Identifier {Escaped}
+|   +- Terminal {=}
+|   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~'}
+|   |   |   
+|   |   +- Justaposition {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') }
+|   |   |   |   
+|   |   |   +- Set {'\\'}
+|   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\\'\~')}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {(}
+|   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\\'\~'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Justaposition {2'0~9a~fA~F' }
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Number {2}
+|   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Terminal {|}
+|   |   |   |   |   +- Justaposition {'tn\\\'\~'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Set {'tn\\\'\~'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {)}
+|   |   |   
+|   |   +- Terminal {|}
+|   |   +- Justaposition {!'\\\'\~'}
+|   |   |   |   
+|   |   |   +- Not Set {!'\\\'\~'}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Identifier = 'A~Z' *'a~zA~Z';}
+|   |   
+|   +- Identifier {Identifier}
+|   +- Terminal {=}
+|   +- Pattern {'A~Z' *'a~zA~Z'}
+|   |   |   
+|   |   +- Justaposition {'A~Z' *'a~zA~Z'}
+|   |   |   |   
+|   |   |   +- Set {'A~Z'}
+|   |   |   +- Zero Or More {*'a~zA~Z'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Set {'a~zA~Z'}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Whitespace = '\t\n ';}
+|   |   
+|   +- Identifier {Whitespace}
+|   +- Terminal {=}
+|   +- Pattern {'\t\n '}
+|   |   |   
+|   |   +- Justaposition {'\t\n '}
+|   |   |   |   
+|   |   |   +- Set {'\t\n '}
+|   |   
+|   +- Terminal {;}
+|   
++- Rule {Comment    = "//" *!'\n' '\n';}
+|   |   
+|   +- Identifier {Comment}
+|   +- Terminal {=}
+|   +- Pattern {"//" *!'\n' '\n'}
+|   |   |   
+|   |   +- Justaposition {"//" *!'\n' '\n'}
+|   |   |   |   
+|   |   |   +- String {"//"}
+|   |   |   +- Zero Or More {*!'\n'}
+|   |   |   |   |   
+|   |   |   |   +- Terminal {*}
+|   |   |   |   +- Not Set {!'\n'}
+|   |   |   |   
+|   |   |   +- Set {'\n'}
+|   |   
+|   +- Terminal {;}
 

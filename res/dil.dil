@@ -12,23 +12,25 @@ Skip      = "skip" ?Pattern ';';
 Terminal  = "terminal" ';';
 Rule      = Identifier '=' Pattern ';';
 
-Pattern = Set
-        | NotSet
-        | String
-        | Reference
-        | Group
-        | FixedTimes
-        | OneOrMore
-        | ZeroOrMore
-        | Optional
-        | Alternatives
-        ;
+Pattern = Justaposition *('|' Justaposition);
 
-Alternatives = Pattern '|' Pattern;
-Optional     = '?' Pattern;
-ZeroOrMore   = '*' Pattern;
-OneOrMore    = '+' Pattern;
-FixedTimes   = Number Pattern;
+Justaposition = +Alternative;
+
+Alternative = Set
+            | NotSet
+            | String
+            | Reference
+            | Group
+            | FixedTimes
+            | OneOrMore
+            | ZeroOrMore
+            | Optional
+            ;
+
+Optional     = '?' Alternative;
+ZeroOrMore   = '*' Alternative;
+OneOrMore    = '+' Alternative;
+FixedTimes   = Number Alternative;
 Group        = '(' +Pattern ')';
 Reference    = Identifier;
 
