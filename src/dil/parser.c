@@ -32,7 +32,6 @@ typedef struct {
     bool        terminal  = (TERMINAL);                       \
     if (terminal) {                                           \
         context->depth++;                                     \
-        printf("Entering Terminal: %d\n", context->depth);    \
     }                                                         \
     if (context->depth < 2) {                                 \
         dil_builder_add(                                      \
@@ -47,7 +46,6 @@ typedef struct {
 #define dil_parse__return(ACCEPT)                                     \
     if (terminal) {                                                   \
         context->depth--;                                             \
-        printf("Exiting Terminal: %d\n", context->depth);             \
     }                                                                 \
     if ((ACCEPT)) {                                                   \
         if (context->depth < 1) {                                     \
@@ -164,7 +162,7 @@ bool dil_parse_escaped(DilParseContext* context)
             for (size_t i = 0; i < 2 - 1; i++) {
                 if (!dil_string_prefix_set(context->string, &SET_0)) {
                     dil_parse__error_set(context, &SET_0);
-                    dil_parse__return(true);
+                    dil_parse__return(false);
                 }
             }
             dil_parse__return(true);
@@ -175,7 +173,7 @@ bool dil_parse_escaped(DilParseContext* context)
         }
 
         dil_parse__error(context, "Unexpected character in `Escaped`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     if (dil_string_prefix_not_set(context->string, &SET_2)) {
@@ -219,13 +217,13 @@ bool dil_parse_set(DilParseContext* context)
         }
         if (!dil_parse_escaped(context)) {
             dil_parse__error(context, "Expected `Escaped` in `Set`!");
-            dil_parse__return(true);
+            dil_parse__return(false);
         }
     }
 
     if (!dil_string_prefix_element(context->string, '\'')) {
         dil_parse__error(context, "Expected `'` in `Set`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -242,7 +240,7 @@ bool dil_parse_not_set(DilParseContext* context)
 
     if (!dil_parse_set(context)) {
         dil_parse__error(context, "Expected `Set` in `NotSet`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -267,7 +265,7 @@ bool dil_parse_string(DilParseContext* context)
                 for (size_t i = 0; i < 2 - 1; i++) {
                     if (!dil_string_prefix_set(context->string, &SET_0)) {
                         dil_parse__error_set(context, &SET_0);
-                        dil_parse__return(true);
+                        dil_parse__return(false);
                     }
                 }
                 continue;
@@ -276,7 +274,7 @@ bool dil_parse_string(DilParseContext* context)
                 continue;
             }
             dil_parse__error(context, "Unexpected character in `String`!");
-            dil_parse__return(true);
+            dil_parse__return(false);
         }
         if (dil_string_prefix_not_set(context->string, &SET_2)) {
             continue;
@@ -286,7 +284,7 @@ bool dil_parse_string(DilParseContext* context)
 
     if (!dil_string_prefix_element(context->string, '"')) {
         dil_parse__error(context, "Expected `\"` in `String`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -313,7 +311,7 @@ bool dil_parse_group(DilParseContext* context)
 
     if (!dil_parse_pattern(context)) {
         dil_parse__error(context, "Expected `Pattern` in `Group`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__skip(context);
@@ -324,7 +322,7 @@ bool dil_parse_group(DilParseContext* context)
 
     if (!dil_string_prefix_element(context->string, ')')) {
         dil_parse__error(context, "Expected `)` in `Group`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -345,7 +343,7 @@ bool dil_parse_fixed_times(DilParseContext* context)
 
     if (!dil_parse_alternative(context)) {
         dil_parse__error(context, "Expected `Alternative` in `FixedTimes`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -364,7 +362,7 @@ bool dil_parse_one_or_more(DilParseContext* context)
 
     if (!dil_parse_alternative(context)) {
         dil_parse__error(context, "Expected `Alternative` in `OneOrMore`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -383,7 +381,7 @@ bool dil_parse_zero_or_more(DilParseContext* context)
 
     if (!dil_parse_alternative(context)) {
         dil_parse__error(context, "Expected `Alternative` in `ZeroOrMore`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -402,7 +400,7 @@ bool dil_parse_optional(DilParseContext* context)
 
     if (!dil_parse_alternative(context)) {
         dil_parse__error(context, "Expected `Alternative` in `Optional`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -452,7 +450,7 @@ bool dil_parse_pattern(DilParseContext* context)
 
         if (!dil_parse_justaposition(context)) {
             dil_parse__error(context, "Expected `Justaposition` in `Pattern`!");
-            dil_parse__return(true);
+            dil_parse__return(false);
         }
 
         dil_parse__skip(context);
@@ -474,21 +472,21 @@ bool dil_parse_rule(DilParseContext* context)
 
     if (!dil_string_prefix_element(context->string, '=')) {
         dil_parse__error(context, "Expected `=` in `Rule`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__skip(context);
 
     if (!dil_parse_pattern(context)) {
         dil_parse__error(context, "Expected `Pattern` in `Rule`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__skip(context);
 
     if (!dil_string_prefix_element(context->string, ';')) {
         dil_parse__error(context, "Expected `;` in `Rule`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -509,7 +507,7 @@ bool dil_parse_terminal(DilParseContext* context)
 
     if (!dil_string_prefix_element(context->string, ';')) {
         dil_parse__error(context, "Expected `;` in `Skip`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -534,7 +532,7 @@ bool dil_parse_skip(DilParseContext* context)
 
     if (!dil_string_prefix_element(context->string, ';')) {
         dil_parse__error(context, "Expected `;` in `Skip`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -555,14 +553,14 @@ bool dil_parse_start(DilParseContext* context)
 
     if (!dil_parse_pattern(context)) {
         dil_parse__error(context, "Expected `Pattern` in `Start`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__skip(context);
 
     if (!dil_string_prefix_element(context->string, ';')) {
         dil_parse__error(context, "Expected `;` in `Start`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
@@ -583,14 +581,14 @@ bool dil_parse_output(DilParseContext* context)
 
     if (!dil_parse_string(context)) {
         dil_parse__error(context, "Expected `String` in `Output`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__skip(context);
 
     if (!dil_string_prefix_element(context->string, ';')) {
         dil_parse__error(context, "Expected `;` in `Output`!");
-        dil_parse__return(true);
+        dil_parse__return(false);
     }
 
     dil_parse__return(true);
