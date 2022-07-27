@@ -21,6 +21,32 @@
                 "showReuseMessage": false,
                 "clear": true
             }
+        },
+        {
+            "type": "shell",
+            "label": "lint (Windows)",
+            "command": "\"${workspaceFolder}\\build\\debug.exe\"",
+            "options": {
+                "cwd": "res"
+            },
+            "args": [
+                "dil.dil"
+            ],
+            "problemMatcher": {
+                "owner": "dilsayar",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/res"
+                ],
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
         }
     ]
 }
