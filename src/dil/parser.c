@@ -45,10 +45,10 @@ void dil_parse__return(DilParseContext* context)
 /* Try to skip a comment. */
 bool dil_parse__skip_comment(DilParseContext* context)
 {
-    DilString const TERMINALS_0 = dil_string_terminated("//");
-    DilString const SET_0       = dil_string_terminated("\n");
+    DilString const STRING_0 = dil_string_terminated("//");
+    DilString const SET_0    = dil_string_terminated("\n");
 
-    if (!dil_string_prefix_check(&context->remaining, &TERMINALS_0)) {
+    if (!dil_string_prefix_check(&context->remaining, &STRING_0)) {
         return false;
     }
 
@@ -60,8 +60,8 @@ bool dil_parse__skip_comment(DilParseContext* context)
 /* Try to skip whitespace. */
 bool dil_parse__skip_whitespace(DilParseContext* context)
 {
-    DilString const SET_0 = dil_string_terminated("\t\n ");
-    return dil_string_prefix_set(&context->remaining, &SET_0);
+    DilString const SET_1 = dil_string_terminated("\t\n ");
+    return dil_string_prefix_set(&context->remaining, &SET_1);
 }
 
 /* Try to skip once. */
@@ -131,10 +131,10 @@ void dil_parse__not_set(DilParseContext* context, DilString const* set)
 }
 
 /* Try to parse a string. */
-void dil_parse__string(DilParseContext* context, DilString const* set)
+void dil_parse__string(DilParseContext* context, DilString const* string)
 {
     dil_parse__create(context, DIL_SYMBOL__STRING);
-    context->dead = !dil_string_prefix_check(&context->remaining, set);
+    context->dead = !dil_string_prefix_check(&context->remaining, string);
     dil_parse__return(context);
 }
 
@@ -143,18 +143,18 @@ void dil_parse_identifier(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_IDENTIFIER);
 
-    DilString const SET_0 = dil_string_terminated("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    DilString const SET_1 = dil_string_terminated(
+    DilString const SET_2 = dil_string_terminated("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    DilString const SET_3 = dil_string_terminated(
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
-    dil_parse__set(context, &SET_0);
+    dil_parse__set(context, &SET_2);
     if (context->dead) {
         dil_parse__return(context);
         return;
     }
 
     while (true) {
-        dil_parse__set(context, &SET_1);
+        dil_parse__set(context, &SET_3);
         if (context->dead) {
             break;
         }
@@ -169,18 +169,18 @@ void dil_parse_escaped(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_ESCAPED);
 
-    DilString const SET_0 = dil_string_terminated("0123456789abcdefABCDEF");
-    DilString const SET_1 = dil_string_terminated("tn\\'~");
-    DilString const SET_2 = dil_string_terminated("\\'~");
+    DilString const SET_4 = dil_string_terminated("0123456789abcdefABCDEF");
+    DilString const SET_5 = dil_string_terminated("tn\\'~");
+    DilString const SET_6 = dil_string_terminated("\\'~");
 
     dil_parse__character(context, '\\');
     if (!context->dead) {
-        dil_parse__set(context, &SET_0);
+        dil_parse__set(context, &SET_4);
         if (!context->dead) {
             for (size_t i = 0; i < 2 - 1; i++) {
-                dil_parse__set(context, &SET_0);
+                dil_parse__set(context, &SET_4);
                 if (context->dead) {
-                    dil_parse__error_set(context, &SET_0);
+                    dil_parse__error_set(context, &SET_4);
                     dil_parse__return(context);
                     return;
                 }
@@ -189,7 +189,7 @@ void dil_parse_escaped(DilParseContext* context)
             return;
         }
 
-        dil_parse__set(context, &SET_1);
+        dil_parse__set(context, &SET_5);
         if (!context->dead) {
             dil_parse__return(context);
             return;
@@ -200,7 +200,7 @@ void dil_parse_escaped(DilParseContext* context)
         return;
     }
 
-    dil_parse__not_set(context, &SET_2);
+    dil_parse__not_set(context, &SET_6);
     if (!context->dead) {
         dil_parse__return(context);
         return;
@@ -214,10 +214,10 @@ void dil_parse_number(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_NUMBER);
 
-    DilString const SET_0 = dil_string_terminated("123456789");
-    DilString const SET_1 = dil_string_terminated("0123456789");
+    DilString const SET_7 = dil_string_terminated("123456789");
+    DilString const SET_8 = dil_string_terminated("0123456789");
 
-    dil_parse__set(context, &SET_0);
+    dil_parse__set(context, &SET_7);
     if (context->dead) {
         dil_parse__return(context);
         return;
@@ -226,7 +226,7 @@ void dil_parse_number(DilParseContext* context)
     dil_parse__skip(context);
 
     while (true) {
-        dil_parse__set(context, &SET_1);
+        dil_parse__set(context, &SET_8);
         if (context->dead) {
             break;
         }
@@ -302,9 +302,9 @@ void dil_parse_string(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_STRING);
 
-    DilString const SET_0 = dil_string_terminated("0123456789abcdefABCDEF");
-    DilString const SET_1 = dil_string_terminated("tn\\\"");
-    DilString const SET_2 = dil_string_terminated("\\\"");
+    DilString const SET_9  = dil_string_terminated("0123456789abcdefABCDEF");
+    DilString const SET_10 = dil_string_terminated("tn\\\"");
+    DilString const SET_11 = dil_string_terminated("\\\"");
 
     dil_parse__character(context, '"');
     if (context->dead) {
@@ -315,19 +315,19 @@ void dil_parse_string(DilParseContext* context)
     while (true) {
         dil_parse__character(context, '\\');
         if (!context->dead) {
-            dil_parse__set(context, &SET_0);
+            dil_parse__set(context, &SET_9);
             if (!context->dead) {
                 for (size_t i = 0; i < 2 - 1; i++) {
-                    dil_parse__set(context, &SET_0);
+                    dil_parse__set(context, &SET_9);
                     if (context->dead) {
-                        dil_parse__error_set(context, &SET_0);
+                        dil_parse__error_set(context, &SET_9);
                         dil_parse__return(context);
                         return;
                     }
                 }
                 continue;
             }
-            dil_parse__set(context, &SET_1);
+            dil_parse__set(context, &SET_10);
             if (!context->dead) {
                 continue;
             }
@@ -335,7 +335,7 @@ void dil_parse_string(DilParseContext* context)
             dil_parse__return(context);
             return;
         }
-        dil_parse__not_set(context, &SET_2);
+        dil_parse__not_set(context, &SET_11);
         if (!context->dead) {
             continue;
         }
@@ -670,9 +670,9 @@ void dil_parse_terminal(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_TERMINAL);
 
-    DilString const TERMINALS_0 = dil_string_terminated("terminal");
+    DilString const TERMINALS_1 = dil_string_terminated("terminal");
 
-    dil_parse__string(context, &TERMINALS_0);
+    dil_parse__string(context, &TERMINALS_1);
     if (context->dead) {
         dil_parse__return(context);
         return;
@@ -695,9 +695,9 @@ void dil_parse_skip(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_SKIP);
 
-    DilString const TERMINALS_0 = dil_string_terminated("skip");
+    DilString const TERMINALS_2 = dil_string_terminated("skip");
 
-    dil_parse__string(context, &TERMINALS_0);
+    dil_parse__string(context, &TERMINALS_2);
     if (context->dead) {
         dil_parse__return(context);
         return;
@@ -725,9 +725,9 @@ void dil_parse_start(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_START);
 
-    DilString const TERMINALS_0 = dil_string_terminated("start");
+    DilString const TERMINALS_3 = dil_string_terminated("start");
 
-    dil_parse__string(context, &TERMINALS_0);
+    dil_parse__string(context, &TERMINALS_3);
     if (context->dead) {
         dil_parse__return(context);
         return;
@@ -759,9 +759,9 @@ void dil_parse_output(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_OUTPUT);
 
-    DilString const TERMINALS_0 = dil_string_terminated("output");
+    DilString const TERMINALS_4 = dil_string_terminated("output");
 
-    dil_parse__string(context, &TERMINALS_0);
+    dil_parse__string(context, &TERMINALS_4);
     if (context->dead) {
         dil_parse__return(context);
         return;
