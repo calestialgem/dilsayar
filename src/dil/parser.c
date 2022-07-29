@@ -14,31 +14,32 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <winnls.h>
 
 /* Create an object in the tree. */
 void dil_parse__create(DilParseContext* context, DilSymbol symbol)
 {
     dil_builder_add(
-        context->builder,
+        &context->builder,
         (DilObject){
             .symbol = symbol,
-            .value  = {.first = context->string->first}});
-    dil_builder_push(context->builder);
+            .value  = {.first = context->remaining.first}});
+    dil_builder_push(&context->builder);
 }
 
 /* End an object or remove it from the tree. */
 bool dil_parse__return(DilParseContext* context, bool accept)
 {
     if (accept) {
-        dil_builder_parent(context->builder)->object.value.last =
-            context->string->first;
-        dil_builder_pop(context->builder);
+        dil_builder_parent(&context->builder)->object.value.last =
+            context->remaining.first;
+        dil_builder_pop(&context->builder);
         return true;
     }
-    context->string->first =
-        dil_builder_parent(context->builder)->object.value.first;
-    dil_builder_remove(context->builder);
-    dil_builder_parent(context->builder)->childeren--;
+    context->remaining.first =
+        dil_builder_parent(&context->builder)->object.value.first;
+    dil_builder_remove(&context->builder);
+    dil_builder_parent(&context->builder)->childeren--;
     return false;
 }
 
@@ -48,11 +49,11 @@ bool dil_parse__skip_comment(DilParseContext* context)
     DilString const TERMINALS_0 = dil_string_terminated("//");
     DilString const SET_0       = dil_string_terminated("\n");
 
-    if (!dil_string_prefix_check(context->string, &TERMINALS_0)) {
+    if (!dil_string_prefix_check(&context->remaining, &TERMINALS_0)) {
         return false;
     }
 
-    while (dil_string_prefix_not_set(context->string, &SET_0)) {}
+    while (dil_string_prefix_not_set(&context->remaining, &SET_0)) {}
 
     return true;
 }
@@ -61,7 +62,7 @@ bool dil_parse__skip_comment(DilParseContext* context)
 bool dil_parse__skip_whitespace(DilParseContext* context)
 {
     DilString const SET_0 = dil_string_terminated("\t\n ");
-    return dil_string_prefix_set(context->string, &SET_0);
+    return dil_string_prefix_set(&context->remaining, &SET_0);
 }
 
 /* Try to skip once. */
@@ -81,15 +82,15 @@ void dil_parse__skip(DilParseContext* context)
 void dil_parse__error(DilParseContext* context, char const* message)
 {
     DilString portion = {
-        .first = context->string->first,
-        .last  = context->string->first};
-    while (context->string->first <= context->string->last &&
+        .first = context->remaining.first,
+        .last  = context->remaining.first};
+    while (context->remaining.first <= context->remaining.last &&
            !dil_parse__skip_once(context)) {
-        context->string->first++;
+        context->remaining.first++;
         portion.last++;
     }
-    context->source->error++;
-    dil_source_print(context->source, &portion, "error", message);
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", message);
 }
 
 /* Print the expected set and skip the erronous characters. */
@@ -112,7 +113,7 @@ bool dil_parse__character(DilParseContext* context, char element)
     dil_parse__create(context, DIL_SYMBOL__CHARACTER);
     return dil_parse__return(
         context,
-        dil_string_prefix_element(context->string, element));
+        dil_string_prefix_element(&context->remaining, element));
 }
 
 /* Try to parse a character from a set. */
@@ -121,7 +122,7 @@ bool dil_parse__set(DilParseContext* context, DilString const* set)
     dil_parse__create(context, DIL_SYMBOL__CHARACTER);
     return dil_parse__return(
         context,
-        dil_string_prefix_set(context->string, set));
+        dil_string_prefix_set(&context->remaining, set));
 }
 
 /* Try to parse a character from a not set. */
@@ -130,7 +131,7 @@ bool dil_parse__not_set(DilParseContext* context, DilString const* set)
     dil_parse__create(context, DIL_SYMBOL__CHARACTER);
     return dil_parse__return(
         context,
-        dil_string_prefix_not_set(context->string, set));
+        dil_string_prefix_not_set(&context->remaining, set));
 }
 
 /* Try to parse a string. */
@@ -139,7 +140,7 @@ bool dil_parse__string(DilParseContext* context, DilString const* set)
     dil_parse__create(context, DIL_SYMBOL__STRING);
     return dil_parse__return(
         context,
-        dil_string_prefix_check(context->string, set));
+        dil_string_prefix_check(&context->remaining, set));
 }
 
 /* Try to parse an identifier. */
@@ -271,7 +272,7 @@ bool dil_parse_string(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    while (dil_string_finite(context->string)) {
+    while (dil_string_finite(&context->remaining)) {
         if (dil_parse__character(context, '\\')) {
             if (dil_parse__set(context, &SET_0)) {
                 for (size_t i = 0; i < 2 - 1; i++) {
@@ -631,23 +632,23 @@ bool dil_parse_statement(DilParseContext* context)
 bool dil_parse__start(DilParseContext* context)
 {
     dil_tree_add(
-        context->builder->built,
+        &context->built,
         (DilNode){
             .object = {
                        .symbol = DIL_SYMBOL__START,
-                       .value  = {.first = context->string->first}}
+                       .value  = {.first = context->remaining.first}}
     });
-    dil_builder_push(context->builder);
+    dil_builder_push(&context->builder);
     dil_parse__skip(context);
     while (dil_parse_statement(context)) {
         dil_parse__skip(context);
     }
 
-    dil_builder_parent(context->builder)->object.value.last =
-        context->string->first;
-    dil_builder_pop(context->builder);
+    dil_builder_parent(&context->builder)->object.value.last =
+        context->remaining.first;
+    dil_builder_pop(&context->builder);
 
-    if (dil_string_finite(context->string)) {
+    if (dil_string_finite(&context->remaining)) {
         dil_parse__error(context, "Unexpected characters in the file!");
         return false;
     }
@@ -656,20 +657,22 @@ bool dil_parse__start(DilParseContext* context)
 }
 
 /* Parses the source file. */
-void dil_parse(DilBuilder* builder, DilSource* source)
+DilTree dil_parse(DilSource source)
 {
-    DilString       string  = source->contents;
-    DilParseContext context = {
-        .builder = builder,
-        .string  = &string,
-        .source  = source};
+    DilParseContext initial = {
+        .builder   = {.built = &initial.built},
+        .remaining = source.contents,
+        .source    = source};
 
-    dil_parse__start(&context);
+    dil_parse__start(&initial);
 
-    if (source->error != 0) {
+    if (initial.source.error != 0) {
         printf(
             "%s: error: File had %llu errors.\n",
-            source->path,
-            source->error);
+            initial.source.path,
+            initial.source.error);
     }
+
+    dil_builder_free(&initial.builder);
+    return initial.built;
 }

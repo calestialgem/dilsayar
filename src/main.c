@@ -24,16 +24,12 @@ int main(int argumentCount, char const* const* arguments)
     }
     printf("\n");
 
-    DilBuffer  buffer  = {0};
-    DilSource  source  = dil_source_load(&buffer, arguments[1]);
-    DilTree    tree    = {0};
-    DilBuilder builder = {.built = &tree};
-
-    dil_parse(&builder, &source);
+    DilBuffer buffer = {0};
+    DilSource source = dil_source_load(&buffer, arguments[1]);
+    DilTree   tree   = dil_parse(source);
 
     dil_tree_print_file(&tree);
 
-    dil_builder_free(&builder);
     dil_tree_free(&tree);
     dil_buffer_free(&buffer);
     return EXIT_SUCCESS;

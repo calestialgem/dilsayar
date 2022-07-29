@@ -14,12 +14,14 @@
 
 /* Context of the parsing process. */
 typedef struct {
+    /* Tree that is built. */
+    DilTree built;
     /* Builder to parse into. */
-    DilBuilder* builder;
+    DilBuilder builder;
     /* Remaining source file contents. */
-    DilString* string;
+    DilString remaining;
     /* Parsed source file. */
-    DilSource* source;
+    DilSource source;
     /* Function that should be called next. */
     bool (*next)(void* context, void* list);
 } DilParseContext;
