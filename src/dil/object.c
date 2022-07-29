@@ -31,7 +31,8 @@ typedef enum {
     DIL_SYMBOL_IDENTIFIER,
     DIL_SYMBOL_WHITESPACE,
     DIL_SYMBOL_COMMENT,
-    DIL_SYMBOL__TERMINAL
+    DIL_SYMBOL__CHARACTER,
+    DIL_SYMBOL__STRING
 } DilSymbol;
 
 typedef struct {
@@ -92,8 +93,10 @@ char const* dil_object_format(DilSymbol symbol)
             return "Whitespace {%.*s}";
         case DIL_SYMBOL_COMMENT:
             return "Comment {%.*s}";
-        case DIL_SYMBOL__TERMINAL:
-            return "__Terminal__ [%.*s]";
+        case DIL_SYMBOL__CHARACTER:
+            return "__Character__ [%.*s]";
+        case DIL_SYMBOL__STRING:
+            return "__String__ [%.*s]";
         default:
             return "Unknown !{%.*s}";
     }
