@@ -22,8 +22,8 @@ typedef struct {
     DilString remaining;
     /* Parsed source file. */
     DilSource source;
-    /* Function that should be called next. */
-    bool (*next)(void* context, void* list);
+    /* Whether the context could not continue parsing. */
+    bool dead;
 } DilParseContext;
 
 /* Contiguous, dynamicly allocated elements. */

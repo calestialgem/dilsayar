@@ -1,42 +1,42 @@
-__Start__
+start
 |   
 +- Output {output "dilsayar.c";}
 |   |   
-|   +- __String__ [output]
+|   +- string [output]
 |   +- String {"dilsayar.c"}
 |   |   |   
-|   |   +- __Character__ ["]
-|   |   +- __Character__ [d]
-|   |   +- __Character__ [i]
-|   |   +- __Character__ [l]
-|   |   +- __Character__ [s]
-|   |   +- __Character__ [a]
-|   |   +- __Character__ [y]
-|   |   +- __Character__ [a]
-|   |   +- __Character__ [r]
-|   |   +- __Character__ [.]
-|   |   +- __Character__ [c]
-|   |   +- __Character__ ["]
+|   |   +- character ["]
+|   |   +- character [d]
+|   |   +- character [i]
+|   |   +- character [l]
+|   |   +- character [s]
+|   |   +- character [a]
+|   |   +- character [y]
+|   |   +- character [a]
+|   |   +- character [r]
+|   |   +- character [.]
+|   |   +- character [c]
+|   |   +- character ["]
 |   |   
-|   +- __Character__ [;]
+|   +- character [;]
 |   
 +- Start {start *Statement;}
 |   |   
-|   +- __String__ [start]
+|   +- string [start]
 |   +- Zero Or More {*Statement}
 |   |   |   
-|   |   +- __Character__ [*]
+|   |   +- character [*]
 |   |   +- Identifier {Statement}
 |   |   |   |   
-|   |   |   +- __Character__ [S]
-|   |   |   +- __Character__ [t]
-|   |   |   +- __Character__ [a]
-|   |   |   +- __Character__ [t]
-|   |   |   +- __Character__ [e]
-|   |   |   +- __Character__ [m]
-|   |   |   +- __Character__ [e]
-|   |   |   +- __Character__ [n]
-|   |   |   +- __Character__ [t]
+|   |   |   +- character [S]
+|   |   |   +- character [t]
+|   |   |   +- character [a]
+|   |   |   +- character [t]
+|   |   |   +- character [e]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [n]
+|   |   |   +- character [t]
 |   |   
-|   +- __Character__ [;]
+|   +- character [;]
 
