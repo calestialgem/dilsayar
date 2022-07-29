@@ -41,6 +41,14 @@ void dil_builder_add(DilBuilder* builder, DilObject object)
     dil_builder_parent(builder)->childeren++;
 }
 
+/* Remove the last pushed parent and all its childeren. */
+void dil_builder_remove(DilBuilder* builder)
+{
+    builder->built->last =
+        builder->built->first + *dil_indices_finish(&builder->parents);
+    dil_builder_pop(builder);
+}
+
 /* Remove the parents. Keeps the memory. */
 void dil_builder_clear(DilBuilder* builder)
 {

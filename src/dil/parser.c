@@ -34,8 +34,7 @@
     }                                                             \
     context->string->first =                                      \
         dil_builder_parent(context->builder)->object.value.first; \
-    dil_builder_pop(context->builder);                            \
-    dil_tree_remove(context->builder->built);                     \
+    dil_builder_remove(context->builder);                         \
     dil_builder_parent(context->builder)->childeren--;            \
     return false;
 
