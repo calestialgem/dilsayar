@@ -9,8 +9,43 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* Type of action the parser can take. */
+typedef enum {
+    DIL_PARSE_ACTION_CHARACTER,
+    DIL_PARSE_ACTION_SET,
+    DIL_PARSE_ACTION_NOT_SET,
+    DIL_PARSE_ACTION_STRING,
+    DIL_PARSE_ACTION_REFERENCE,
+    DIL_PARSE_ACTION_REPEAT,
+    DIL_PARSE_ACTION_GROUP,
+    DIL_PARSE_ACTION_ALTERNATIVE
+} DilParseActionType;
+
+/* Action the parser can take. */
+typedef struct {
+    union {
+        /* Character to check against. */
+        char character;
+        /* Index of the set or the string. */
+        uint32_t index;
+        /* Referred symbol. */
+        DilSymbol referred;
+        struct {
+            /* Minimum repeat amount. */
+            uint16_t min;
+            /* Maximum repeat amount. */
+            uint16_t max;
+        };
+        /* Amount of actions in a group or amount of alternatives. */
+        uint32_t amount;
+    };
+    /* Type. */
+    DilParseActionType tag;
+} DilParseAction;
 
 /* Context of the parsing process. */
 typedef struct {
