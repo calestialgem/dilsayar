@@ -16,43 +16,27 @@
 #include <stdio.h>
 
 /* Macro for the start of a try-parse function. */
-#define dil_parse__create(SYMBOL, TERMINAL)                   \
-    char const* untouched = context->string->first;           \
-    bool        terminal  = (TERMINAL);                       \
-    if (terminal) {                                           \
-        context->depth++;                                     \
-    }                                                         \
-    if (context->depth < 2) {                                 \
-        dil_builder_add(                                      \
-            context->builder,                                 \
-            (DilObject){                                      \
-                .symbol = (SYMBOL),                           \
-                .value  = {.first = context->string->first}}); \
-        dil_builder_push(context->builder);                   \
-    }
+#define dil_parse__create(SYMBOL)                         \
+    dil_builder_add(                                      \
+        context->builder,                                 \
+        (DilObject){                                      \
+            .symbol = (SYMBOL),                           \
+            .value  = {.first = context->string->first}}); \
+    dil_builder_push(context->builder);
 
 /* Macro for the return of a try-parse function. */
-#define dil_parse__return(ACCEPT)                                     \
-    if (terminal) {                                                   \
-        context->depth--;                                             \
-    }                                                                 \
-    if ((ACCEPT)) {                                                   \
-        if (context->depth < 1) {                                     \
-            dil_builder_parent(context->builder)->object.value.last = \
-                context->string->first;                               \
-            dil_builder_pop(context->builder);                        \
-        }                                                             \
-        return true;                                                  \
-    }                                                                 \
-    context->string->first = untouched;                               \
-    if (context->depth < 1) {                                         \
-        dil_builder_pop(context->builder);                            \
-        dil_tree_remove(context->builder->built);                     \
-        dil_tree_at(                                                  \
-            context->builder->built,                                  \
-            *dil_indices_finish(&context->builder->parents))          \
-            ->childeren--;                                            \
-    }                                                                 \
+#define dil_parse__return(ACCEPT)                                 \
+    if ((ACCEPT)) {                                               \
+        dil_builder_parent(context->builder)->object.value.last = \
+            context->string->first;                               \
+        dil_builder_pop(context->builder);                        \
+        return true;                                              \
+    }                                                             \
+    context->string->first =                                      \
+        dil_builder_parent(context->builder)->object.value.first; \
+    dil_builder_pop(context->builder);                            \
+    dil_tree_remove(context->builder->built);                     \
+    dil_builder_parent(context->builder)->childeren--;            \
     return false;
 
 /* Try to skip a comment. */
@@ -122,7 +106,7 @@ void dil_parse__error_set(DilParseContext* context, DilString const* set)
 /* Try to parse an identifier. */
 bool dil_parse_identifier(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_IDENTIFIER, true);
+    dil_parse__create(DIL_SYMBOL_IDENTIFIER);
 
     DilString const SET_0 = dil_string_terminated("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     DilString const SET_1 = dil_string_terminated(
@@ -140,7 +124,7 @@ bool dil_parse_identifier(DilParseContext* context)
 /* Try to parse an escaped character. */
 bool dil_parse_escaped(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ESCAPED, true);
+    dil_parse__create(DIL_SYMBOL_ESCAPED);
 
     DilString const SET_0 = dil_string_terminated("0123456789abcdefABCDEF");
     DilString const SET_1 = dil_string_terminated("tn\\'~");
@@ -175,7 +159,7 @@ bool dil_parse_escaped(DilParseContext* context)
 /* Try to parse a number. */
 bool dil_parse_number(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_NUMBER, true);
+    dil_parse__create(DIL_SYMBOL_NUMBER);
 
     DilString const SET_0 = dil_string_terminated("123456789");
     DilString const SET_1 = dil_string_terminated("0123456789");
@@ -194,7 +178,7 @@ bool dil_parse_number(DilParseContext* context)
 /* Try to parse a set. */
 bool dil_parse_set(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_SET, true);
+    dil_parse__create(DIL_SYMBOL_SET);
 
     if (!dil_string_prefix_element(context->string, '\'')) {
         dil_parse__return(false);
@@ -221,7 +205,7 @@ bool dil_parse_set(DilParseContext* context)
 /* Try to parse a not set. */
 bool dil_parse_not_set(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_NOT_SET, true);
+    dil_parse__create(DIL_SYMBOL_NOT_SET);
 
     if (!dil_string_prefix_element(context->string, '!')) {
         dil_parse__return(false);
@@ -238,7 +222,7 @@ bool dil_parse_not_set(DilParseContext* context)
 /* Try to parse a string. */
 bool dil_parse_string(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_STRING, true);
+    dil_parse__create(DIL_SYMBOL_STRING);
 
     DilString const SET_0 = dil_string_terminated("0123456789abcdefABCDEF");
     DilString const SET_1 = dil_string_terminated("tn\\\"");
@@ -290,7 +274,7 @@ bool dil_parse_pattern(DilParseContext* context);
 /* Try to parse a group. */
 bool dil_parse_group(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_GROUP, false);
+    dil_parse__create(DIL_SYMBOL_GROUP);
 
     if (!dil_string_prefix_element(context->string, '(')) {
         dil_parse__return(false);
@@ -320,7 +304,7 @@ bool dil_parse_group(DilParseContext* context)
 /* Try to parse a fixed times. */
 bool dil_parse_fixed_times(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_FIXED_TIMES, false);
+    dil_parse__create(DIL_SYMBOL_FIXED_TIMES);
 
     if (!dil_parse_number(context)) {
         dil_parse__return(false);
@@ -339,7 +323,7 @@ bool dil_parse_fixed_times(DilParseContext* context)
 /* Try to parse a one or more. */
 bool dil_parse_one_or_more(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ONE_OR_MORE, false);
+    dil_parse__create(DIL_SYMBOL_ONE_OR_MORE);
 
     if (!dil_string_prefix_element(context->string, '+')) {
         dil_parse__return(false);
@@ -358,7 +342,7 @@ bool dil_parse_one_or_more(DilParseContext* context)
 /* Try to parse a zero or more. */
 bool dil_parse_zero_or_more(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ZERO_OR_MORE, false);
+    dil_parse__create(DIL_SYMBOL_ZERO_OR_MORE);
 
     if (!dil_string_prefix_element(context->string, '*')) {
         dil_parse__return(false);
@@ -377,7 +361,7 @@ bool dil_parse_zero_or_more(DilParseContext* context)
 /* Try to parse a optional. */
 bool dil_parse_optional(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_OPTIONAL, false);
+    dil_parse__create(DIL_SYMBOL_OPTIONAL);
 
     if (!dil_string_prefix_element(context->string, '?')) {
         dil_parse__return(false);
@@ -396,7 +380,7 @@ bool dil_parse_optional(DilParseContext* context)
 /* Try to parse a justaposition. */
 bool dil_parse_justaposition(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION, false);
+    dil_parse__create(DIL_SYMBOL_JUSTAPOSITION);
 
     if (!dil_parse_pattern(context)) {
         dil_parse__return(false);
@@ -414,7 +398,7 @@ bool dil_parse_justaposition(DilParseContext* context)
 /* Try to parse alternatives. */
 bool dil_parse_alternative(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_ALTERNATIVE, false);
+    dil_parse__create(DIL_SYMBOL_ALTERNATIVE);
 
     if (!dil_parse_pattern(context)) {
         dil_parse__return(false);
@@ -464,7 +448,7 @@ bool dil_parse_pattern(DilParseContext* context)
 /* Try to parse a rule. */
 bool dil_parse_rule(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_RULE, false);
+    dil_parse__create(DIL_SYMBOL_RULE);
 
     if (!dil_parse_identifier(context)) {
         dil_parse__return(false);
@@ -497,7 +481,7 @@ bool dil_parse_rule(DilParseContext* context)
 /* Try to parse a terminal. */
 bool dil_parse_terminal(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_TERMINAL, false);
+    dil_parse__create(DIL_SYMBOL_TERMINAL);
 
     DilString const TERMINALS_0 = dil_string_terminated("terminal");
 
@@ -518,7 +502,7 @@ bool dil_parse_terminal(DilParseContext* context)
 /* Try to parse a skip. */
 bool dil_parse_skip(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_SKIP, false);
+    dil_parse__create(DIL_SYMBOL_SKIP);
 
     DilString const TERMINALS_0 = dil_string_terminated("skip");
 
@@ -543,7 +527,7 @@ bool dil_parse_skip(DilParseContext* context)
 /* Try to parse a start. */
 bool dil_parse_start(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_START, false);
+    dil_parse__create(DIL_SYMBOL_START);
 
     DilString const TERMINALS_0 = dil_string_terminated("start");
 
@@ -571,7 +555,7 @@ bool dil_parse_start(DilParseContext* context)
 /* Try to parse an output. */
 bool dil_parse_output(DilParseContext* context)
 {
-    dil_parse__create(DIL_SYMBOL_OUTPUT, false);
+    dil_parse__create(DIL_SYMBOL_OUTPUT);
 
     DilString const TERMINALS_0 = dil_string_terminated("output");
 

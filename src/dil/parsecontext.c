@@ -20,8 +20,6 @@ typedef struct {
     DilString* string;
     /* Parsed source file. */
     DilSource* source;
-    /* Stack depth further away from the last nonterminal. */
-    int depth;
     /* Function that should be called next. */
     bool (*next)(void* context, void* list);
 } DilParseContext;
