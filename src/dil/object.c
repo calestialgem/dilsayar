@@ -9,6 +9,8 @@
 #include <stdio.h>
 
 typedef enum {
+    DIL_SYMBOL__CHARACTER,
+    DIL_SYMBOL__STRING,
     DIL_SYMBOL__START,
     DIL_SYMBOL_STATEMENT,
     DIL_SYMBOL_OUTPUT,
@@ -30,9 +32,7 @@ typedef enum {
     DIL_SYMBOL_ESCAPED,
     DIL_SYMBOL_IDENTIFIER,
     DIL_SYMBOL_WHITESPACE,
-    DIL_SYMBOL_COMMENT,
-    DIL_SYMBOL__CHARACTER,
-    DIL_SYMBOL__STRING
+    DIL_SYMBOL_COMMENT
 } DilSymbol;
 
 typedef struct {
@@ -49,8 +49,12 @@ typedef struct {
 char const* dil_object_format(DilSymbol symbol)
 {
     switch (symbol) {
+        case DIL_SYMBOL__CHARACTER:
+            return "character [%.*s]";
+        case DIL_SYMBOL__STRING:
+            return "string [%.*s]";
         case DIL_SYMBOL__START:
-            return "__Start__";
+            return "start";
         case DIL_SYMBOL_STATEMENT:
             return "Statement {%.*s}";
         case DIL_SYMBOL_OUTPUT:
@@ -93,10 +97,6 @@ char const* dil_object_format(DilSymbol symbol)
             return "Whitespace {%.*s}";
         case DIL_SYMBOL_COMMENT:
             return "Comment {%.*s}";
-        case DIL_SYMBOL__CHARACTER:
-            return "__Character__ [%.*s]";
-        case DIL_SYMBOL__STRING:
-            return "__String__ [%.*s]";
         default:
             return "Unknown !{%.*s}";
     }
