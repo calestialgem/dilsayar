@@ -25,6 +25,8 @@ typedef struct {
     DilString remaining;
     /* Parsed source file. */
     DilSource source;
+    /* Whether the parser is in skip mode. */
+    bool skip;
 } DilParseContext;
 
 /* Create an object in the tree. */
@@ -41,6 +43,15 @@ void dil_parse__create(DilParseContext* context, DilSymbol symbol)
 /* End an object or remove it from the tree. */
 bool dil_parse__return(DilParseContext* context, bool accept)
 {
+    if (context->skip) {
+        if (!accept) {
+            context->remaining.first =
+                dil_builder_parent(&context->builder)->object.value.first;
+        }
+        dil_builder_remove(&context->builder);
+        dil_builder_parent(&context->builder)->childeren--;
+        return accept;
+    }
     if (accept) {
         dil_builder_parent(&context->builder)->object.value.last =
             context->remaining.first;
@@ -54,74 +65,41 @@ bool dil_parse__return(DilParseContext* context, bool accept)
     return false;
 }
 
-/* Try to skip a comment. */
-bool dil_parse__skip_comment(DilParseContext* context)
+bool dil_parse_comment(DilParseContext* context);
+bool dil_parse_whitespace(DilParseContext* context);
+bool dil_parse_identifier(DilParseContext* context);
+bool dil_parse_escaped(DilParseContext* context);
+bool dil_parse_number(DilParseContext* context);
+bool dil_parse_set(DilParseContext* context);
+bool dil_parse_not_set(DilParseContext* context);
+bool dil_parse_string(DilParseContext* context);
+bool dil_parse_reference(DilParseContext* context);
+bool dil_parse_group(DilParseContext* context);
+bool dil_parse_fixed_times(DilParseContext* context);
+bool dil_parse_one_or_more(DilParseContext* context);
+bool dil_parse_zero_or_more(DilParseContext* context);
+bool dil_parse_optional(DilParseContext* context);
+bool dil_parse_unit(DilParseContext* context);
+bool dil_parse_alternative(DilParseContext* context);
+bool dil_parse_pattern(DilParseContext* context);
+bool dil_parse_rule(DilParseContext* context);
+bool dil_parse_start(DilParseContext* context);
+bool dil_parse_skip(DilParseContext* context);
+bool dil_parse_statement(DilParseContext* context);
+
+/* Try to skip in style 0 once. */
+bool dil_parse__skip_0_once(DilParseContext* context)
 {
-    char const* start = context->remaining.first;
-
-    DilString const TERMINALS_0 = dil_string_terminated("//");
-
-    if (!dil_string_prefix_check(&context->remaining, &TERMINALS_0)) {
-        return false;
-    }
-
-    while (!dil_string_prefix_element(&context->remaining, '\n')) {}
-
-    if (!dil_string_prefix_element(&context->remaining, '\n')) {
-        context->remaining.first = start;
-        return false;
-    }
-
-    return true;
+    context->skip = true;
+    bool accept   = dil_parse_whitespace(context) || dil_parse_comment(context);
+    context->skip = false;
+    return accept;
 }
 
-/* Try to skip whitespace. */
-bool dil_parse__skip_whitespace(DilParseContext* context)
+/* Skip in style 0 as much as possible. */
+void dil_parse__skip_0(DilParseContext* context)
 {
-    DilString const SET_0 = dil_string_terminated("\t\n ");
-    return dil_string_prefix_set(&context->remaining, &SET_0);
-}
-
-/* Try to skip once. */
-bool dil_parse__skip_once(DilParseContext* context)
-{
-    return dil_parse__skip_whitespace(context) ||
-           dil_parse__skip_comment(context);
-}
-
-/* Skip as much as possible. */
-void dil_parse__skip(DilParseContext* context)
-{
-    while (dil_parse__skip_once(context)) {}
-}
-
-/* Skip erronous characters and print them. */
-void dil_parse__error(DilParseContext* context, char const* message)
-{
-    DilString portion = {
-        .first = context->remaining.first,
-        .last  = context->remaining.first};
-    while (context->remaining.first <= context->remaining.last &&
-           !dil_parse__skip_once(context)) {
-        context->remaining.first++;
-        portion.last++;
-    }
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", message);
-}
-
-/* Print the expected set and skip the erronous characters. */
-void dil_parse__error_set(DilParseContext* context, DilString const* set)
-{
-    size_t const BUFFER_SIZE = 1024;
-    char         buffer[BUFFER_SIZE];
-    (void)sprintf_s(
-        buffer,
-        BUFFER_SIZE,
-        "Expected one of `%.*s` in `String`!",
-        (int)dil_string_size(set),
-        set->first);
-    dil_parse__error(context, buffer);
+    while (dil_parse__skip_0_once(context)) {}
 }
 
 /* Try to parse a character. */
@@ -160,6 +138,192 @@ bool dil_parse__string(DilParseContext* context, DilString const* set)
         dil_string_prefix_check(&context->remaining, set));
 }
 
+/* Skip over the erronous characters and print them. */
+void dil_parse__error_skip(
+    DilParseContext* context,
+    bool (*skip)(DilParseContext*),
+    char const* expected,
+    char const* symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected `%s` in `%s`!",
+        expected,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first};
+    while (context->remaining.first <= context->remaining.last &&
+           !skip(context)) {
+        context->remaining.first++;
+        portion.last++;
+    }
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the expected character. */
+void dil_parse__error_character(
+    DilParseContext* context,
+    char             character,
+    char const*      symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected `%c` in `%s`!",
+        character,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the expected set. */
+void dil_parse__error_set(
+    DilParseContext* context,
+    DilString const* set,
+    char const*      symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected one of `%.*s` in `%s`!",
+        (int)dil_string_size(set),
+        set->first,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the expected not set. */
+void dil_parse__error_not_set(
+    DilParseContext* context,
+    DilString const* set,
+    char const*      symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected none of `%.*s` in `%s`!",
+        (int)dil_string_size(set),
+        set->first,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the expected string. */
+void dil_parse__error_string(
+    DilParseContext* context,
+    DilString const* string,
+    char const*      symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected `%.*s` in `%s`!",
+        (int)dil_string_size(string),
+        string->first,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the expected terminal. */
+void dil_parse__error_reference(
+    DilParseContext* context,
+    char const*      expected,
+    char const*      symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)sprintf_s(
+        buffer,
+        BUFFER_SIZE,
+        "Expected `%s` in `%s`!",
+        expected,
+        symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Print the unexpected character. */
+void dil_parse__error_unexpected(DilParseContext* context, char const* symbol)
+{
+    size_t const BUFFER_SIZE = 1024;
+    char         buffer[BUFFER_SIZE];
+    (void)
+        sprintf_s(buffer, BUFFER_SIZE, "Unexpected character in `%s`!", symbol);
+    DilString portion = {
+        .first = context->remaining.first,
+        .last  = context->remaining.first + 1};
+    context->source.error++;
+    dil_source_print(&context->source, &portion, "error", buffer);
+}
+
+/* Try to parse a comment. */
+bool dil_parse_comment(DilParseContext* context)
+{
+    dil_parse__create(context, DIL_SYMBOL_COMMENT);
+
+    DilString const TERMINALS_0 = dil_string_terminated("//");
+    DilString const SET_0       = dil_string_terminated("\n");
+    char const      CHARACTER_0 = '\n';
+
+    if (!dil_parse__string(context, &TERMINALS_0)) {
+        return dil_parse__return(context, false);
+    }
+
+    while (dil_parse__not_set(context, &SET_0)) {}
+
+    if (!dil_parse__character(context, CHARACTER_0)) {
+        dil_parse__error_character(context, CHARACTER_0, "Comment");
+        return dil_parse__return(context, true);
+    }
+
+    return dil_parse__return(context, true);
+}
+
+/* Try to parse a whitespace. */
+bool dil_parse_whitespace(DilParseContext* context)
+{
+    dil_parse__create(context, DIL_SYMBOL_WHITESPACE);
+
+    DilString const SET_0 = dil_string_terminated("\t\n ");
+
+    if (!dil_parse__set(context, &SET_0)) {
+        return dil_parse__return(context, false);
+    }
+
+    return dil_parse__return(context, true);
+}
+
 /* Try to parse an identifier. */
 bool dil_parse_identifier(DilParseContext* context)
 {
@@ -191,8 +355,8 @@ bool dil_parse_escaped(DilParseContext* context)
         if (dil_parse__set(context, &SET_0)) {
             for (size_t i = 0; i < 2 - 1; i++) {
                 if (!dil_parse__set(context, &SET_0)) {
-                    dil_parse__error_set(context, &SET_0);
-                    return dil_parse__return(context, false);
+                    dil_parse__error_set(context, &SET_0, "Escaped");
+                    return dil_parse__return(context, true);
                 }
             }
             return dil_parse__return(context, true);
@@ -202,8 +366,8 @@ bool dil_parse_escaped(DilParseContext* context)
             return dil_parse__return(context, true);
         }
 
-        dil_parse__error(context, "Unexpected character in `Escaped`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_unexpected(context, "Escaped");
+        return dil_parse__return(context, true);
     }
 
     if (dil_parse__not_set(context, &SET_2)) {
@@ -225,8 +389,6 @@ bool dil_parse_number(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
-
     while (dil_parse__set(context, &SET_1)) {}
 
     return dil_parse__return(context, true);
@@ -246,14 +408,14 @@ bool dil_parse_set(DilParseContext* context)
             continue;
         }
         if (!dil_parse_escaped(context)) {
-            dil_parse__error(context, "Expected `Escaped` in `Set`!");
-            return dil_parse__return(context, false);
+            dil_parse__error_reference(context, "Escaped", "Set");
+            return dil_parse__return(context, true);
         }
     }
 
     if (!dil_parse__character(context, '\'')) {
-        dil_parse__error(context, "Expected `'` in `Set`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, '\'', "Set");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -269,8 +431,8 @@ bool dil_parse_not_set(DilParseContext* context)
     }
 
     if (!dil_parse_set(context)) {
-        dil_parse__error(context, "Expected `Set` in `NotSet`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_reference(context, "Set", "NotSet");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -294,8 +456,8 @@ bool dil_parse_string(DilParseContext* context)
             if (dil_parse__set(context, &SET_0)) {
                 for (size_t i = 0; i < 2 - 1; i++) {
                     if (!dil_parse__set(context, &SET_0)) {
-                        dil_parse__error_set(context, &SET_0);
-                        return dil_parse__return(context, false);
+                        dil_parse__error_set(context, &SET_0, "String");
+                        return dil_parse__return(context, true);
                     }
                 }
                 continue;
@@ -303,8 +465,8 @@ bool dil_parse_string(DilParseContext* context)
             if (dil_parse__set(context, &SET_1)) {
                 continue;
             }
-            dil_parse__error(context, "Unexpected character in `String`!");
-            return dil_parse__return(context, false);
+            dil_parse__error_unexpected(context, "String");
+            return dil_parse__return(context, true);
         }
         if (dil_parse__not_set(context, &SET_2)) {
             continue;
@@ -313,8 +475,8 @@ bool dil_parse_string(DilParseContext* context)
     }
 
     if (!dil_parse__character(context, '"')) {
-        dil_parse__error(context, "Expected `\"` in `String`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, '"', "String");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -326,8 +488,6 @@ bool dil_parse_reference(DilParseContext* context)
     return dil_parse_identifier(context);
 }
 
-bool dil_parse_pattern(DilParseContext* context);
-
 /* Try to parse a group. */
 bool dil_parse_group(DilParseContext* context)
 {
@@ -337,22 +497,26 @@ bool dil_parse_group(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `Group`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "Group");
+        return dil_parse__return(context, true);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     while (dil_parse_pattern(context)) {
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
     }
 
     if (!dil_parse__character(context, ')')) {
-        dil_parse__error(context, "Expected `)` in `Group`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, ')', "Group");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -367,11 +531,15 @@ bool dil_parse_fixed_times(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `FixedTimes`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "FixedTimes");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -386,11 +554,15 @@ bool dil_parse_one_or_more(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `OneOrMore`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "OneOrMore");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -405,11 +577,15 @@ bool dil_parse_zero_or_more(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `ZeroOrMore`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "ZeroOrMore");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -424,11 +600,15 @@ bool dil_parse_optional(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `Optional`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "Optional");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -443,10 +623,10 @@ bool dil_parse_justaposition(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     while (dil_parse_pattern(context)) {
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
     }
 
     return dil_parse__return(context, true);
@@ -461,31 +641,39 @@ bool dil_parse_alternative(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse__character(context, '|')) {
-        dil_parse__error(context, "Expected `|` in `Alternative`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, '|', "Alternative");
+        return dil_parse__return(context, true);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `Alternative`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "Alternative");
+        return dil_parse__return(context, true);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     while (dil_parse__character(context, '|')) {
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
 
         if (!dil_parse_pattern(context)) {
-            dil_parse__error(context, "Expected `Pattern` in `Alternative`!");
-            return dil_parse__return(context, false);
+            dil_parse__error_skip(
+                context,
+                &dil_parse__skip_0_once,
+                "Pattern",
+                "Alternative");
+            return dil_parse__return(context, true);
         }
 
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
     }
 
     return dil_parse__return(context, true);
@@ -511,45 +699,60 @@ bool dil_parse_rule(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse__character(context, '=')) {
-        dil_parse__error(context, "Expected `=` in `Rule`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, '=', "Rule");
+        return dil_parse__return(context, true);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `Rule`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "Rule");
+        return dil_parse__return(context, true);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (!dil_parse__character(context, ';')) {
-        dil_parse__error(context, "Expected `;` in `Rule`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, ';', "Rule");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
 }
 
-/* Try to parse a terminal. */
-bool dil_parse_terminal(DilParseContext* context)
+/* Try to parse a start. */
+bool dil_parse_start(DilParseContext* context)
 {
-    dil_parse__create(context, DIL_SYMBOL_TERMINAL);
+    dil_parse__create(context, DIL_SYMBOL_START);
 
-    DilString const TERMINALS_0 = dil_string_terminated("terminal");
+    DilString const TERMINALS_0 = dil_string_terminated("start");
 
     if (!dil_parse__string(context, &TERMINALS_0)) {
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
+
+    if (!dil_parse_pattern(context)) {
+        dil_parse__error_skip(
+            context,
+            &dil_parse__skip_0_once,
+            "Pattern",
+            "Start");
+        return dil_parse__return(context, true);
+    }
+
+    dil_parse__skip_0(context);
 
     if (!dil_parse__character(context, ';')) {
-        dil_parse__error(context, "Expected `;` in `Skip`!");
+        dil_parse__error_character(context, ';', "Start");
         return dil_parse__return(context, false);
     }
 
@@ -567,71 +770,15 @@ bool dil_parse_skip(DilParseContext* context)
         return dil_parse__return(context, false);
     }
 
-    dil_parse__skip(context);
+    dil_parse__skip_0(context);
 
     if (dil_parse_pattern(context)) {
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
     }
 
     if (!dil_parse__character(context, ';')) {
-        dil_parse__error(context, "Expected `;` in `Skip`!");
-        return dil_parse__return(context, false);
-    }
-
-    return dil_parse__return(context, true);
-}
-
-/* Try to parse a start. */
-bool dil_parse_start(DilParseContext* context)
-{
-    dil_parse__create(context, DIL_SYMBOL_START);
-
-    DilString const TERMINALS_0 = dil_string_terminated("start");
-
-    if (!dil_parse__string(context, &TERMINALS_0)) {
-        return dil_parse__return(context, false);
-    }
-
-    dil_parse__skip(context);
-
-    if (!dil_parse_pattern(context)) {
-        dil_parse__error(context, "Expected `Pattern` in `Start`!");
-        return dil_parse__return(context, false);
-    }
-
-    dil_parse__skip(context);
-
-    if (!dil_parse__character(context, ';')) {
-        dil_parse__error(context, "Expected `;` in `Start`!");
-        return dil_parse__return(context, false);
-    }
-
-    return dil_parse__return(context, true);
-}
-
-/* Try to parse an output. */
-bool dil_parse_output(DilParseContext* context)
-{
-    dil_parse__create(context, DIL_SYMBOL_OUTPUT);
-
-    DilString const TERMINALS_0 = dil_string_terminated("output");
-
-    if (!dil_parse__string(context, &TERMINALS_0)) {
-        return dil_parse__return(context, false);
-    }
-
-    dil_parse__skip(context);
-
-    if (!dil_parse_string(context)) {
-        dil_parse__error(context, "Expected `String` in `Output`!");
-        return dil_parse__return(context, false);
-    }
-
-    dil_parse__skip(context);
-
-    if (!dil_parse__character(context, ';')) {
-        dil_parse__error(context, "Expected `;` in `Output`!");
-        return dil_parse__return(context, false);
+        dil_parse__error_character(context, ';', "Skip");
+        return dil_parse__return(context, true);
     }
 
     return dil_parse__return(context, true);
@@ -640,8 +787,7 @@ bool dil_parse_output(DilParseContext* context)
 /* Try to parse a statement. */
 bool dil_parse_statement(DilParseContext* context)
 {
-    return dil_parse_output(context) || dil_parse_start(context) ||
-           dil_parse_skip(context) || dil_parse_terminal(context) ||
+    return dil_parse_skip(context) || dil_parse_start(context) ||
            dil_parse_rule(context);
 }
 
@@ -656,9 +802,10 @@ void dil_parse__start(DilParseContext* context)
                        .value  = {.first = context->remaining.first}}
     });
     dil_builder_push(&context->builder);
-    dil_parse__skip(context);
+
+    dil_parse__skip_0(context);
     while (dil_parse_statement(context)) {
-        dil_parse__skip(context);
+        dil_parse__skip_0(context);
     }
 
     dil_builder_parent(&context->builder)->object.value.last =
@@ -666,7 +813,12 @@ void dil_parse__start(DilParseContext* context)
     dil_builder_pop(&context->builder);
 
     if (dil_string_finite(&context->remaining)) {
-        dil_parse__error(context, "Unexpected characters in the file!");
+        context->source.error++;
+        dil_source_print(
+            &context->source,
+            &context->remaining,
+            "error",
+            "There are unexpected characters left in the file!");
     }
 }
 

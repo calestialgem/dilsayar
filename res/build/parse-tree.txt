@@ -1,1 +1,18 @@
 start
+|   
++- Skip {skip  Whitespace }
+|   |   
+|   +- string [skip]
+|   +- Identifier {Whitespace}
+|   |   |   
+|   |   +- character [W]
+|   |   +- character [h]
+|   |   +- character [i]
+|   |   +- character [t]
+|   |   +- character [e]
+|   |   +- character [s]
+|   |   +- character [p]
+|   |   +- character [a]
+|   |   +- character [c]
+|   |   +- character [e]
+
