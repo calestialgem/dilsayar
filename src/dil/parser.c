@@ -6,7 +6,6 @@
 #include "dil/buffer.c"
 #include "dil/builder.c"
 #include "dil/object.c"
-#include "dil/parsecontext.c"
 #include "dil/source.c"
 #include "dil/string.c"
 #include "dil/tree.c"
@@ -15,6 +14,20 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <winnls.h>
+
+/* Context of the parsing process. */
+typedef struct {
+    /* Tree that is built. */
+    DilTree built;
+    /* Builder to parse into. */
+    DilBuilder builder;
+    /* Remaining source file contents. */
+    DilString remaining;
+    /* Parsed source file. */
+    DilSource source;
+    /* Whether the context could not continue parsing. */
+    bool dead;
+} DilParseContext;
 
 /* Create an object in the tree. */
 void dil_parse__create(DilParseContext* context, DilSymbol symbol)
