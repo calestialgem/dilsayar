@@ -13,18 +13,18 @@ typedef enum {
     DIL_SYMBOL__STRING,
     DIL_SYMBOL__START,
     DIL_SYMBOL_STATEMENT,
-    DIL_SYMBOL_OUTPUT,
-    DIL_SYMBOL_START,
     DIL_SYMBOL_SKIP,
-    DIL_SYMBOL_TERMINAL,
+    DIL_SYMBOL_START,
     DIL_SYMBOL_RULE,
+    DIL_SYMBOL_PATTERN,
     DIL_SYMBOL_ALTERNATIVE,
-    DIL_SYMBOL_JUSTAPOSITION,
+    DIL_SYMBOL_UNIT,
     DIL_SYMBOL_OPTIONAL,
     DIL_SYMBOL_ZERO_OR_MORE,
     DIL_SYMBOL_ONE_OR_MORE,
     DIL_SYMBOL_FIXED_TIMES,
     DIL_SYMBOL_GROUP,
+    DIL_SYMBOL_REFERENCE,
     DIL_SYMBOL_STRING,
     DIL_SYMBOL_NOT_SET,
     DIL_SYMBOL_SET,
@@ -57,20 +57,18 @@ char const* dil_object_format(DilSymbol symbol)
             return "start";
         case DIL_SYMBOL_STATEMENT:
             return "Statement {%.*s}";
-        case DIL_SYMBOL_OUTPUT:
-            return "Output {%.*s}";
-        case DIL_SYMBOL_START:
-            return "Start {%.*s}";
         case DIL_SYMBOL_SKIP:
             return "Skip {%.*s}";
-        case DIL_SYMBOL_TERMINAL:
-            return "Terminal {%.*s}";
+        case DIL_SYMBOL_START:
+            return "Start {%.*s}";
         case DIL_SYMBOL_RULE:
             return "Rule {%.*s}";
+        case DIL_SYMBOL_PATTERN:
+            return "Pattern {%.*s}";
         case DIL_SYMBOL_ALTERNATIVE:
             return "Alternative {%.*s}";
-        case DIL_SYMBOL_JUSTAPOSITION:
-            return "Justaposition {%.*s}";
+        case DIL_SYMBOL_UNIT:
+            return "Unit {%.*s}";
         case DIL_SYMBOL_OPTIONAL:
             return "Optional {%.*s}";
         case DIL_SYMBOL_ZERO_OR_MORE:
@@ -81,6 +79,8 @@ char const* dil_object_format(DilSymbol symbol)
             return "Fixed Times {%.*s}";
         case DIL_SYMBOL_GROUP:
             return "Group {%.*s}";
+        case DIL_SYMBOL_REFERENCE:
+            return "Reference {%.*s}";
         case DIL_SYMBOL_STRING:
             return "String {%.*s}";
         case DIL_SYMBOL_NOT_SET:

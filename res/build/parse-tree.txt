@@ -1,18 +1,1648 @@
 start
 |   
-+- Skip {skip  Whitespace }
++- Statement {skip  Whitespace | Comment;}
 |   |   
-|   +- string [skip]
-|   +- Identifier {Whitespace}
+|   +- Skip {skip  Whitespace | Comment;}
 |   |   |   
-|   |   +- character [W]
-|   |   +- character [h]
-|   |   +- character [i]
-|   |   +- character [t]
-|   |   +- character [e]
-|   |   +- character [s]
-|   |   +- character [p]
-|   |   +- character [a]
-|   |   +- character [c]
-|   |   +- character [e]
+|   |   +- string [skip]
+|   |   +- Pattern {Whitespace | Comment}
+|   |   |   |   
+|   |   |   +- Alternative {Whitespace }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Whitespace}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Whitespace}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Whitespace}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [W]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   |   +- character [p]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [c]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Comment}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Comment}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Comment}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Comment}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [C]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {start *Statement;}
+|   |   
+|   +- Start {start *Statement;}
+|   |   |   
+|   |   +- string [start]
+|   |   +- Pattern {*Statement}
+|   |   |   |   
+|   |   |   +- Alternative {*Statement}
+|   |   |   |   |   
+|   |   |   |   +- Unit {*Statement}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*Statement}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {Statement}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Reference {Statement}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Identifier {Statement}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Statement = Skip | Start | Rule;}
+|   |   
+|   +- Rule {Statement = Skip | Start | Rule;}
+|   |   |   
+|   |   +- Identifier {Statement}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [t]
+|   |   |   +- character [a]
+|   |   |   +- character [t]
+|   |   |   +- character [e]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [n]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Skip | Start | Rule}
+|   |   |   |   
+|   |   |   +- Alternative {Skip }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Skip}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Skip}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Skip}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [k]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [p]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Start }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Start}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Start}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Start}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Rule}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Rule}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Rule}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Rule}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [R]
+|   |   |   |   |   |   |   +- character [u]
+|   |   |   |   |   |   |   +- character [l]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Skip      = "skip" ?Pattern ';';}
+|   |   
+|   +- Rule {Skip      = "skip" ?Pattern ';';}
+|   |   |   
+|   |   +- Identifier {Skip}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [k]
+|   |   |   +- character [i]
+|   |   |   +- character [p]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"skip" ?Pattern ';'}
+|   |   |   |   
+|   |   |   +- Alternative {"skip" ?Pattern ';'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"skip"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"skip"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   +- character [k]
+|   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   +- character [p]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {?Pattern}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Optional {?Pattern}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [?]
+|   |   |   |   |   |   +- Unit {Pattern}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Reference {Pattern}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Identifier {Pattern}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [P]
+|   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   
+|   |   |   |   +- Unit {';'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {';'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {;}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [;]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Start     = "start" Pattern ';';}
+|   |   
+|   +- Rule {Start     = "start" Pattern ';';}
+|   |   |   
+|   |   +- Identifier {Start}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [t]
+|   |   |   +- character [a]
+|   |   |   +- character [r]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"start" Pattern ';'}
+|   |   |   |   
+|   |   |   +- Alternative {"start" Pattern ';'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"start"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"start"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {Pattern}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Pattern}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Pattern}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [P]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   
+|   |   |   |   +- Unit {';'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {';'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {;}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [;]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Rule      = Identifier '=' Pattern ';';}
+|   |   
+|   +- Rule {Rule      = Identifier '=' Pattern ';';}
+|   |   |   
+|   |   +- Identifier {Rule}
+|   |   |   |   
+|   |   |   +- character [R]
+|   |   |   +- character [u]
+|   |   |   +- character [l]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Identifier '=' Pattern ';'}
+|   |   |   |   
+|   |   |   +- Alternative {Identifier '=' Pattern ';'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Identifier}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Identifier}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Identifier}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [I]
+|   |   |   |   |   |   |   +- character [d]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   
+|   |   |   |   +- Unit {'='}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'='}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {=}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [=]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Pattern}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Pattern}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Pattern}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [P]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   
+|   |   |   |   +- Unit {';'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {';'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {;}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [;]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Pattern     = Alternative *('|' Alternative);}
+|   |   
+|   +- Rule {Pattern     = Alternative *('|' Alternative);}
+|   |   |   
+|   |   +- Identifier {Pattern}
+|   |   |   |   
+|   |   |   +- character [P]
+|   |   |   +- character [a]
+|   |   |   +- character [t]
+|   |   |   +- character [t]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [n]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Alternative *('|' Alternative)}
+|   |   |   |   
+|   |   |   +- Alternative {Alternative *('|' Alternative)}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Alternative}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Alternative}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Alternative}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   +- character [l]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [v]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   
+|   |   |   |   +- Unit {*('|' Alternative)}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*('|' Alternative)}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {('|' Alternative)}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Group {('|' Alternative)}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   |   +- Pattern {'|' Alternative}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Alternative {'|' Alternative}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {'|'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Set {'|'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {|}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [|]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {Alternative}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Reference {Alternative}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Identifier {Alternative}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [l]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [v]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [)]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Alternative = +Unit;}
+|   |   
+|   +- Rule {Alternative = +Unit;}
+|   |   |   
+|   |   +- Identifier {Alternative}
+|   |   |   |   
+|   |   |   +- character [A]
+|   |   |   +- character [l]
+|   |   |   +- character [t]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [n]
+|   |   |   +- character [a]
+|   |   |   +- character [t]
+|   |   |   +- character [i]
+|   |   |   +- character [v]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {+Unit}
+|   |   |   |   
+|   |   |   +- Alternative {+Unit}
+|   |   |   |   |   
+|   |   |   |   +- Unit {+Unit}
+|   |   |   |   |   |   
+|   |   |   |   |   +- One Or More {+Unit}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [+]
+|   |   |   |   |   |   +- Unit {Unit}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Reference {Unit}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Identifier {Unit}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [U]
+|   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Unit = Set
+     | NotSet
+     | String
+     | Reference
+     | Group
+     | FixedTimes
+     | OneOrMore
+     | ZeroOrMore
+     | Optional;}
+|   |   
+|   +- Rule {Unit = Set
+     | NotSet
+     | String
+     | Reference
+     | Group
+     | FixedTimes
+     | OneOrMore
+     | ZeroOrMore
+     | Optional;}
+|   |   |   
+|   |   +- Identifier {Unit}
+|   |   |   |   
+|   |   |   +- character [U]
+|   |   |   +- character [n]
+|   |   |   +- character [i]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Set
+     | NotSet
+     | String
+     | Reference
+     | Group
+     | FixedTimes
+     | OneOrMore
+     | ZeroOrMore
+     | Optional}
+|   |   |   |   
+|   |   |   +- Alternative {Set
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Set}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Set}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Set}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {NotSet
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {NotSet}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {NotSet}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {NotSet}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [N]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {String
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {String}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {String}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {String}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Reference
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Reference}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Reference}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Reference}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [R]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [c]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Group
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Group}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Group}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Group}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [G]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [u]
+|   |   |   |   |   |   |   +- character [p]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {FixedTimes
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {FixedTimes}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {FixedTimes}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {FixedTimes}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [F]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [x]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [d]
+|   |   |   |   |   |   |   +- character [T]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [s]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {OneOrMore
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {OneOrMore}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {OneOrMore}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {OneOrMore}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [O]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [O]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [M]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {ZeroOrMore
+     }
+|   |   |   |   |   
+|   |   |   |   +- Unit {ZeroOrMore}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {ZeroOrMore}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {ZeroOrMore}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [Z]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [O]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [M]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {Optional}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Optional}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Optional}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Optional}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [O]
+|   |   |   |   |   |   |   +- character [p]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [l]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Optional   = '?' Unit;}
+|   |   
+|   +- Rule {Optional   = '?' Unit;}
+|   |   |   
+|   |   +- Identifier {Optional}
+|   |   |   |   
+|   |   |   +- character [O]
+|   |   |   +- character [p]
+|   |   |   +- character [t]
+|   |   |   +- character [i]
+|   |   |   +- character [o]
+|   |   |   +- character [n]
+|   |   |   +- character [a]
+|   |   |   +- character [l]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'?' Unit}
+|   |   |   |   
+|   |   |   +- Alternative {'?' Unit}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'?'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'?'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {?}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [?]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Unit}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Unit}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Unit}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [U]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {ZeroOrMore = '*' Unit;}
+|   |   
+|   +- Rule {ZeroOrMore = '*' Unit;}
+|   |   |   
+|   |   +- Identifier {ZeroOrMore}
+|   |   |   |   
+|   |   |   +- character [Z]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [o]
+|   |   |   +- character [O]
+|   |   |   +- character [r]
+|   |   |   +- character [M]
+|   |   |   +- character [o]
+|   |   |   +- character [r]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'*' Unit}
+|   |   |   |   
+|   |   |   +- Alternative {'*' Unit}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'*'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'*'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {*}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Unit}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Unit}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Unit}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [U]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {OneOrMore  = '+' Unit;}
+|   |   
+|   +- Rule {OneOrMore  = '+' Unit;}
+|   |   |   
+|   |   +- Identifier {OneOrMore}
+|   |   |   |   
+|   |   |   +- character [O]
+|   |   |   +- character [n]
+|   |   |   +- character [e]
+|   |   |   +- character [O]
+|   |   |   +- character [r]
+|   |   |   +- character [M]
+|   |   |   +- character [o]
+|   |   |   +- character [r]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'+' Unit}
+|   |   |   |   
+|   |   |   +- Alternative {'+' Unit}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'+'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'+'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {+}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [+]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Unit}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Unit}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Unit}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [U]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {FixedTimes = Number Unit;}
+|   |   
+|   +- Rule {FixedTimes = Number Unit;}
+|   |   |   
+|   |   +- Identifier {FixedTimes}
+|   |   |   |   
+|   |   |   +- character [F]
+|   |   |   +- character [i]
+|   |   |   +- character [x]
+|   |   |   +- character [e]
+|   |   |   +- character [d]
+|   |   |   +- character [T]
+|   |   |   +- character [i]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [s]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Number Unit}
+|   |   |   |   
+|   |   |   +- Alternative {Number Unit}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Number}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Number}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Number}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [N]
+|   |   |   |   |   |   |   +- character [u]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   
+|   |   |   |   +- Unit {Unit}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Unit}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Unit}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [U]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Group      = '(' Pattern ')';}
+|   |   
+|   +- Rule {Group      = '(' Pattern ')';}
+|   |   |   
+|   |   +- Identifier {Group}
+|   |   |   |   
+|   |   |   +- character [G]
+|   |   |   +- character [r]
+|   |   |   +- character [o]
+|   |   |   +- character [u]
+|   |   |   +- character [p]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'(' Pattern ')'}
+|   |   |   |   
+|   |   |   +- Alternative {'(' Pattern ')'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'('}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'('}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {(}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Pattern}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Pattern}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Pattern}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [P]
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   
+|   |   |   |   +- Unit {')'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {')'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {)}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [)]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Reference  = Identifier;}
+|   |   
+|   +- Rule {Reference  = Identifier;}
+|   |   |   
+|   |   +- Identifier {Reference}
+|   |   |   |   
+|   |   |   +- character [R]
+|   |   |   +- character [e]
+|   |   |   +- character [f]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [e]
+|   |   |   +- character [n]
+|   |   |   +- character [c]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Identifier}
+|   |   |   |   
+|   |   |   +- Alternative {Identifier}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Identifier}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Identifier}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Identifier}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [I]
+|   |   |   |   |   |   |   +- character [d]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {skip;}
+|   |   
+|   +- Skip {skip;}
+|   |   |   
+|   |   +- string [skip]
+|   |   +- character [;]
+|   
++- Statement {String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';}
+|   |   
+|   +- Rule {String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';}
+|   |   |   
+|   |   +- Identifier {String}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [t]
+|   |   |   +- character [r]
+|   |   |   +- character [i]
+|   |   |   +- character [n]
+|   |   |   +- character [g]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
+|   |   |   |   
+|   |   |   +- Alternative {'"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'"'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'"'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {"}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Group {('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"')}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   |   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Alternative {'\\' (2'0~9a~fA~F' | 'tn\\"') }
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {'\\'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Set {'\\'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {(2'0~9a~fA~F' | 'tn\\"')}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\"')}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- Alternative {2'0~9a~fA~F' }
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Unit {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Number {2}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [2]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Unit {'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {0}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [0]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {9}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [9]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {f}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {A}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {F}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [F]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [|]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- Alternative {'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Unit {'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Set {'tn\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {t}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {n}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {"}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [)]
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [|]
+|   |   |   |   |   |   |   |   |   +- Alternative {!'\\"'}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {!'\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Not Set {!'\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [!]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Set {'\\"'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {"}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [)]
+|   |   |   |   |   
+|   |   |   |   +- Unit {'"'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'"'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {"}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {NotSet = '!' Set;}
+|   |   
+|   +- Rule {NotSet = '!' Set;}
+|   |   |   
+|   |   +- Identifier {NotSet}
+|   |   |   |   
+|   |   |   +- character [N]
+|   |   |   +- character [o]
+|   |   |   +- character [t]
+|   |   |   +- character [S]
+|   |   |   +- character [e]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'!' Set}
+|   |   |   |   
+|   |   |   +- Alternative {'!' Set}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'!'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'!'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {!}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [!]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {Set}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Set}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Set}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';}
+|   |   
+|   +- Rule {Set    = '\'' *(Escaped ?('\~' Escaped)) '\'';}
+|   |   |   
+|   |   +- Identifier {Set}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [e]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'\'' *(Escaped ?('\~' Escaped)) '\''}
+|   |   |   |   
+|   |   |   +- Alternative {'\'' *(Escaped ?('\~' Escaped)) '\''}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'\''}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'\''}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {\'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {*(Escaped ?('\~' Escaped))}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*(Escaped ?('\~' Escaped))}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {(Escaped ?('\~' Escaped))}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Group {(Escaped ?('\~' Escaped))}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   |   +- Pattern {Escaped ?('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Alternative {Escaped ?('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Reference {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [E]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [c]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [p]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [d]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {?('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Optional {?('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [?]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Unit {('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- Group {('\~' Escaped)}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Pattern {'\~' Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Alternative {'\~' Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Unit {'\~'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Set {'\~'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {\~}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Unit {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Reference {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- Identifier {Escaped}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [E]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [c]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [p]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [d]
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   +- character [)]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [)]
+|   |   |   |   |   
+|   |   |   |   +- Unit {'\''}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'\''}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {\'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Number     = '1~9' *'0~9';}
+|   |   
+|   +- Rule {Number     = '1~9' *'0~9';}
+|   |   |   
+|   |   +- Identifier {Number}
+|   |   |   |   
+|   |   |   +- character [N]
+|   |   |   +- character [u]
+|   |   |   +- character [m]
+|   |   |   +- character [b]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'1~9' *'0~9'}
+|   |   |   |   
+|   |   |   +- Alternative {'1~9' *'0~9'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'1~9'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'1~9'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {1}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [1]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   +- Escaped {9}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [9]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {*'0~9'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*'0~9'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {'0~9'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Set {'0~9'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   +- Escaped {0}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [0]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   +- Escaped {9}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [9]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';}
+|   |   
+|   +- Rule {Escaped    = '\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~';}
+|   |   |   
+|   |   +- Identifier {Escaped}
+|   |   |   |   
+|   |   |   +- character [E]
+|   |   |   +- character [s]
+|   |   |   +- character [c]
+|   |   |   +- character [a]
+|   |   |   +- character [p]
+|   |   |   +- character [e]
+|   |   |   +- character [d]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') | !'\\\'\~'}
+|   |   |   |   
+|   |   |   +- Alternative {'\\' (2'0~9a~fA~F' | 'tn\\\'\~') }
+|   |   |   |   |   
+|   |   |   |   +- Unit {'\\'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'\\'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {(2'0~9a~fA~F' | 'tn\\\'\~')}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Group {(2'0~9a~fA~F' | 'tn\\\'\~')}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [(]
+|   |   |   |   |   |   +- Pattern {2'0~9a~fA~F' | 'tn\\\'\~'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Alternative {2'0~9a~fA~F' }
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Unit {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Fixed Times {2'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Number {2}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [2]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Unit {'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- Set {'0~9a~fA~F'}
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {0}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [0]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {9}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [9]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {f}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {A}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   |   +- Escaped {F}
+|   |   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   |   +- character [F]
+|   |   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [|]
+|   |   |   |   |   |   |   +- Alternative {'tn\\\'\~'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Unit {'tn\\\'\~'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- Set {'tn\\\'\~'}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   +- Escaped {t}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Escaped {n}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Escaped {\'}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- Escaped {\~}
+|   |   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [)]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {!'\\\'\~'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {!'\\\'\~'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Not Set {!'\\\'\~'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [!]
+|   |   |   |   |   |   +- Set {'\\\'\~'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   +- Escaped {\\}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Escaped {\'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Escaped {\~}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Identifier = 'A~Z' *'a~zA~Z';}
+|   |   
+|   +- Rule {Identifier = 'A~Z' *'a~zA~Z';}
+|   |   |   
+|   |   +- Identifier {Identifier}
+|   |   |   |   
+|   |   |   +- character [I]
+|   |   |   +- character [d]
+|   |   |   +- character [e]
+|   |   |   +- character [n]
+|   |   |   +- character [t]
+|   |   |   +- character [i]
+|   |   |   +- character [f]
+|   |   |   +- character [i]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'A~Z' *'a~zA~Z'}
+|   |   |   |   
+|   |   |   +- Alternative {'A~Z' *'a~zA~Z'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'A~Z'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'A~Z'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {A}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   +- Escaped {Z}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [Z]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {*'a~zA~Z'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*'a~zA~Z'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {'a~zA~Z'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Set {'a~zA~Z'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   +- Escaped {z}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [z]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- Escaped {A}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [~]
+|   |   |   |   |   |   |   |   +- Escaped {Z}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [Z]
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Whitespace = '\t\n ';}
+|   |   
+|   +- Rule {Whitespace = '\t\n ';}
+|   |   |   
+|   |   +- Identifier {Whitespace}
+|   |   |   |   
+|   |   |   +- character [W]
+|   |   |   +- character [h]
+|   |   |   +- character [i]
+|   |   |   +- character [t]
+|   |   |   +- character [e]
+|   |   |   +- character [s]
+|   |   |   +- character [p]
+|   |   |   +- character [a]
+|   |   |   +- character [c]
+|   |   |   +- character [e]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'\t\n '}
+|   |   |   |   
+|   |   |   +- Alternative {'\t\n '}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'\t\n '}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'\t\n '}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {\t}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Escaped {\n}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Escaped { }
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Comment    = "//" *!'\n' '\n';}
+|   |   
+|   +- Rule {Comment    = "//" *!'\n' '\n';}
+|   |   |   
+|   |   +- Identifier {Comment}
+|   |   |   |   
+|   |   |   +- character [C]
+|   |   |   +- character [o]
+|   |   |   +- character [m]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [n]
+|   |   |   +- character [t]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"//" *!'\n' '\n'}
+|   |   |   |   
+|   |   |   +- Alternative {"//" *!'\n' '\n'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"//"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"//"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [/]
+|   |   |   |   |   |   +- character [/]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {*!'\n'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Zero Or More {*!'\n'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [*]
+|   |   |   |   |   |   +- Unit {!'\n'}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- Not Set {!'\n'}
+|   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   +- character [!]
+|   |   |   |   |   |   |   |   +- Set {'\n'}
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   |   |   |   +- Escaped {\n}
+|   |   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {'\n'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'\n'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {\n}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [\]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
 

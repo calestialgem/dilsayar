@@ -9,7 +9,7 @@ Skip      = "skip" ?Pattern ';';
 Start     = "start" Pattern ';';
 Rule      = Identifier '=' Pattern ';';
 
-Pattern     = Alternative +('|' Alternative);
+Pattern     = Alternative *('|' Alternative);
 Alternative = +Unit;
 
 Unit = Set

@@ -485,7 +485,8 @@ bool dil_parse_string(DilParseContext* context)
 /* Try to parse a reference. */
 bool dil_parse_reference(DilParseContext* context)
 {
-    return dil_parse_identifier(context);
+    dil_parse__create(context, DIL_SYMBOL_REFERENCE);
+    return dil_parse__return(context, dil_parse_identifier(context));
 }
 
 /* Try to parse a group. */
@@ -533,11 +534,11 @@ bool dil_parse_fixed_times(DilParseContext* context)
 
     dil_parse__skip_0(context);
 
-    if (!dil_parse_pattern(context)) {
+    if (!dil_parse_unit(context)) {
         dil_parse__error_skip(
             context,
             &dil_parse__skip_0_once,
-            "Pattern",
+            "Unit",
             "FixedTimes");
         return dil_parse__return(context, true);
     }
@@ -556,11 +557,11 @@ bool dil_parse_one_or_more(DilParseContext* context)
 
     dil_parse__skip_0(context);
 
-    if (!dil_parse_pattern(context)) {
+    if (!dil_parse_unit(context)) {
         dil_parse__error_skip(
             context,
             &dil_parse__skip_0_once,
-            "Pattern",
+            "Unit",
             "OneOrMore");
         return dil_parse__return(context, true);
     }
@@ -579,11 +580,11 @@ bool dil_parse_zero_or_more(DilParseContext* context)
 
     dil_parse__skip_0(context);
 
-    if (!dil_parse_pattern(context)) {
+    if (!dil_parse_unit(context)) {
         dil_parse__error_skip(
             context,
             &dil_parse__skip_0_once,
-            "Pattern",
+            "Unit",
             "ZeroOrMore");
         return dil_parse__return(context, true);
     }
@@ -602,11 +603,11 @@ bool dil_parse_optional(DilParseContext* context)
 
     dil_parse__skip_0(context);
 
-    if (!dil_parse_pattern(context)) {
+    if (!dil_parse_unit(context)) {
         dil_parse__error_skip(
             context,
             &dil_parse__skip_0_once,
-            "Pattern",
+            "Unit",
             "Optional");
         return dil_parse__return(context, true);
     }
@@ -614,22 +615,17 @@ bool dil_parse_optional(DilParseContext* context)
     return dil_parse__return(context, true);
 }
 
-/* Try to parse a justaposition. */
-bool dil_parse_justaposition(DilParseContext* context)
+/* Try to parse a unit. */
+bool dil_parse_unit(DilParseContext* context)
 {
-    dil_parse__create(context, DIL_SYMBOL_JUSTAPOSITION);
-
-    if (!dil_parse_pattern(context)) {
-        return dil_parse__return(context, false);
-    }
-
-    dil_parse__skip_0(context);
-
-    while (dil_parse_pattern(context)) {
-        dil_parse__skip_0(context);
-    }
-
-    return dil_parse__return(context, true);
+    dil_parse__create(context, DIL_SYMBOL_UNIT);
+    return dil_parse__return(
+        context,
+        dil_parse_set(context) || dil_parse_not_set(context) ||
+            dil_parse_string(context) || dil_parse_reference(context) ||
+            dil_parse_group(context) || dil_parse_fixed_times(context) ||
+            dil_parse_one_or_more(context) || dil_parse_zero_or_more(context) ||
+            dil_parse_optional(context));
 }
 
 /* Try to parse alternatives. */
@@ -637,42 +633,13 @@ bool dil_parse_alternative(DilParseContext* context)
 {
     dil_parse__create(context, DIL_SYMBOL_ALTERNATIVE);
 
-    if (!dil_parse_pattern(context)) {
+    if (!dil_parse_unit(context)) {
         return dil_parse__return(context, false);
     }
 
     dil_parse__skip_0(context);
 
-    if (!dil_parse__character(context, '|')) {
-        dil_parse__error_character(context, '|', "Alternative");
-        return dil_parse__return(context, true);
-    }
-
-    dil_parse__skip_0(context);
-
-    if (!dil_parse_pattern(context)) {
-        dil_parse__error_skip(
-            context,
-            &dil_parse__skip_0_once,
-            "Pattern",
-            "Alternative");
-        return dil_parse__return(context, true);
-    }
-
-    dil_parse__skip_0(context);
-
-    while (dil_parse__character(context, '|')) {
-        dil_parse__skip_0(context);
-
-        if (!dil_parse_pattern(context)) {
-            dil_parse__error_skip(
-                context,
-                &dil_parse__skip_0_once,
-                "Pattern",
-                "Alternative");
-            return dil_parse__return(context, true);
-        }
-
+    while (dil_parse_unit(context)) {
         dil_parse__skip_0(context);
     }
 
@@ -682,12 +649,30 @@ bool dil_parse_alternative(DilParseContext* context)
 /* Try to parse a pattern. */
 bool dil_parse_pattern(DilParseContext* context)
 {
-    return dil_parse_set(context) || dil_parse_not_set(context) ||
-           dil_parse_string(context) || dil_parse_reference(context) ||
-           dil_parse_group(context) || dil_parse_fixed_times(context) ||
-           dil_parse_one_or_more(context) || dil_parse_zero_or_more(context) ||
-           dil_parse_optional(context) || dil_parse_justaposition(context) ||
-           dil_parse_alternative(context);
+    dil_parse__create(context, DIL_SYMBOL_PATTERN);
+
+    if (!dil_parse_alternative(context)) {
+        return dil_parse__return(context, false);
+    }
+
+    dil_parse__skip_0(context);
+
+    while (dil_parse__character(context, '|')) {
+        dil_parse__skip_0(context);
+
+        if (!dil_parse_alternative(context)) {
+            dil_parse__error_skip(
+                context,
+                &dil_parse__skip_0_once,
+                "Alternative",
+                "Pattern");
+            return dil_parse__return(context, true);
+        }
+
+        dil_parse__skip_0(context);
+    }
+
+    return dil_parse__return(context, true);
 }
 
 /* Try to parse a rule. */
@@ -787,8 +772,11 @@ bool dil_parse_skip(DilParseContext* context)
 /* Try to parse a statement. */
 bool dil_parse_statement(DilParseContext* context)
 {
-    return dil_parse_skip(context) || dil_parse_start(context) ||
-           dil_parse_rule(context);
+    dil_parse__create(context, DIL_SYMBOL_STATEMENT);
+    return dil_parse__return(
+        context,
+        dil_parse_skip(context) || dil_parse_start(context) ||
+            dil_parse_rule(context));
 }
 
 /* Parses the __start__ symbol. */
