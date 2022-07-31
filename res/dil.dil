@@ -1,40 +1,35 @@
 // SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-output "dilsayar.c";
+skip  Whitespace | Comment;
 start *Statement;
-skip Whitespace | Comment;
 
-Statement = Output | Start | Skip | Terminal | Rule;
-Output    = "output" String ';';
-Start     = "start" Pattern ';';
+Statement = Skip | Start | Rule;
 Skip      = "skip" ?Pattern ';';
-Terminal  = "terminal" ';';
+Start     = "start" Pattern ';';
 Rule      = Identifier '=' Pattern ';';
 
-Pattern = Set
-        | NotSet
-        | String
-        | Reference
-        | Group
-        | FixedTimes
-        | OneOrMore
-        | ZeroOrMore
-        | Optional
-        | Justaposition
-        | Alternative
-        ;
+Pattern     = Alternative +('|' Alternative);
+Alternative = +Unit;
 
-Alternative   = Pattern +('|' Pattern);
-Justaposition = +Pattern;
-Optional      = '?' Pattern;
-ZeroOrMore    = '*' Pattern;
-OneOrMore     = '+' Pattern;
-FixedTimes    = Number Pattern;
-Group         = '(' +Pattern ')';
-Reference     = Identifier;
+Unit = Set
+     | NotSet
+     | String
+     | Reference
+     | Group
+     | FixedTimes
+     | OneOrMore
+     | ZeroOrMore
+     | Optional;
 
-terminal;
+Optional   = '?' Unit;
+ZeroOrMore = '*' Unit;
+OneOrMore  = '+' Unit;
+FixedTimes = Number Unit;
+Group      = '(' Pattern ')';
+Reference  = Identifier;
+
+skip;
 
 String = '"' *('\\' (2'0~9a~fA~F' | 'tn\\"') | !'\\"') '"';
 NotSet = '!' Set;
