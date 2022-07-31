@@ -11,6 +11,7 @@ project(dilsayar)
 set(headers
     src/dil/buffer.c
     src/dil/builder.c
+    src/dil/generator.c
     src/dil/indices.c
     src/dil/lib.c
     src/dil/object.c
