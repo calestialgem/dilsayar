@@ -3,6 +3,7 @@
 
 #include "dil/buffer.c"
 #include "dil/builder.c"
+#include "dil/generator.c"
 #include "dil/indices.c"
 #include "dil/object.c"
 #include "dil/parser.c"
@@ -29,6 +30,7 @@ int main(int argumentCount, char const* const* arguments)
     DilTree   tree   = dil_parse(source);
 
     dil_tree_print_file(&tree);
+    dil_generate_file(&tree);
 
     dil_tree_free(&tree);
     dil_buffer_free(&buffer);
