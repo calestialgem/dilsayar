@@ -160,6 +160,32 @@ void dil_tree_free(DilTree* list)
     list->allocated = NULL;
 }
 
+/* Whether the subtrees are equal. */
+bool dil_tree_equal(DilNode const* lhs, DilNode const* rhs)
+{
+    if (lhs->childeren != rhs->childeren) {
+        return false;
+    }
+    if (lhs->childeren == 0) {
+        return lhs->object.symbol == rhs->object.symbol &&
+               dil_string_equal(&lhs->object.value, &rhs->object.value);
+    }
+    for (size_t i = 0; i < lhs->childeren; i++) {
+        if (!dil_tree_equal(lhs + 1 + i, rhs + 1 + i)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/* Whether the subtrees at the given indicies are equal. */
+bool dil_tree_equal_sub(DilTree const* tree, size_t lhs, size_t rhs)
+{
+    DilNode const* lhsp = dil_tree_at(tree, lhs);
+    DilNode const* rhsp = dil_tree_at(tree, rhs);
+    return dil_tree_equal(lhsp, rhsp);
+}
+
 /* Print pipes and object if its given. */
 void dil_tree_print_branch(FILE* stream, int pipes, DilObject const* object)
 {

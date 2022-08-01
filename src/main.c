@@ -40,20 +40,28 @@ int main(int argumentCount, char const* const* arguments)
         DilSource source = dil_source_load(&buffer, &path);
         DilTree   tree   = dil_parse(&source);
 
-        if (source.error == 0) {
+        if (source.errors == 0) {
             dil_tree_print_file(&tree, &path);
         }
 
         dil_analyze(&source, &tree);
 
-        if (source.error != 0) {
+        if (source.errors != 0) {
             printf(
                 "%.*s: error: File had %llu errors.\n",
                 (int)dil_string_size(&source.path),
                 source.path.first,
-                source.error);
+                source.errors);
         } else {
             dil_generate_file(&tree, &path);
+        }
+
+        if (source.warnings != 0) {
+            printf(
+                "%.*s: warning: File had %llu warnings.\n",
+                (int)dil_string_size(&source.path),
+                source.path.first,
+                source.warnings);
         }
 
         dil_tree_free(&tree);

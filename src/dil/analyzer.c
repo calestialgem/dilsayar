@@ -18,14 +18,35 @@ typedef struct {
 /* First pass of the analysis. */
 DilStringList dil_analyze_first_pass(DilSource* source, DilTree const* tree)
 {
-    DilStringList symbols   = {0};
-    bool          seenStart = false;
+    DilStringList symbols      = {0};
+    bool          seenStart    = false;
+    size_t const  INVALID_SKIP = 0;
+    size_t        lastSkip     = INVALID_SKIP;
 
     // Skip the start symbol.
     for (size_t current = 1; current < dil_tree_size(tree); current++) {
         DilNode const* node = dil_tree_at(tree, current);
 
         switch (node->object.symbol) {
+            case DIL_SYMBOL_SKIP: {
+                if (lastSkip == INVALID_SKIP) {
+                    if (node->childeren == 2) {
+                        dil_source_warning(
+                            source,
+                            &node->object.value,
+                            "Redundant no skip directive!");
+                    }
+                } else {
+                    if (dil_tree_equal_sub(tree, lastSkip, current)) {
+                        dil_source_warning(
+                            source,
+                            &node->object.value,
+                            "Redundant skip directive!");
+                    }
+                }
+                lastSkip = current;
+                break;
+            }
             case DIL_SYMBOL_START: {
                 if (seenStart) {
                     dil_source_error(
@@ -50,6 +71,7 @@ DilStringList dil_analyze_first_pass(DilSource* source, DilTree const* tree)
                         dil_string_list_add(&symbols, node->object.value);
                     }
                 }
+                break;
             }
             default:
                 break;
@@ -89,6 +111,7 @@ void dil_analyze_second_pass(
                             "Reference to an undefined symbol!");
                     }
                 }
+                break;
             }
             default:
                 break;

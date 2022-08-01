@@ -16,8 +16,10 @@ typedef struct {
     DilString path;
     /* Contents of the info.contents. */
     DilString contents;
-    /* Whether the file has errors. */
-    size_t error;
+    /* Amount of errors in the file. */
+    size_t errors;
+    /* Amount of warnings in the file. */
+    size_t warnings;
 } DilSource;
 
 /* Location of a character in the source file. */
@@ -53,7 +55,7 @@ DilSource dil_source_load(DilBuffer* buffer, DilString const* path)
             path->first,
             (int)dil_string_size(&extension),
             extension.first);
-        result.error++;
+        result.errors++;
         return result;
     }
 
@@ -72,7 +74,7 @@ DilSource dil_source_load(DilBuffer* buffer, DilString const* path)
         printf(
             "%s: error: Could not open the file at path!\n",
             pathBuffer.first);
-        result.error++;
+        result.errors++;
         return result;
     }
     dil_buffer_free(&pathBuffer);
@@ -223,5 +225,15 @@ void dil_source_error(
     char const*      message)
 {
     dil_source_print(source, string, "error", message);
-    source->error++;
+    source->errors++;
+}
+
+/* Report a warning in the source file. */
+void dil_source_warning(
+    DilSource*       source,
+    DilString const* string,
+    char const*      message)
+{
+    dil_source_print(source, string, "warning", message);
+    source->warnings++;
 }

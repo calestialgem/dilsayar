@@ -16,7 +16,8 @@
                 "test\\multi_start.dil",
                 "test\\no_start.dil",
                 "test\\redefinition.dil",
-                "test\\undefined_reference.dil"
+                "test\\undefined_reference.dil",
+                "test\\redundant_skip.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
@@ -35,7 +36,8 @@
                 "test\\multi_start.dil",
                 "test\\no_start.dil",
                 "test\\redefinition.dil",
-                "test\\undefined_reference.dil"
+                "test\\undefined_reference.dil",
+                "test\\redundant_skip.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
