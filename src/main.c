@@ -57,6 +57,8 @@ int main(int argumentCount, char const* const* arguments)
         }
 
         dil_tree_free(&tree);
+
+        printf("\n");
     }
 
     dil_buffer_free(&buffer);

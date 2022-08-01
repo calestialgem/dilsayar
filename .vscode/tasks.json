@@ -32,7 +32,9 @@
             "args": [
                 "dil.dil",
                 "test\\multi_start.dil",
-                "test\\no_start.dil"
+                "test\\no_start.dil",
+                "test\\redefinition.dil",
+                "test\\undefined_reference.dil"
             ],
             "problemMatcher": {
                 "owner": "dilsayar",
