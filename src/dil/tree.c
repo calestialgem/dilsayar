@@ -3,8 +3,10 @@
 
 #pragma once
 
+#include "dil/buffer.c"
 #include "dil/indices.c"
 #include "dil/object.c"
+#include "dil/string.c"
 
 #include <Windows.h>
 #include <errhandlingapi.h>
@@ -208,19 +210,59 @@ void dil_tree_print(FILE* stream, DilTree const* tree)
 }
 
 /* Print the tree to the default file. */
-void dil_tree_print_file(DilTree const* tree)
+void dil_tree_print_file(DilTree const* tree, DilString const* path)
 {
-    char PATH[] = "build\\parse-tree.txt";
-    if (!CreateDirectory("build", NULL) &&
+    DilString const EXTENSION       = dil_string_terminated("_parse.txt");
+    DilString const BUILD_DIRECTORY = dil_string_terminated("build\\");
+    DilSplit        pathSplit       = dil_string_split_last(path, '\\');
+    DilBuffer       buffer          = {0};
+
+    // Remove extension `.dil`.
+    pathSplit.after.last -= 4;
+
+    dil_buffer_reserve(
+        &buffer,
+        1 + dil_string_size(&BUILD_DIRECTORY) +
+            dil_string_size(&pathSplit.before));
+    buffer.last += sprintf(
+        buffer.last,
+        "%.*s%.*s",
+        (int)dil_string_size(&BUILD_DIRECTORY),
+        BUILD_DIRECTORY.first,
+        (int)dil_string_size(&pathSplit.before),
+        pathSplit.before.first);
+
+    if (!CreateDirectory(buffer.first, NULL) &&
         GetLastError() != ERROR_ALREADY_EXISTS) {
-        printf("Could not create the build directory!\n");
+        printf(
+            "%.*s: error: Could not create the build directory `%s`!\n",
+            (int)dil_string_size(path),
+            path->first,
+            buffer.first);
         return;
     }
-    FILE* outputParseStream = fopen(PATH, "w");
+
+    dil_buffer_reserve(
+        &buffer,
+        1 + dil_string_size(&EXTENSION) + dil_string_size(&pathSplit.after));
+    buffer.last += sprintf(
+        buffer.last,
+        "%.*s%.*s",
+        (int)dil_string_size(&pathSplit.after),
+        pathSplit.after.first,
+        (int)dil_string_size(&EXTENSION),
+        EXTENSION.first);
+
+    FILE* outputParseStream = fopen(buffer.first, "w");
     if (outputParseStream == NULL) {
-        printf("Could not open the output file %s!\n", PATH);
+        printf(
+            "%.*s: error: Could not open the output file `%s`!\n",
+            (int)dil_string_size(path),
+            path->first,
+            buffer.first);
         return;
     }
+    dil_buffer_free(&buffer);
     dil_tree_print(outputParseStream, tree);
     (void)fclose(outputParseStream);
 }

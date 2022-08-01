@@ -820,13 +820,6 @@ DilTree dil_parse(DilSource source)
 
     dil_parse__start(&initial);
 
-    if (initial.source.error != 0) {
-        printf(
-            "%s: error: File had %llu errors.\n",
-            initial.source.path,
-            initial.source.error);
-    }
-
     dil_builder_free(&initial.builder);
     return initial.built;
 }

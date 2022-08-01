@@ -13,7 +13,7 @@
 /* Information of a info.contents. */
 typedef struct {
     /* Path to the info.contents. */
-    char const* path;
+    DilString path;
     /* Contents of the info.contents. */
     DilString contents;
     /* Whether the file has errors. */
@@ -39,16 +39,43 @@ typedef struct {
 } DilSourcePortion;
 
 /* Load the source file at the path to the memory to the buffer. */
-DilSource dil_source_load(DilBuffer* buffer, char const* path)
+DilSource dil_source_load(DilBuffer* buffer, DilString const* path)
 {
-    FILE*     stream = fopen(path, "r");
-    DilSource result = {.path = path};
+    DilSource result = {.path = *path};
 
-    if (stream == NULL) {
-        printf("Could not open file %s!\n", path);
+    DilString const VALID_EXTENSION = dil_string_terminated("dil");
+    DilString       extension       = dil_string_split_last(path, '.').after;
+
+    if (!dil_string_equal(&VALID_EXTENSION, &extension)) {
+        printf(
+            "%.*s: error: File extension should be `dil` not `%.*s`!\n",
+            (int)dil_string_size(path),
+            path->first,
+            (int)dil_string_size(&extension),
+            extension.first);
         result.error++;
         return result;
     }
+
+    DilBuffer pathBuffer = {0};
+
+    dil_buffer_reserve(&pathBuffer, 1 + dil_string_size(path));
+    pathBuffer.last += sprintf(
+        pathBuffer.last,
+        "%.*s",
+        (int)dil_string_size(path),
+        path->first);
+
+    FILE* stream = fopen(pathBuffer.first, "r");
+
+    if (stream == NULL) {
+        printf(
+            "%s: error: Could not open the file at path!\n",
+            pathBuffer.first);
+        result.error++;
+        return result;
+    }
+    dil_buffer_free(&pathBuffer);
 
     size_t       start = dil_buffer_size(buffer);
     size_t const CHUNK = 1024;
@@ -164,8 +191,9 @@ void dil_source_print(
 {
     DilSourcePortion portion = dil_source_find(source, string);
     printf(
-        "%s:%llu:%llu: %s: %s\n",
-        source->path,
+        "%.*s:%llu:%llu: %s: %s\n",
+        (int)dil_string_size(&source->path),
+        source->path.first,
         portion.start.line,
         portion.start.column,
         type,

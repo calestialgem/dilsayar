@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "dil/analyzer.c"
 #include "dil/buffer.c"
 #include "dil/builder.c"
 #include "dil/generator.c"
@@ -25,14 +26,33 @@ int main(int argumentCount, char const* const* arguments)
     }
     printf("\n");
 
+    if (argumentCount < 2) {
+        printf("Provide a `.dil` file!\n");
+        return EXIT_FAILURE;
+    }
+
     DilBuffer buffer = {0};
-    DilSource source = dil_source_load(&buffer, arguments[1]);
-    DilTree   tree   = dil_parse(source);
 
-    dil_tree_print_file(&tree);
-    dil_generate_file(&tree);
+    for (int i = 1; i < argumentCount; i++) {
+        dil_buffer_clear(&buffer);
 
-    dil_tree_free(&tree);
+        DilString path   = dil_string_terminated(arguments[i]);
+        DilSource source = dil_source_load(&buffer, &path);
+        DilTree   tree   = dil_parse(source);
+
+        if (source.error != 0) {
+            printf(
+                "%.*s: error: File had %llu errors.\n",
+                (int)dil_string_size(&source.path),
+                source.path.first,
+                source.error);
+        }
+
+        dil_tree_print_file(&tree, &path);
+        dil_generate_file(&tree, &path);
+        dil_tree_free(&tree);
+    }
+
     dil_buffer_free(&buffer);
     return EXIT_SUCCESS;
 }

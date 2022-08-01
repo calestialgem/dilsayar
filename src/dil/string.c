@@ -84,6 +84,30 @@ char const* dil_string_first_fit(DilString const* view, bool (*predicate)(char))
     return view->last;
 }
 
+/* Find the last occurance of the element. Returns the position before the first
+ * element if it does not exist. */
+char const* dil_string_last(DilString const* view, char element)
+{
+    for (char const* i = view->last - 1; i >= view->first; i--) {
+        if (*i == element) {
+            return i;
+        }
+    }
+    return view->first - 1;
+}
+
+/* Find the last element that fits the predicate. Returns the position before
+ * the first character if none fits it. */
+char const* dil_string_last_fit(DilString const* view, bool (*predicate)(char))
+{
+    for (char const* i = view->last - 1; i >= view->first; i--) {
+        if (predicate(*i)) {
+            return i;
+        }
+    }
+    return view->first - 1;
+}
+
 /* Whether view contains the element. */
 bool dil_string_contains(DilString const* view, char element)
 {
@@ -182,6 +206,21 @@ dil_string_split_first_fit(DilString const* view, bool (*predicate)(char))
     return dil_string_split_position(
         view,
         dil_string_first_fit(view, predicate));
+}
+
+/* Split at the last occurence of the element. */
+DilSplit dil_string_split_last(DilString const* view, char element)
+{
+    return dil_string_split_position(view, dil_string_last(view, element) + 1);
+}
+
+/* Split at the last element that fits the predicate. */
+DilSplit
+dil_string_split_last_fit(DilString const* view, bool (*predicate)(char))
+{
+    return dil_string_split_position(
+        view,
+        dil_string_last_fit(view, predicate) + 1);
 }
 
 /* Return a view upto the position from the begining of the view. Removes those
