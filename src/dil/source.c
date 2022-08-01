@@ -191,11 +191,13 @@ void dil_source_print(
 {
     DilSourcePortion portion = dil_source_find(source, string);
     printf(
-        "%.*s:%llu:%llu: %s: %s\n",
+        "%.*s:%llu:%llu:%llu:%llu: %s: %s\n",
         (int)dil_string_size(&source->path),
         source->path.first,
         portion.start.line,
         portion.start.column,
+        portion.end.line,
+        portion.end.column,
         type,
         message);
 
