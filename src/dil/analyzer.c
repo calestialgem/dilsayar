@@ -57,19 +57,15 @@ DilStringList dil_analyze_first_pass(DilSource* source, DilTree const* tree)
                 seenStart = true;
                 break;
             }
-            case DIL_SYMBOL_IDENTIFIER: {
-                DilNode const* previous = dil_tree_at(tree, current - 1);
-                if (previous->object.symbol == DIL_SYMBOL_RULE) {
-                    if (dil_string_list_contains(
-                            &symbols,
-                            &node->object.value)) {
-                        dil_source_error(
-                            source,
-                            &node->object.value,
-                            "Redefinition of the symbol!");
-                    } else {
-                        dil_string_list_add(&symbols, node->object.value);
-                    }
+            case DIL_SYMBOL_RULE: {
+                DilNode const* next = dil_tree_at(tree, current + 1);
+                if (dil_string_list_contains(&symbols, &next->object.value)) {
+                    dil_source_error(
+                        source,
+                        &next->object.value,
+                        "Redefinition of the symbol!");
+                } else {
+                    dil_string_list_add(&symbols, next->object.value);
                 }
                 break;
             }
