@@ -40,16 +40,22 @@ int main(int argumentCount, char const* const* arguments)
         DilSource source = dil_source_load(&buffer, &path);
         DilTree   tree   = dil_parse(source);
 
+        if (source.error == 0) {
+            dil_tree_print_file(&tree, &path);
+        }
+
+        dil_analyze(&source, &tree);
+
         if (source.error != 0) {
             printf(
                 "%.*s: error: File had %llu errors.\n",
                 (int)dil_string_size(&source.path),
                 source.path.first,
                 source.error);
+        } else {
+            dil_generate_file(&tree, &path);
         }
 
-        dil_tree_print_file(&tree, &path);
-        dil_generate_file(&tree, &path);
         dil_tree_free(&tree);
     }
 

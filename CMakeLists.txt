@@ -9,6 +9,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 project(dilsayar)
 
 set(headers
+    src/dil/analyzer.c
     src/dil/buffer.c
     src/dil/builder.c
     src/dil/generator.c

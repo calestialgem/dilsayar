@@ -12,7 +12,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug",
             "args": [
-                "dil.dil"
+                "dil.dil",
+                "test\\multi_start.dil",
+                "test\\no_start.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
@@ -27,7 +29,9 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/debug.exe",
             "args": [
-                "dil.dil"
+                "dil.dil",
+                "test\\multi_start.dil",
+                "test\\no_start.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
