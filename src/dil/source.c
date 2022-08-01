@@ -215,3 +215,13 @@ void dil_source_print(
     }
     printf("\n");
 }
+
+/* Report an error in the source file. */
+void dil_source_error(
+    DilSource*       source,
+    DilString const* string,
+    char const*      message)
+{
+    dil_source_print(source, string, "error", message);
+    source->error++;
+}

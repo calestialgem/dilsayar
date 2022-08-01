@@ -5,35 +5,101 @@
 
 #include "dil/object.c"
 #include "dil/source.c"
+#include "dil/stringlist.c"
 #include "dil/tree.c"
 
-/* Analyze the parse tree of the source file. */
-void dil_analyze(DilSource* source, DilTree const* tree)
+/* Context of the analysis process. */
+typedef struct {
+    DilSource*     source;
+    DilTree const* tree;
+    DilStringList  symbols;
+} DilAnalysisContext;
+
+/* First pass of the analysis. */
+DilStringList dil_analyze_first_pass(DilSource* source, DilTree const* tree)
 {
-    bool seenStart = false;
+    DilStringList symbols   = {0};
+    bool          seenStart = false;
 
     // Skip the start symbol.
     for (size_t current = 1; current < dil_tree_size(tree); current++) {
         DilNode const* node = dil_tree_at(tree, current);
-        if (node->object.symbol == DIL_SYMBOL_START) {
-            if (seenStart) {
-                dil_source_print(
-                    source,
-                    &node->object.value,
-                    "error",
-                    "Multiple start symbol directives!");
-                source->error++;
+
+        switch (node->object.symbol) {
+            case DIL_SYMBOL_START: {
+                if (seenStart) {
+                    dil_source_error(
+                        source,
+                        &node->object.value,
+                        "Multiple start symbol directives!");
+                }
+                seenStart = true;
+                break;
             }
-            seenStart = true;
+            case DIL_SYMBOL_IDENTIFIER: {
+                DilNode const* previous = dil_tree_at(tree, current - 1);
+                if (previous->object.symbol == DIL_SYMBOL_RULE) {
+                    if (dil_string_list_contains(
+                            &symbols,
+                            &node->object.value)) {
+                        dil_source_error(
+                            source,
+                            &node->object.value,
+                            "Redefinition of the symbol!");
+                    } else {
+                        dil_string_list_add(&symbols, node->object.value);
+                    }
+                }
+            }
+            default:
+                break;
         }
     }
 
     if (!seenStart) {
-        dil_source_print(
+        dil_source_error(
             source,
             &source->contents,
-            "error",
             "Missing start symbol directive!");
-        source->error++;
     }
+
+    return symbols;
+}
+
+/* Second pass of the analysis. */
+void dil_analyze_second_pass(
+    DilSource*           source,
+    DilTree const*       tree,
+    DilStringList const* symbols)
+{
+    // Skip the start symbol.
+    for (size_t current = 1; current < dil_tree_size(tree); current++) {
+        DilNode const* node = dil_tree_at(tree, current);
+
+        switch (node->object.symbol) {
+            case DIL_SYMBOL_IDENTIFIER: {
+                DilNode const* previous = dil_tree_at(tree, current - 1);
+                if (previous->object.symbol == DIL_SYMBOL_REFERENCE) {
+                    if (!dil_string_list_contains(
+                            symbols,
+                            &node->object.value)) {
+                        dil_source_error(
+                            source,
+                            &node->object.value,
+                            "Reference to an undefined symbol!");
+                    }
+                }
+            }
+            default:
+                break;
+        }
+    }
+}
+
+/* Analyze the parse tree of the source file. */
+void dil_analyze(DilSource* source, DilTree const* tree)
+{
+    DilStringList symbols = dil_analyze_first_pass(source, tree);
+    dil_analyze_second_pass(source, tree, &symbols);
+    dil_string_list_free(&symbols);
 }

@@ -13,7 +13,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <winnls.h>
 
 /* Context of the parsing process. */
 typedef struct {
@@ -24,7 +23,7 @@ typedef struct {
     /* Remaining source file contents. */
     DilString remaining;
     /* Parsed source file. */
-    DilSource source;
+    DilSource* source;
     /* Whether the parser is in skip mode. */
     bool skip;
 } DilParseContext;
@@ -161,8 +160,7 @@ void dil_parse__error_skip(
         context->remaining.first++;
         portion.last++;
     }
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the expected character. */
@@ -182,8 +180,7 @@ void dil_parse__error_character(
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the expected set. */
@@ -204,8 +201,7 @@ void dil_parse__error_set(
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the expected not set. */
@@ -226,8 +222,7 @@ void dil_parse__error_not_set(
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the expected string. */
@@ -248,8 +243,7 @@ void dil_parse__error_string(
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the expected terminal. */
@@ -269,8 +263,7 @@ void dil_parse__error_reference(
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Print the unexpected character. */
@@ -283,8 +276,7 @@ void dil_parse__error_unexpected(DilParseContext* context, char const* symbol)
     DilString portion = {
         .first = context->remaining.first,
         .last  = context->remaining.first + 1};
-    context->source.error++;
-    dil_source_print(&context->source, &portion, "error", buffer);
+    dil_source_error(context->source, &portion, buffer);
 }
 
 /* Try to parse a comment. */
@@ -801,21 +793,19 @@ void dil_parse__start(DilParseContext* context)
     dil_builder_pop(&context->builder);
 
     if (dil_string_finite(&context->remaining)) {
-        context->source.error++;
-        dil_source_print(
-            &context->source,
+        dil_source_error(
+            context->source,
             &context->remaining,
-            "error",
             "There are unexpected characters left in the file!");
     }
 }
 
 /* Parses the source file. */
-DilTree dil_parse(DilSource source)
+DilTree dil_parse(DilSource* source)
 {
     DilParseContext initial = {
         .builder   = {.built = &initial.built},
-        .remaining = source.contents,
+        .remaining = source->contents,
         .source    = source};
 
     dil_parse__start(&initial);

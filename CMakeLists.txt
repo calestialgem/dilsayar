@@ -19,6 +19,7 @@ set(headers
     src/dil/parser.c
     src/dil/source.c
     src/dil/string.c
+    src/dil/stringlist.c
     src/dil/tree.c
 )
 

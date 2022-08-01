@@ -38,7 +38,7 @@ int main(int argumentCount, char const* const* arguments)
 
         DilString path   = dil_string_terminated(arguments[i]);
         DilSource source = dil_source_load(&buffer, &path);
-        DilTree   tree   = dil_parse(source);
+        DilTree   tree   = dil_parse(&source);
 
         if (source.error == 0) {
             dil_tree_print_file(&tree, &path);
