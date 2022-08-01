@@ -21,6 +21,8 @@ set(headers
     src/dil/string.c
     src/dil/stringlist.c
     src/dil/stringlistlist.c
+    src/dil/stringsetmap.c
+    src/dil/stringset.c
     src/dil/tree.c
 )
 

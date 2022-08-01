@@ -302,3 +302,15 @@ bool dil_string_prefix_check(DilString* string, DilString const* prefix)
     *string = split.after;
     return true;
 }
+
+/* Hash of the string. */
+size_t dil_string_hash(DilString const* string)
+{
+    size_t const PRIME = 53;
+    size_t       hash  = 0;
+    for (char const* i = string->first; i < string->last; i++) {
+        hash *= PRIME;
+        hash += *i;
+    }
+    return hash;
+}
