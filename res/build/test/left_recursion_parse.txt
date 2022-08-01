@@ -1,0 +1,273 @@
+start
+|   
++- Statement {start Something;}
+|   |   
+|   +- Start {start Something;}
+|   |   |   
+|   |   +- string [start]
+|   |   +- Pattern {Something}
+|   |   |   |   
+|   |   |   +- Alternative {Something}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Something}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Something}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Something}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {Something = Something "some other thing";}
+|   |   
+|   +- Rule {Something = Something "some other thing";}
+|   |   |   
+|   |   +- Identifier {Something}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [o]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [t]
+|   |   |   +- character [h]
+|   |   |   +- character [i]
+|   |   |   +- character [n]
+|   |   |   +- character [g]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Something "some other thing"}
+|   |   |   |   
+|   |   |   +- Alternative {Something "some other thing"}
+|   |   |   |   |   
+|   |   |   |   +- Unit {Something}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Something}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Something}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   |   |   
+|   |   |   |   +- Unit {"some other thing"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"some other thing"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [g]
+|   |   |   |   |   |   +- character ["]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {SomeOtherThing = Something "after another thing" | "something" | SomeOtherThing;}
+|   |   
+|   +- Rule {SomeOtherThing = Something "after another thing" | "something" | SomeOtherThing;}
+|   |   |   
+|   |   +- Identifier {SomeOtherThing}
+|   |   |   |   
+|   |   |   +- character [S]
+|   |   |   +- character [o]
+|   |   |   +- character [m]
+|   |   |   +- character [e]
+|   |   |   +- character [O]
+|   |   |   +- character [t]
+|   |   |   +- character [h]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [T]
+|   |   |   +- character [h]
+|   |   |   +- character [i]
+|   |   |   +- character [n]
+|   |   |   +- character [g]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {Something "after another thing" | "something" | SomeOtherThing}
+|   |   |   |   
+|   |   |   +- Alternative {Something "after another thing" }
+|   |   |   |   |   
+|   |   |   |   +- Unit {Something}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {Something}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {Something}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   |   |   
+|   |   |   |   +- Unit {"after another thing"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"after another thing"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [f]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [g]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {"something" }
+|   |   |   |   |   
+|   |   |   |   +- Unit {"something"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"something"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [s]
+|   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [g]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {SomeOtherThing}
+|   |   |   |   |   
+|   |   |   |   +- Unit {SomeOtherThing}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {SomeOtherThing}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {SomeOtherThing}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [S]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [m]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [O]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [T]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {A = B;}
+|   |   
+|   +- Rule {A = B;}
+|   |   |   
+|   |   +- Identifier {A}
+|   |   |   |   
+|   |   |   +- character [A]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {B}
+|   |   |   |   
+|   |   |   +- Alternative {B}
+|   |   |   |   |   
+|   |   |   |   +- Unit {B}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {B}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {B}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [B]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {B = C;}
+|   |   
+|   +- Rule {B = C;}
+|   |   |   
+|   |   +- Identifier {B}
+|   |   |   |   
+|   |   |   +- character [B]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {C}
+|   |   |   |   
+|   |   |   +- Alternative {C}
+|   |   |   |   |   
+|   |   |   |   +- Unit {C}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {C}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {C}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [C]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {C = A;}
+|   |   
+|   +- Rule {C = A;}
+|   |   |   
+|   |   +- Identifier {C}
+|   |   |   |   
+|   |   |   +- character [C]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {A}
+|   |   |   |   
+|   |   |   +- Alternative {A}
+|   |   |   |   |   
+|   |   |   |   +- Unit {A}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {A}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {A}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [A]
+|   |   |   
+|   |   +- character [;]
+

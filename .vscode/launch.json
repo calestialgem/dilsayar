@@ -17,7 +17,8 @@
                 "test\\no_start.dil",
                 "test\\redefinition.dil",
                 "test\\undefined_reference.dil",
-                "test\\redundant_skip.dil"
+                "test\\redundant_skip.dil",
+                "test\\left_recursion.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",
@@ -37,7 +38,8 @@
                 "test\\no_start.dil",
                 "test\\redefinition.dil",
                 "test\\undefined_reference.dil",
-                "test\\redundant_skip.dil"
+                "test\\redundant_skip.dil",
+                "test\\left_recursion.dil"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/res",

@@ -35,7 +35,8 @@
                 "test\\no_start.dil",
                 "test\\redefinition.dil",
                 "test\\undefined_reference.dil",
-                "test\\redundant_skip.dil"
+                "test\\redundant_skip.dil",
+                "test\\left_recursion.dil"
             ],
             "problemMatcher": {
                 "owner": "dilsayar",

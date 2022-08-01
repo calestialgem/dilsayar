@@ -5,6 +5,7 @@
 
 #include "dil/object.c"
 #include "dil/source.c"
+#include "dil/string.c"
 #include "dil/stringlist.c"
 #include "dil/tree.c"
 
@@ -58,14 +59,50 @@ DilStringList dil_analyze_first_pass(DilSource* source, DilTree const* tree)
                 break;
             }
             case DIL_SYMBOL_RULE: {
-                DilNode const* next = dil_tree_at(tree, current + 1);
-                if (dil_string_list_contains(&symbols, &next->object.value)) {
+                DilNode const* name = node + 1;
+                if (dil_string_list_contains(&symbols, &name->object.value)) {
                     dil_source_error(
                         source,
-                        &next->object.value,
+                        &name->object.value,
                         "Redefinition of the symbol!");
                 } else {
-                    dil_string_list_add(&symbols, next->object.value);
+                    dil_string_list_add(&symbols, name->object.value);
+                }
+                // Pattern.
+                DilNode const* ref          = node + 3 + name->childeren;
+                size_t         alternatives = ref->childeren;
+                // Alternative.
+                ref++;
+
+                for (size_t i = 0; i < alternatives; i += 2) {
+                    // Unit.
+                    ref++;
+                    // Reference.
+                    ref++;
+                    if (ref->object.symbol == DIL_SYMBOL_REFERENCE &&
+                        dil_string_equal(
+                            &name->object.value,
+                            &(++ref)->object.value)) {
+                        // Identifier.
+                        dil_source_error(
+                            source,
+                            &ref->object.value,
+                            "Rule has left recursion!");
+                    }
+                    for (size_t depth = i < alternatives - 1 ? 1 : 0;
+                         depth > 0;) {
+                        ref++;
+                        switch (ref->object.symbol) {
+                            case DIL_SYMBOL_ALTERNATIVE:
+                                depth--;
+                                break;
+                            case DIL_SYMBOL_PATTERN:
+                                depth += ref->childeren / 2 + 1;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
                 break;
             }
