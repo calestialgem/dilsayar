@@ -10,6 +10,8 @@
 #include "dil/stringsetmap.c"
 #include "dil/tree.c"
 
+#include <stdio.h>
+
 /* Context of the analysis process. */
 typedef struct {
     DilSource*      source;
@@ -90,7 +92,7 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
                         ref++;
                         dil_string_set_add(&firstReferences, ref->object.value);
                     }
-                    for (size_t depth = i < alternatives - 1 ? 1 : 0;
+                    for (size_t depth = i + 2 < alternatives ? 1 : 0;
                          depth > 0;) {
                         ref++;
                         switch (ref->object.symbol) {
@@ -111,6 +113,82 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
                     &context->firstReferences,
                     name->object.value,
                     firstReferences);
+                break;
+            }
+            case DIL_SYMBOL_PATTERN: {
+                // Alternative.
+                DilNode const* refi = node + 1;
+
+                for (size_t i = 0; i + 2 < node->childeren; i += 2) {
+                    // Unit.
+                    refi++;
+
+                    // Unit.
+                    DilNode const* refj = refi;
+
+                    for (size_t depth = i + 2 < node->childeren ? 1 : 0;
+                         depth > 0;) {
+                        refj++;
+                        switch (refj->object.symbol) {
+                            case DIL_SYMBOL_ALTERNATIVE:
+                                depth--;
+                                break;
+                            case DIL_SYMBOL_PATTERN:
+                                depth += refj->childeren / 2 + 1;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    if (refj + 1 != refi) {
+                        for (size_t j = i + 2; j < node->childeren; j += 2) {
+                            // Unit.
+                            refj++;
+
+                            if (dil_tree_equal(refj, refi)) {
+                                dil_source_error(
+                                    context->source,
+                                    &refi->object.value,
+                                    "Alternatives need left factoring!");
+                                dil_source_error(
+                                    context->source,
+                                    &refj->object.value,
+                                    "Alternatives need left factoring!");
+                            }
+
+                            for (size_t depth = j + 2 < node->childeren ? 1 : 0;
+                                 depth > 0;) {
+                                refj++;
+                                switch (refj->object.symbol) {
+                                    case DIL_SYMBOL_ALTERNATIVE:
+                                        depth--;
+                                        break;
+                                    case DIL_SYMBOL_PATTERN:
+                                        depth += refj->childeren / 2 + 1;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                    }
+
+                    for (size_t depth = i + 4 < node->childeren ? 1 : 0;
+                         depth > 0;) {
+                        refi++;
+                        switch (refi->object.symbol) {
+                            case DIL_SYMBOL_ALTERNATIVE:
+                                depth--;
+                                break;
+                            case DIL_SYMBOL_PATTERN:
+                                depth += refi->childeren / 2 + 1;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
                 break;
             }
             default:

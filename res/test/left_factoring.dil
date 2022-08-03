@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2022 Cem Geçgel <gecgelcem@outlook.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Test left factoring.
+
+start Something;
+
+// Direct.
+Something = 'c' ('a' 'b' | 'a' 'c' | 'a' 'd');
+
+// Indirect.
+A = B | C;
+B = 'a' 'b';
+C = 'a' 'c';
