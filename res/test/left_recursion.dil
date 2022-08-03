@@ -10,6 +10,14 @@ Something = Something "some other thing";
 SomeOtherThing = Something "after another thing" | "something" | SomeOtherThing;
 
 // Indirect left recursion.
-A = B;
+A = B 'a';
 B = C;
 C = A;
+
+// No left recursion; direct right recursion.
+AnotherThing = "another thing" AnotherThing;
+
+// No left recursion; indirect right recursion.
+K = 'k' L;
+L = M;
+M = K;

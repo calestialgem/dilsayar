@@ -202,18 +202,18 @@ start
 |   |   |   
 |   |   +- character [;]
 |   
-+- Statement {A = B;}
++- Statement {A = B 'a';}
 |   |   
-|   +- Rule {A = B;}
+|   +- Rule {A = B 'a';}
 |   |   |   
 |   |   +- Identifier {A}
 |   |   |   |   
 |   |   |   +- character [A]
 |   |   |   
 |   |   +- character [=]
-|   |   +- Pattern {B}
+|   |   +- Pattern {B 'a'}
 |   |   |   |   
-|   |   |   +- Alternative {B}
+|   |   |   +- Alternative {B 'a'}
 |   |   |   |   |   
 |   |   |   |   +- Unit {B}
 |   |   |   |   |   |   
@@ -222,6 +222,17 @@ start
 |   |   |   |   |   |   +- Identifier {B}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- character [B]
+|   |   |   |   |   
+|   |   |   |   +- Unit {'a'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'a'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
 |   |   |   
 |   |   +- character [;]
 |   
@@ -268,6 +279,151 @@ start
 |   |   |   |   |   |   +- Identifier {A}
 |   |   |   |   |   |   |   |   
 |   |   |   |   |   |   |   +- character [A]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {AnotherThing = "another thing" AnotherThing;}
+|   |   
+|   +- Rule {AnotherThing = "another thing" AnotherThing;}
+|   |   |   
+|   |   +- Identifier {AnotherThing}
+|   |   |   |   
+|   |   |   +- character [A]
+|   |   |   +- character [n]
+|   |   |   +- character [o]
+|   |   |   +- character [t]
+|   |   |   +- character [h]
+|   |   |   +- character [e]
+|   |   |   +- character [r]
+|   |   |   +- character [T]
+|   |   |   +- character [h]
+|   |   |   +- character [i]
+|   |   |   +- character [n]
+|   |   |   +- character [g]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"another thing" AnotherThing}
+|   |   |   |   
+|   |   |   +- Alternative {"another thing" AnotherThing}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"another thing"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"another thing"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   +- character [ ]
+|   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   +- character [g]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {AnotherThing}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {AnotherThing}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {AnotherThing}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [A]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [o]
+|   |   |   |   |   |   |   +- character [t]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [e]
+|   |   |   |   |   |   |   +- character [r]
+|   |   |   |   |   |   |   +- character [T]
+|   |   |   |   |   |   |   +- character [h]
+|   |   |   |   |   |   |   +- character [i]
+|   |   |   |   |   |   |   +- character [n]
+|   |   |   |   |   |   |   +- character [g]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {K = 'k' L;}
+|   |   
+|   +- Rule {K = 'k' L;}
+|   |   |   
+|   |   +- Identifier {K}
+|   |   |   |   
+|   |   |   +- character [K]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'k' L}
+|   |   |   |   
+|   |   |   +- Alternative {'k' L}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'k'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'k'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {k}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [k]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {L}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {L}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {L}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [L]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {L = M;}
+|   |   
+|   +- Rule {L = M;}
+|   |   |   
+|   |   +- Identifier {L}
+|   |   |   |   
+|   |   |   +- character [L]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {M}
+|   |   |   |   
+|   |   |   +- Alternative {M}
+|   |   |   |   |   
+|   |   |   |   +- Unit {M}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {M}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {M}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [M]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {M = K;}
+|   |   
+|   +- Rule {M = K;}
+|   |   |   
+|   |   +- Identifier {M}
+|   |   |   |   
+|   |   |   +- character [M]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {K}
+|   |   |   |   
+|   |   |   +- Alternative {K}
+|   |   |   |   |   
+|   |   |   |   +- Unit {K}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {K}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {K}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [K]
 |   |   |   
 |   |   +- character [;]
 

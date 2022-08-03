@@ -126,6 +126,50 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
     }
 }
 
+/* For use by the left recursion. */
+void dil_analyze_left_recursion_callees(
+    DilAnalysisContext const* context,
+    DilString const*          definition,
+    DilString const*          reference,
+    DilStringSet*             checked);
+
+/* Check for left recursion. */
+void dil_analyze_left_recursion(
+    DilAnalysisContext const* context,
+    DilString const*          definition,
+    DilString const*          reference,
+    DilStringSet*             checked)
+{
+    if (dil_string_equal(reference, definition)) {
+        dil_source_error(
+            context->source,
+            reference,
+            "Rule has left recursion!");
+        return;
+    }
+    dil_analyze_left_recursion_callees(context, definition, reference, checked);
+}
+
+/* Check for left recursion from the callees. */
+void dil_analyze_left_recursion_callees(
+    DilAnalysisContext const* context,
+    DilString const*          definition,
+    DilString const*          reference,
+    DilStringSet*             checked)
+{
+    DilStringSet const* firstReferences =
+        dil_string_set_map_at(&context->firstReferences, reference);
+    for (DilString const* i = firstReferences->values.first;
+         i < firstReferences->values.last;
+         i++) {
+        if (dil_string_set_contains(checked, i)) {
+            continue;
+        }
+        dil_string_set_add(checked, *i);
+        dil_analyze_left_recursion(context, definition, i, checked);
+    }
+}
+
 /* Second pass of the analysis. */
 void dil_analyze_second_pass(DilAnalysisContext* context)
 {
@@ -136,19 +180,14 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
 
         switch (node->object.symbol) {
             case DIL_SYMBOL_RULE: {
-                DilNode const*      name            = node + 1;
-                DilStringSet const* firstReferences = dil_string_set_map_at(
-                    &context->firstReferences,
-                    &name->object.value);
-                DilString const* selfCall =
-                    dil_string_set_at(firstReferences, &name->object.value);
-                if (selfCall != NULL) {
-                    dil_source_error(
-                        context->source,
-                        selfCall,
-                        "Rule has left recursion!");
-                }
-                // TODO: Check cycles.
+                DilNode const* name    = node + 1;
+                DilStringSet   checked = {0};
+                dil_analyze_left_recursion_callees(
+                    context,
+                    &name->object.value,
+                    &name->object.value,
+                    &checked);
+                dil_string_set_free(&checked);
                 break;
             }
             case DIL_SYMBOL_IDENTIFIER: {
