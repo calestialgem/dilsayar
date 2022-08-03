@@ -6,8 +6,7 @@
 #include <cstdlib>
 
 /* Start the program. */
-int main(int argumentCount, char const* const* arguments)
-{
+int main(int argumentCount, char const* const* arguments) {
     // Print the arguments.
     std::printf("Running with arguments:\n");
     for (int i = 0; i < argumentCount; i++) {

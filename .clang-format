@@ -30,7 +30,7 @@ BinPackParameters: False
 BitFieldColonSpacing: None
 BreakAfterJavaFieldAnnotations: True
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Linux
+BreakBeforeBraces: Attach
 BreakBeforeConceptDeclarations: True
 BreakBeforeTernaryOperators: True
 BreakConstructorInitializers: BeforeComma
