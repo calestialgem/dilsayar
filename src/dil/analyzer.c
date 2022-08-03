@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/buffer.c"
 #include "dil/indexmap.c"
 #include "dil/object.c"
 #include "dil/source.c"
@@ -12,6 +13,8 @@
 #include "dil/tree.c"
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Context of the analysis process. */
 typedef struct {
@@ -203,35 +206,64 @@ DilNode const* dil_analyze_first_unit(
     DilNode const*            unit,
     DilStringSet*             checked)
 {
-    // Reference.
-    DilNode const* reference = unit + 1;
-    if (reference->object.symbol != DIL_SYMBOL_REFERENCE) {
-        return unit;
+    // Under.
+    unit++;
+    switch (unit->object.symbol) {
+        case DIL_SYMBOL_OPTIONAL:
+        case DIL_SYMBOL_ZERO_OR_MORE:
+        case DIL_SYMBOL_ONE_OR_MORE:
+            // Repeat character.
+            unit++;
+            // Unit.
+            unit++;
+            break;
+        case DIL_SYMBOL_FIXED_TIMES:
+            // Number.
+            unit++;
+            // Unit.
+            unit += unit->childeren + 1;
+            break;
+        case DIL_SYMBOL_GROUP:
+            // Opening bracket.
+            unit++;
+            // Pattern.
+            unit++;
+            // Alternative.
+            unit++;
+            // Unit.
+            unit++;
+            break;
+        case DIL_SYMBOL_REFERENCE: {
+            // Identifier.
+            unit++;
+            if (dil_string_set_contains(checked, &unit->object.value)) {
+                return NULL;
+            }
+            dil_string_set_add(checked, unit->object.value);
+            size_t const* callee =
+                dil_index_map_at(&context->rules, &unit->object.value);
+            if (callee == NULL) {
+                return NULL;
+            }
+            // Rule.
+            unit = dil_tree_at(context->tree, *callee);
+            // Identifier.
+            unit++;
+            // Equal sign.
+            unit += unit->childeren + 1;
+            // Pattern.
+            unit++;
+            // Alternative.
+            unit++;
+            // Unit.
+            unit++;
+            break;
+        }
+        default:
+            // Unit.
+            return --unit;
     }
-    // Identifier.
-    reference++;
-    if (dil_string_set_contains(checked, &reference->object.value)) {
-        return NULL;
-    }
-    dil_string_set_add(checked, reference->object.value);
-    size_t const* callee =
-        dil_index_map_at(&context->rules, &reference->object.value);
-    if (callee == NULL) {
-        return NULL;
-    }
-    // Rule.
-    DilNode const* refered = dil_tree_at(context->tree, *callee);
-    // Identifier.
-    refered++;
-    // Equal sign.
-    refered += refered->childeren + 1;
-    // Pattern.
-    refered++;
-    // Alternative.
-    refered++;
-    // Unit.
-    refered++;
-    return dil_analyze_first_unit(context, refered, checked);
+    return dil_analyze_first_unit(context, unit, checked);
 }
 
 /* Find the first unit in the unit or its calles. Provides a string set by
@@ -244,6 +276,119 @@ DilNode const* dil_analyze_first_unit_allocated(
     unit                 = dil_analyze_first_unit(context, unit, &checked);
     dil_string_set_free(&checked);
     return unit;
+}
+
+/* Extract the set of first characters from the terminal unit, and whether the
+ * set is characters not to have. */
+void dil_analyze_first_character(
+    DilAnalysisContext const* context,
+    DilNode const*            unit,
+    DilBuffer*                buffer,
+    bool * not )
+{
+    *not = false;
+    // Under.
+    unit++;
+    switch (unit->object.symbol) {
+        case DIL_SYMBOL_NOT_SET:
+            *not = true;
+            // Exclamation mark.
+            unit++;
+            // Set.
+            unit++;
+        case DIL_SYMBOL_SET:
+            for (char const* i = unit->object.value.first + 1;
+                 i < unit->object.value.last - 1;
+                 i++) {
+                size_t remaining = unit->object.value.last - 1 - i;
+                if (remaining < 3 || *(i + 1) != '~') {
+                    dil_buffer_add(buffer, *i);
+                    continue;
+                }
+                for (char j = *i; j < *(i += 2); j++) {
+                    dil_buffer_add(buffer, j);
+                }
+            }
+            break;
+        case DIL_SYMBOL_STRING:
+            for (char const* i = unit->object.value.first + 1;
+                 i < unit->object.value.last - 1;
+                 i++) {
+                dil_buffer_add(buffer, *i);
+                break;
+            }
+            break;
+        default:
+            DilBuffer    messageBuffer     = {0};
+            char const*  file              = __FILE__;
+            unsigned     line              = __LINE__;
+            char const*  message           = "Unexpected nonterminal unit!";
+            size_t const MAX_NUMBER_LENGTH = 32;
+            dil_buffer_reserve(
+                &messageBuffer,
+                3 + strlen(file) + MAX_NUMBER_LENGTH + strlen(message) + 1);
+            messageBuffer.last +=
+                sprintf(messageBuffer.first, "%s:%u: %s", file, line, message);
+            dil_source_print(
+                context->source,
+                &unit->object.value,
+                "internal error",
+                messageBuffer.first);
+            dil_buffer_free(&messageBuffer);
+    }
+}
+
+/* Whether the first units are the same. Checks for the string and character
+ * terminals as well. Assumes the passed nodes are first units. */
+bool dil_analyze_first_unit_equal(
+    DilAnalysisContext const* context,
+    DilNode const*            lhs,
+    DilNode const*            rhs)
+{
+    if (dil_tree_equal(lhs, rhs)) {
+        return true;
+    }
+    DilBuffer lhsBuffer = {0};
+    DilBuffer rhsBuffer = {0};
+    bool      lhsNot    = false;
+    bool      rhsNot    = false;
+
+    dil_analyze_first_character(context, lhs, &lhsBuffer, &lhsNot);
+    dil_analyze_first_character(context, rhs, &rhsBuffer, &rhsNot);
+
+    DilString lhsSet = {.first = lhsBuffer.first, .last = lhsBuffer.last};
+    DilString rhsSet = {.first = rhsBuffer.first, .last = rhsBuffer.last};
+    bool      result = false;
+
+    if (!dil_string_finite(&lhsSet) || !dil_string_finite(&rhsSet)) {
+        goto end;
+    }
+    if (lhsNot == rhsNot) {
+        for (char const* i = lhsSet.first; i < lhsSet.last; i++) {
+            if (dil_string_contains(&rhsSet, *i)) {
+                result = true;
+                goto end;
+            }
+        }
+    } else {
+        if (lhsNot) {
+            rhsNot        = true;
+            lhsNot        = false;
+            DilString tmp = lhsSet;
+            lhsSet        = rhsSet;
+            rhsSet        = tmp;
+        }
+        for (char const* i = lhsSet.first; i < lhsSet.last; i++) {
+            if (!dil_string_contains(&rhsSet, *i)) {
+                result = true;
+                goto end;
+            }
+        }
+    }
+end:
+    dil_buffer_free(&lhsBuffer);
+    dil_buffer_free(&rhsBuffer);
+    return result;
 }
 
 /* Second pass of the analysis. */
@@ -294,7 +439,10 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
                             continue;
                         }
 
-                        if (dil_tree_equal(unitj, uniti)) {
+                        if (dil_analyze_first_unit_equal(
+                                context,
+                                unitj,
+                                uniti)) {
                             dil_source_error(
                                 context->source,
                                 &refi->object.value,

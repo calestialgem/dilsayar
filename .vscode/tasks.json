@@ -50,7 +50,7 @@
                     "${workspaceFolder}/res"
                 ],
                 "pattern": {
-                    "regexp": "^(.*):(\\d+):(\\d+):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "regexp": "^(.*):(\\d+):(\\d+):(\\d+):(\\d+):\\s+(warning|error|internal error):\\s+(.*)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,
