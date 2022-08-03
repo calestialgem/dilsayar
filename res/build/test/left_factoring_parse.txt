@@ -251,4 +251,209 @@ start
 |   |   |   |   |   |   +- character [']
 |   |   |   
 |   |   +- character [;]
+|   
++- Statement {J = 'a' 'b' | "a" "b" | "ab";}
+|   |   
+|   +- Rule {J = 'a' 'b' | "a" "b" | "ab";}
+|   |   |   
+|   |   +- Identifier {J}
+|   |   |   |   
+|   |   |   +- character [J]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'a' 'b' | "a" "b" | "ab"}
+|   |   |   |   
+|   |   |   +- Alternative {'a' 'b' }
+|   |   |   |   |   
+|   |   |   |   +- Unit {'a'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'a'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {'b'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'b'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {b}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {"a" "b" }
+|   |   |   |   |   
+|   |   |   |   +- Unit {"a"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"a"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {"b"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"b"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {"ab"}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"ab"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"ab"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   +- character ["]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {K = L | M | N;}
+|   |   
+|   +- Rule {K = L | M | N;}
+|   |   |   
+|   |   +- Identifier {K}
+|   |   |   |   
+|   |   |   +- character [K]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {L | M | N}
+|   |   |   |   
+|   |   |   +- Alternative {L }
+|   |   |   |   |   
+|   |   |   |   +- Unit {L}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {L}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {L}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [L]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {M }
+|   |   |   |   |   
+|   |   |   |   +- Unit {M}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {M}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {M}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [M]
+|   |   |   |   
+|   |   |   +- character [|]
+|   |   |   +- Alternative {N}
+|   |   |   |   |   
+|   |   |   |   +- Unit {N}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Reference {N}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- Identifier {N}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [N]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {L = 'a' 'b';}
+|   |   
+|   +- Rule {L = 'a' 'b';}
+|   |   |   
+|   |   +- Identifier {L}
+|   |   |   |   
+|   |   |   +- character [L]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {'a' 'b'}
+|   |   |   |   
+|   |   |   +- Alternative {'a' 'b'}
+|   |   |   |   |   
+|   |   |   |   +- Unit {'a'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'a'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {a}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   
+|   |   |   |   +- Unit {'b'}
+|   |   |   |   |   |   
+|   |   |   |   |   +- Set {'b'}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   |   |   |   +- Escaped {b}
+|   |   |   |   |   |   |   |   
+|   |   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character [']
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {M = "a" "b";}
+|   |   
+|   +- Rule {M = "a" "b";}
+|   |   |   
+|   |   +- Identifier {M}
+|   |   |   |   
+|   |   |   +- character [M]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"a" "b"}
+|   |   |   |   
+|   |   |   +- Alternative {"a" "b"}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"a"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"a"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   
+|   |   |   |   +- Unit {"b"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"b"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   +- character ["]
+|   |   |   
+|   |   +- character [;]
+|   
++- Statement {N = "ab";}
+|   |   
+|   +- Rule {N = "ab";}
+|   |   |   
+|   |   +- Identifier {N}
+|   |   |   |   
+|   |   |   +- character [N]
+|   |   |   
+|   |   +- character [=]
+|   |   +- Pattern {"ab"}
+|   |   |   |   
+|   |   |   +- Alternative {"ab"}
+|   |   |   |   |   
+|   |   |   |   +- Unit {"ab"}
+|   |   |   |   |   |   
+|   |   |   |   |   +- String {"ab"}
+|   |   |   |   |   |   |   
+|   |   |   |   |   |   +- character ["]
+|   |   |   |   |   |   +- character [a]
+|   |   |   |   |   |   +- character [b]
+|   |   |   |   |   |   +- character ["]
+|   |   |   
+|   |   +- character [;]
 

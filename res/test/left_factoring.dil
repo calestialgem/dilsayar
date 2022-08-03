@@ -12,3 +12,11 @@ Something = 'c' ('a' 'b' | 'a' 'c' | 'a' 'd');
 A = B | C;
 B = 'a' 'b';
 C = 'a' 'c';
+
+// String and character terminals.
+J = 'a' 'b' | "a" "b" | "ab";
+// Indirect.
+K = L | M | N;
+L = 'a' 'b';
+M = "a" "b";
+N = "ab";
