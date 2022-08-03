@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/indexmap.c"
 #include "dil/object.c"
 #include "dil/source.c"
 #include "dil/string.c"
@@ -18,7 +19,27 @@ typedef struct {
     DilTree const*  tree;
     DilStringSet    symbols;
     DilStringSetMap firstReferences;
+    DilIndexMap     rules;
 } DilAnalysisContext;
+
+/* Goes to the next alternative of the current pattern. */
+DilNode const* dil_analyze_next_alternative(DilNode const* node)
+{
+    for (size_t depth = 1; depth > 0;) {
+        node++;
+        switch (node->object.symbol) {
+            case DIL_SYMBOL_ALTERNATIVE:
+                depth--;
+                break;
+            case DIL_SYMBOL_PATTERN:
+                depth += node->childeren / 2 + 1;
+                break;
+            default:
+                break;
+        }
+    }
+    return node;
+}
 
 /* First pass of the analysis. */
 void dil_analyze_first_pass(DilAnalysisContext* context)
@@ -79,10 +100,10 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
                 // Pattern.
                 DilNode const* ref          = node + 3 + name->childeren;
                 size_t         alternatives = ref->childeren;
-                // Alternative.
-                ref++;
 
                 for (size_t i = 0; i < alternatives; i += 2) {
+                    // Alternative.
+                    ref = dil_analyze_next_alternative(ref);
                     // Unit.
                     ref++;
                     // Reference.
@@ -92,20 +113,6 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
                         ref++;
                         dil_string_set_add(&firstReferences, ref->object.value);
                     }
-                    for (size_t depth = i + 2 < alternatives ? 1 : 0;
-                         depth > 0;) {
-                        ref++;
-                        switch (ref->object.symbol) {
-                            case DIL_SYMBOL_ALTERNATIVE:
-                                depth--;
-                                break;
-                            case DIL_SYMBOL_PATTERN:
-                                depth += ref->childeren / 2 + 1;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
                 }
 
                 dil_string_set_add(&context->symbols, name->object.value);
@@ -113,82 +120,7 @@ void dil_analyze_first_pass(DilAnalysisContext* context)
                     &context->firstReferences,
                     name->object.value,
                     firstReferences);
-                break;
-            }
-            case DIL_SYMBOL_PATTERN: {
-                // Alternative.
-                DilNode const* refi = node + 1;
-
-                for (size_t i = 0; i + 2 < node->childeren; i += 2) {
-                    // Unit.
-                    refi++;
-
-                    // Unit.
-                    DilNode const* refj = refi;
-
-                    for (size_t depth = i + 2 < node->childeren ? 1 : 0;
-                         depth > 0;) {
-                        refj++;
-                        switch (refj->object.symbol) {
-                            case DIL_SYMBOL_ALTERNATIVE:
-                                depth--;
-                                break;
-                            case DIL_SYMBOL_PATTERN:
-                                depth += refj->childeren / 2 + 1;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    if (refj + 1 != refi) {
-                        for (size_t j = i + 2; j < node->childeren; j += 2) {
-                            // Unit.
-                            refj++;
-
-                            if (dil_tree_equal(refj, refi)) {
-                                dil_source_error(
-                                    context->source,
-                                    &refi->object.value,
-                                    "Alternatives need left factoring!");
-                                dil_source_error(
-                                    context->source,
-                                    &refj->object.value,
-                                    "Alternatives need left factoring!");
-                            }
-
-                            for (size_t depth = j + 2 < node->childeren ? 1 : 0;
-                                 depth > 0;) {
-                                refj++;
-                                switch (refj->object.symbol) {
-                                    case DIL_SYMBOL_ALTERNATIVE:
-                                        depth--;
-                                        break;
-                                    case DIL_SYMBOL_PATTERN:
-                                        depth += refj->childeren / 2 + 1;
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                        }
-                    }
-
-                    for (size_t depth = i + 4 < node->childeren ? 1 : 0;
-                         depth > 0;) {
-                        refi++;
-                        switch (refi->object.symbol) {
-                            case DIL_SYMBOL_ALTERNATIVE:
-                                depth--;
-                                break;
-                            case DIL_SYMBOL_PATTERN:
-                                depth += refi->childeren / 2 + 1;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
+                dil_index_map_add(&context->rules, name->object.value, current);
                 break;
             }
             default:
@@ -268,6 +200,39 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
                 dil_string_set_free(&checked);
                 break;
             }
+            case DIL_SYMBOL_PATTERN: {
+                // Pattern.
+                DilNode const* refi = node;
+
+                for (size_t i = 0; i + 2 < node->childeren; i += 2) {
+                    // Alternative.
+                    refi = dil_analyze_next_alternative(refi);
+                    // Unit.
+                    refi++;
+
+                    // Unit.
+                    DilNode const* refj = refi;
+
+                    for (size_t j = i + 2; j < node->childeren; j += 2) {
+                        // Alternative.
+                        refj = dil_analyze_next_alternative(refj);
+                        // Unit.
+                        refj++;
+
+                        if (dil_tree_equal(refj, refi)) {
+                            dil_source_error(
+                                context->source,
+                                &refi->object.value,
+                                "Alternatives need left factoring!");
+                            dil_source_error(
+                                context->source,
+                                &refj->object.value,
+                                "Alternatives need left factoring!");
+                        }
+                    }
+                }
+                break;
+            }
             case DIL_SYMBOL_IDENTIFIER: {
                 DilNode const* previous =
                     dil_tree_at(context->tree, current - 1);
@@ -304,4 +269,5 @@ void dil_analyze(DilSource* source, DilTree const* tree)
         dil_string_set_free(&i->value);
     }
     dil_string_set_map_free(&context.firstReferences);
+    dil_index_map_free(&context.rules);
 }
