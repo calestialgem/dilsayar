@@ -3,28 +3,13 @@
 
 cmake_minimum_required(VERSION 3.12)
 
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(dilsayar)
 
 set(headers
-    src/dil/analyzer.c
-    src/dil/buffer.c
-    src/dil/builder.c
-    src/dil/generator.c
-    src/dil/indexmap.c
-    src/dil/indices.c
-    src/dil/lib.c
-    src/dil/object.c
-    src/dil/parser.c
-    src/dil/source.c
-    src/dil/string.c
-    src/dil/stringlist.c
-    src/dil/stringlistlist.c
-    src/dil/stringsetmap.c
-    src/dil/stringset.c
-    src/dil/tree.c
+    src/dil/view.cc
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${headers})
@@ -46,7 +31,7 @@ function(setup_target target)
     endif(MSVC)
 endfunction(setup_target target)
 
-add_executable(debug src/main.c)
+add_executable(debug src/main.cc)
 setup_target(debug)
 
 # Create compile commands for the header files as well.

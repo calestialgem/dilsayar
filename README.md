@@ -3,7 +3,7 @@
 
 # Dilsayar
 
-A parser generator in C. Reads the grammar file and produces its parser in C.
+A parser generator in C++. Reads the grammar file and produces its parser in C.
 
 ---
 
