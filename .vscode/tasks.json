@@ -26,6 +26,10 @@
             "type": "shell",
             "label": "lint (Windows)",
             "command": "\"${workspaceFolder}\\build\\debug.exe\"",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "options": {
                 "cwd": "res"
             },
