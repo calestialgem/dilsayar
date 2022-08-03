@@ -54,7 +54,7 @@ Element const* first(View<Element> const& view, Element const& element) {
 /* Find the first element that fits the predicate. Returns the position after
  * the last element if none fits. */
 template<typename Element, typename Predicate>
-Element const* first(View<Element> const& view, Predicate predicate) {
+Element const* first_fit(View<Element> const& view, Predicate predicate) {
     for (Element const* i = view.first; i < view.last; i++) {
         if (predicate(*i)) {
             return i;
@@ -78,7 +78,7 @@ Element const* last(View<Element> const& view, Element const& element) {
 /* Find the last element that fits the predicate. Returns the position before
  * the first element if none fits. */
 template<typename Element, typename Predicate>
-Element const* last(View<Element> const& view, Predicate predicate) {
+Element const* last_fit(View<Element> const& view, Predicate predicate) {
     for (Element const* i = view.last - 1; i >= view.first; i--) {
         if (predicate(*i)) {
             return i;
@@ -95,7 +95,7 @@ bool contains(View<Element> const& view, Element const& element) {
 
 /* Whether the view contains an element that fits the predicate. */
 template<typename Element, typename Predicate>
-bool contains(View<Element> const& view, Predicate predicate) {
+bool contains_fit(View<Element> const& view, Predicate predicate) {
     return first(view, predicate) != view.last;
 }
 
@@ -107,7 +107,7 @@ bool starts(View<Element> const& view, Element const& element) {
 
 /* Whether the first element fits the predicate. */
 template<typename Element, typename Predicate>
-bool starts(View<Element> const& view, Predicate predicate) {
+bool starts_fit(View<Element> const& view, Predicate predicate) {
     return predicate(at(view, 0));
 }
 
@@ -119,7 +119,7 @@ bool finishes(View<Element> const& view, Element const& element) {
 
 /* Whether the last element fits the predicate. */
 template<typename Element, typename Predicate>
-bool finishes(View<Element> const& view, Predicate predicate) {
+bool finishes_fit(View<Element> const& view, Predicate predicate) {
     return predicate(back(view, 0));
 }
 

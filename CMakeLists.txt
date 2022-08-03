@@ -10,6 +10,7 @@ project(dilsayar)
 
 set(headers
     src/dil/ix.cc
+    src/dil/split.cc
     src/dil/view.cc
 )
 
