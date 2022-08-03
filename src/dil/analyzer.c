@@ -180,6 +180,72 @@ void dil_analyze_left_recursion_callees(
     }
 }
 
+/* Check for left recursion from the callees. Provides a string set by itself.
+ */
+void dil_analyze_left_recursion_callees_allocated(
+    DilAnalysisContext const* context,
+    DilString const*          definition,
+    DilString const*          reference)
+{
+    DilStringSet checked = {0};
+    dil_analyze_left_recursion_callees(
+        context,
+        definition,
+        reference,
+        &checked);
+    dil_string_set_free(&checked);
+}
+
+/* Find the first unit in the unit or its callees. Returns NULL if the rule
+ * has left recursion or referes an undefined symbol. */
+DilNode const* dil_analyze_first_unit(
+    DilAnalysisContext const* context,
+    DilNode const*            unit,
+    DilStringSet*             checked)
+{
+    // Reference.
+    DilNode const* reference = unit + 1;
+    if (reference->object.symbol != DIL_SYMBOL_REFERENCE) {
+        return unit;
+    }
+    // Identifier.
+    reference++;
+    if (dil_string_set_contains(checked, &reference->object.value)) {
+        return NULL;
+    }
+    dil_string_set_add(checked, reference->object.value);
+    size_t const* callee =
+        dil_index_map_at(&context->rules, &reference->object.value);
+    if (callee == NULL) {
+        return NULL;
+    }
+    // Rule.
+    DilNode const* refered = dil_tree_at(context->tree, *callee);
+    // Identifier.
+    refered++;
+    // Equal sign.
+    refered += refered->childeren + 1;
+    // Pattern.
+    refered++;
+    // Alternative.
+    refered++;
+    // Unit.
+    refered++;
+    return dil_analyze_first_unit(context, refered, checked);
+}
+
+/* Find the first unit in the unit or its calles. Provides a string set by
+ * itself. */
+DilNode const* dil_analyze_first_unit_allocated(
+    DilAnalysisContext const* context,
+    DilNode const*            unit)
+{
+    DilStringSet checked = {0};
+    unit                 = dil_analyze_first_unit(context, unit, &checked);
+    dil_string_set_free(&checked);
+    return unit;
+}
+
 /* Second pass of the analysis. */
 void dil_analyze_second_pass(DilAnalysisContext* context)
 {
@@ -190,14 +256,11 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
 
         switch (node->object.symbol) {
             case DIL_SYMBOL_RULE: {
-                DilNode const* name    = node + 1;
-                DilStringSet   checked = {0};
-                dil_analyze_left_recursion_callees(
+                DilNode const* name = node + 1;
+                dil_analyze_left_recursion_callees_allocated(
                     context,
                     &name->object.value,
-                    &name->object.value,
-                    &checked);
-                dil_string_set_free(&checked);
+                    &name->object.value);
                 break;
             }
             case DIL_SYMBOL_PATTERN: {
@@ -210,6 +273,12 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
                     // Unit.
                     refi++;
 
+                    DilNode const* uniti =
+                        dil_analyze_first_unit_allocated(context, refi);
+                    if (uniti == NULL) {
+                        continue;
+                    }
+
                     // Unit.
                     DilNode const* refj = refi;
 
@@ -219,7 +288,13 @@ void dil_analyze_second_pass(DilAnalysisContext* context)
                         // Unit.
                         refj++;
 
-                        if (dil_tree_equal(refj, refi)) {
+                        DilNode const* unitj =
+                            dil_analyze_first_unit_allocated(context, refj);
+                        if (unitj == NULL) {
+                            continue;
+                        }
+
+                        if (dil_tree_equal(unitj, uniti)) {
                             dil_source_error(
                                 context->source,
                                 &refi->object.value,
