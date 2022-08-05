@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(dilsayar)
 
 set(headers
+    src/dil/hasher.cc
     src/dil/ix.cc
     src/dil/split.cc
     src/dil/view.cc

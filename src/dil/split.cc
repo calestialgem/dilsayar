@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/hasher.cc"
 #include "dil/ix.cc"
 #include "dil/view.cc"
 
@@ -53,5 +54,18 @@ Split<Element> split_last(View<Element> const& view, Element const& element) {
 template<typename Element, typename Predicate>
 Split<Element> split_last_fit(View<Element> const& view, Predicate predicate) {
     return split(view, last_fit(view, predicate));
+}
+
+/* Whether the splits point to same elements. */
+template<typename Element>
+bool equal(Split<Element> const& lhs, Split<Element> const& rhs) {
+    return equal(lhs.before, rhs.before) && equal(lhs.after, rhs.after);
+}
+
+/* Hash of the view. */
+template<typename Element>
+void hash(Split<Element> const& split, Hasher& hasher) {
+    hash(split.before, hasher);
+    hash(split.after, hasher);
 }
 } // namespace dil

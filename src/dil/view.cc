@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "dil/hasher.cc"
 #include "dil/ix.cc"
 
 namespace dil {
@@ -136,5 +137,13 @@ bool equal(View<Element> const& lhs, View<Element> const& rhs) {
         }
     }
     return true;
+}
+
+/* Hash of the view. */
+template<typename Element>
+void hash(View<Element> const& view, Hasher& hasher) {
+    for (Element const* i = view.first; i < view.last; i++) {
+        hash(*i, hasher);
+    }
 }
 } // namespace dil
