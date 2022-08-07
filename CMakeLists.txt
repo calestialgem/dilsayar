@@ -11,6 +11,7 @@ project(dilsayar)
 set(headers
     src/dil/hasher.cc
     src/dil/ix.cc
+    src/dil/list.cc
     src/dil/split.cc
     src/dil/view.cc
 )
