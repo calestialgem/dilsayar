@@ -13,6 +13,7 @@ set(headers
     src/dil/ix.cc
     src/dil/list.cc
     src/dil/split.cc
+    src/dil/tally.cc
     src/dil/view.cc
 )
 
